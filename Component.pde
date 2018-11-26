@@ -1,9 +1,9 @@
 class Component {
-  int order;
+  int order;//used for block determination (dfs for block selection)
   Color primary, relay;
   Vertex[] degreeList;
   Stack<Vertex> stack=new Stack<Vertex>();
-  LinkedList<Vertex>[] giant=new LinkedList[2];
+  LinkedList<Vertex>[] giant=new LinkedList[2];//giant[0]->giant block; giant[1]->giant component
   LinkedList<LinkedList<Vertex>> blocks=new LinkedList<LinkedList<Vertex>>(), components=new LinkedList<LinkedList<Vertex>>();//first component is for singletons
   int[] tails=new int[3];//0->tailsTouchGiantBlock, 1->tailsTouchMinorBlocks, 2->tailsTouchBothBlocks
   Component(Color primary, Color relay) {
@@ -80,7 +80,7 @@ class Component {
     initialMarks(primary);
     initialMarks(relay);
     for (Vertex nodeA : relay.vertices) {
-      for (Vertex nodeB : nodeA.colorNeighbors.get(primary.index)) {
+      for (Vertex nodeB : nodeA.linksAt(primary)) {
         nodeA.links.addLast(nodeB);
         nodeB.links.addLast(nodeA);
       }
@@ -103,7 +103,7 @@ class Component {
   }
   void generateDegreeList() {
     for (Vertex node : giant[1]) {
-      node.mark=0;
+      node.mark=0;//mark all nodes to 0 prepare tail-counting and tail-touching
       node.lowpoint=node.links.size();
       degreeList[node.lowpoint].push(node);
     }
@@ -117,14 +117,11 @@ class Component {
         node.links.clear();
     }
   }
-  boolean goOn() {
-    return degreeList[1].value>0;
-  }
   void clearTailCounts() {
     tails[0]=tails[1]=tails[2]=0;
   }
   void countTails() {
-    if (degreeList[1].value>0) {
+    if (degreeList[0].value>0) {
       for (Vertex node=degreeList[0].next; node!=null; node=node.next)
         node.mark=0;
       for (Vertex node=degreeList[0].next; node!=null; node=node.next)

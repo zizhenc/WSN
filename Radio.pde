@@ -1,6 +1,6 @@
 class Radio {
   int value;
-  float x, y, radioWidth, radioHeight, diameter, gap;
+  float x, y, radioHeight, diameter, gap;
   String[] label;
   Radio(String[] label) {
     this.label=label;
@@ -18,7 +18,6 @@ class Radio {
     textAlign(LEFT, CENTER);
     this.x=screenX(x, y);
     this.y=screenY(x, y);
-    radioWidth=textWidth(label[0])+gui.thisFont.stepX()+gui.thisFont.stepY();
     radioHeight=gui.thisFont.stepY(label.length)+gui.thisFont.gap(label.length-1);
     diameter=gui.thisFont.stepY();
     gap=gui.thisFont.gap();

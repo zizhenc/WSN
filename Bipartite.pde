@@ -1,46 +1,45 @@
 abstract class Bipartite extends Procedure implements Screen {
-  int _N, _E, amount;
-  Color primary, relay;
-  Region region=new Region();
-  Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
-  ExTable table;
+  int _N, _E;
+  boolean goOn;
   int[][] nodes=new int[2][8];//0-> primary, 1-> relay
+  color[] colour={color(random(128, 256), random(128, 256), random(128, 256)), color(random(128, 256), random(128, 256), random(128, 256)), color(random(128, 256), random(128, 256), random(128, 256))};
   String[] headers={"Degree", "Primary", "Relay", "Total"}, modalLabels={"Table", "Plot"};
   Plot plot=new Plot("Degree", "Vertex", 3);
-  color[] colour={color(random(128, 256), random(128, 256), random(128, 256)), color(random(128, 256), random(128, 256), random(128, 256)), color(random(128, 256), random(128, 256), random(128, 256))};
-  Component component;
-  ListIterator<Checker> partsIterator;
-  HashSet<Vertex> domain=new HashSet<Vertex>();
-  Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
-  Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block"), primaryPlot=new Checker("Primary plot"), relayPlot=new Checker("Relay plot"), totalPlot=new Checker("Total plot");
+  Color primary, relay;
   Radio modals=new Radio(modalLabels);
+  Region region=new Region();
+  Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
+  Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block"), primaryPlot=new Checker("Primary plot"), relayPlot=new Checker("Relay plot"), totalPlot=new Checker("Total plot");
+  ExTable table;
+  Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
+  Component component;
+  HashSet<Vertex> domain=new HashSet<Vertex>();
+  abstract int getAmount();
+  abstract void setComponent(int index);//index starts from 1
   Bipartite() {
     parts.addLast(minorComponents);
-    parts.addLast(giantComponent);
     parts.addLast(tails);
+    parts.addLast(giantComponent);
     switches.addLast(showEdge);
     switches.addLast(showRegion);
     tunes.addLast(edgeWeight);
     tunes.addLast(backbone);
     table=new ExTable(headers, 8);
   }
-  abstract void setComponent(int index);//index starts from 1
   void setting() {
     initialize();
     showNode.value=showEdge.value=minorComponents.value=giantComponent.value=minorBlocks.value=giantBlock.value=primaryPlot.value=relayPlot.value=totalPlot.value=true;
     tails.value=showRegion.value=false;
     edgeWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     setComponent(1);
-    backbone.setValue(1);
-    backbone.setPreference(1, amount);
+    backbone.setPreference(1, getAmount());
   }
   void resetParts() {
-    partsIterator=parts.listIterator(1);
-    if (partsIterator.next()==giantBlock) {
-      partsIterator.remove();
-      partsIterator.next();
-      partsIterator.remove();
-      partsIterator.add(giantComponent);
+    goOn=true;
+    if (parts.getLast()==giantBlock) {
+      parts.removeLast();
+      parts.removeLast();
+      parts.addLast(giantComponent);
     }
   }
   void reset() {
@@ -54,17 +53,16 @@ abstract class Bipartite extends Procedure implements Screen {
     interval.setPreference(1, ceil((primary.vertices.size()+relay.vertices.size())/3.0), 1);
   }
   void restart() {
-    component.restart();
     resetParts();
+    component.restart();
   }
   void deploying() {
     for (int i=0; i<interval.value; i++) {
-      if (play.value&&!component.deleting()) {
-        partsIterator=parts.listIterator(1);
-        if (partsIterator.next()==giantComponent) {
-          partsIterator.remove();
-          partsIterator.add(giantBlock);
-          partsIterator.add(minorBlocks);
+      if (play.value&&!goOn) {
+        if (parts.getLast()==giantComponent) {
+          parts.removeLast();
+          parts.addLast(minorBlocks);
+          parts.addLast(giantBlock);
         }
         if (navigation.auto) {
           if (backbone.value<backbone.max) {
@@ -75,6 +73,8 @@ abstract class Bipartite extends Procedure implements Screen {
         }
         play.value=navigation.auto;
       }
+      if (play.value)
+        goOn=component.deleting();
     }
   }
   void show() {
@@ -83,7 +83,7 @@ abstract class Bipartite extends Procedure implements Screen {
       for (int j=0; j<8; j++)
         nodes[i][j]=0;
     domain.clear();
-    if (component.goOn()) {
+    if (goOn) {
       if (giantComponent.value)
         for (int i=1; i<component.degreeList.length; i++)
           for (Vertex nodeA=component.degreeList[i].next; nodeA!=null; nodeA=nodeA.next) {
@@ -139,34 +139,35 @@ abstract class Bipartite extends Procedure implements Screen {
                 }
                 displayNode(nodeA);
               }
+        /*
         for (ListIterator<LinkedList<Vertex>> i=component.blocks.listIterator(component.blocks.size()-1); i.hasPrevious(); ) {
-          Vertex nodeA=i.previous().getLast();
-          if (nodeA.order==-3) {
-            if (!giantBlock.value) {
-              if (showEdge.value) {
-                int count=0;
-                stroke(gui.partColor[0].value);
-                strokeWeight(edgeWeight.value);
-                for (Vertex nodeB : nodeA.links)
-                  if (nodeB.order==-4)
-                    count++;
-                  else
-                    displayEdge(nodeA, nodeB);
-                nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()-count]++;
-              }
-              displayNode(nodeA);
-            }
-          } else {
-            if (showEdge.value) {
-              stroke(gui.partColor[0].value);
-              strokeWeight(edgeWeight.value);
-              for (Vertex nodeB : nodeA.links)
-                displayEdge(nodeA, nodeB);
-              nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()]++;
-            }
-            displayNode(nodeA);
-          }
-        }
+         Vertex nodeA=i.previous().getLast();
+         if (nodeA.order==-3) {
+         if (!giantBlock.value) {
+         if (showEdge.value) {
+         int count=0;
+         stroke(gui.partColor[0].value);
+         strokeWeight(edgeWeight.value);
+         for (Vertex nodeB : nodeA.links)
+         if (nodeB.order==-4)
+         count++;
+         else
+         displayEdge(nodeA, nodeB);
+         nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()-count]++;
+         }
+         displayNode(nodeA);
+         }
+         } else {
+         if (showEdge.value) {
+         stroke(gui.partColor[0].value);
+         strokeWeight(edgeWeight.value);
+         for (Vertex nodeB : nodeA.links)
+         displayEdge(nodeA, nodeB);
+         nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()]++;
+         }
+         displayNode(nodeA);
+         }
+         }*/
       }
     }
     if (tails.value)
@@ -176,15 +177,17 @@ abstract class Bipartite extends Procedure implements Screen {
           stroke(gui.partColor[1].value);
           strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.links)
-            if (component.goOn())
+            if (goOn) {
               if (nodeB.order!=-2&&!giantComponent.value)
                 count++;
               else
                 displayEdge(nodeA, nodeB);
-            else if (nodeB.order<-2&&!giantBlock.value||nodeB.order>-2&&!minorBlocks.value)
-              count++;
-            else
-              displayEdge(nodeA, nodeB);
+            } else {
+              if (nodeB.order<-2&&!giantBlock.value||nodeB.order>-2&&!minorBlocks.value)
+                count++;
+              else
+                displayEdge(nodeA, nodeB);
+            }
           nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()-count]++;
         }
         displayNode(nodeA);
@@ -216,17 +219,48 @@ abstract class Bipartite extends Procedure implements Screen {
     word[2]=String.format("Average degree: %.2f", showNode.value?_E*2.0/_N:0);
     word[3]=String.format("Dominates: %d (%.2f%%)", domain.size(), domain.size()*100.0/graph.vertex.length);
     word[4]="Components: "+components();  
-    int len=6;
-    if (!colour.nodeIterator.hasNext()&&graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
-      len=11;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
-      int faces=showEdge.value?_E-colour.vertices.size()+graph.topology.characteristic():0;
-      word[7]="Faces: "+faces;
-      word[8]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
-      word[9]=showEdge.value?String.format("3-cycle faces: %d (%.2f%%)", colour.cycles[0], colour.cycles[0]*100.0/faces):"3-cycle faces: 0 (0.00%)";
-      word[10]=showEdge.value?String.format("4-cycle faces: %d (%.2f%%)", colour.cycles[1], colour.cycles[1]*100.0/faces):"4-cycle faces: 0 (0.00%)";
+    int len=goOn?6:7;
+    if (graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
+      len=goOn?8:9;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
+      int faces=_E-_N+components()+graph.topology.characteristic()-1;
+      word[5]="Faces: "+faces;
+      word[6]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
     }
+    if (!goOn)
+      word[len-2]="Giant component blocks: "+component.blocks.size();
+    word[len-1]="Primary partite #"+(primary.index+1)+" & relay partite #"+(relay.index+1);
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+1+i));
+    if (modals.value==1) {
+      setPlot();
+      plot.initialize(gui.thisFont.stepX(2), gui.thisFont.stepY(startHeight+1+len), gui.margin(), gui.margin());
+      plot.frame();
+      if (primaryPlot.value) {
+        stroke(colour[0]);
+        strokeWeight(gui.unit());
+        plot.linesAt(0);
+        strokeWeight(gui.unit(4));
+        plot.pointsAt(0);
+      }
+      if (relayPlot.value) {
+        stroke(colour[1]);
+        strokeWeight(gui.unit());
+        plot.linesAt(1);
+        strokeWeight(gui.unit(4));
+        plot.pointsAt(1);
+      }
+      if (totalPlot.value) {
+        stroke(colour[2]);
+        strokeWeight(gui.unit());
+        plot.linesAt(2);
+        strokeWeight(gui.unit(4));
+        plot.pointsAt(2);
+      }
+      plot.measure();
+    } else {
+      setTable();
+      table.display(gui.thisFont.stepX(2), gui.thisFont.stepY(startHeight+len+1));
+    }
   }
   void displayEdge(Vertex nodeA, Vertex nodeB) {
     if (nodeA.value<nodeB.value) {
@@ -248,8 +282,8 @@ abstract class Bipartite extends Procedure implements Screen {
   }
   void moreControls(float y) {
     fill(gui.headColor[2].value);
-    text("Chart modals:", width-gui.margin()+gui.body.stepX(), y);
-    modals.display(width-gui.margin()+gui.body.stepX(2), y+gui.body.stepY(0.5));
+    text("Chart modals:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY());
+    modals.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
   }
   void moreMouseReleases() {
     if (backbone.active())
@@ -326,7 +360,7 @@ abstract class Bipartite extends Procedure implements Screen {
   }
   int components() {
     int amount=0;
-    if (component.goOn()) {
+    if (goOn) {
       if (giantComponent.value)
         amount+=1;
       else if (tails.value) {

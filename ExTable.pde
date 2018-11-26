@@ -14,25 +14,25 @@ class ExTable extends Table {
     pushStyle();
     stroke(gui.frameColor.value);
     strokeWeight(gui.unit(2));
-    float gap=textWidth(maxString)+gui.body.stepX();
-    line(x, y, x+getColumnCount()*gap, y);
-    line(x, y+gui.body.stepY((getRowCount()+1)*1.6), x+getColumnCount()*gap, y+gui.body.stepY((getRowCount()+1)*1.6));
-    line(x, y, x, y+gui.body.stepY((getRowCount()+1)*1.6));
-    line(x+getColumnCount()*gap, y, x+getColumnCount()*gap, y+gui.body.stepY((getRowCount()+1)*1.6));
+    float gapX=textWidth(maxString)+gui.thisFont.stepX(), gapY=gui.thisFont.stepY(1.5);
+    line(x, y, x+getColumnCount()*gapX, y);
+    line(x, y+(getRowCount()+1)*gapY, x+getColumnCount()*gapX, y+(getRowCount()+1)*gapY);
+    line(x, y, x, y+(getRowCount()+1)*gapY);
+    line(x+getColumnCount()*gapX, y, x+getColumnCount()*gapX, y+(getRowCount()+1)*gapY);
     strokeWeight(gui.unit());
     for (int i=1; i<getColumnCount(); i++)
-      line(x+i*gap, y, x+i*gap, y+gui.body.stepY((getRowCount()+1)*1.6));
+      line(x+i*gapX, y, x+i*gapX, y+(getRowCount()+1)*gapY);
     for (int i=1; i<=getRowCount(); i++)
-      line(x, y+gui.body.stepY(i*1.6), x+getColumnCount()*gap, y+gui.body.stepY(i*1.6));
+      line(x, y+i*gapY, x+getColumnCount()*gapX, y+i*gapY);
     fill(gui.headColor[3].value);
-    textAlign(CENTER);
+    textAlign(CENTER, CENTER);
     for (int i=0; i<getColumnCount(); i++)
-      text(getColumnTitle(i), x+i*gap+gap/2, y+gui.body.stepY(1.1));
+      text(getColumnTitle(i), x+i*gapX+gapX/2, y+gapY/2);
     fill(gui.bodyColor[0].value);
     for (int i=0; i<getRowCount(); i++)
       for (int j=0; j<getColumnCount(); j++)
         if (getString(i, j)!=null)
-          text(getString(i, j), x+j*gap+gap/2, y+gui.body.stepY(1.6*i+2.7));
+          text(getString(i, j), x+j*gapX+gapX/2, y+(i+1)*gapY+gapY/2);
     popStyle();
   }
 }

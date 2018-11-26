@@ -32,6 +32,7 @@ void loadScreens() {
   screen[6]=new RelayColoring();
   screen[7]=new SLPartite();
   screen[8]=new RLPartite();
+  screen[9]=new SLBipartite();
   screen[11]=new Scene();
   gui.load=true;
 }

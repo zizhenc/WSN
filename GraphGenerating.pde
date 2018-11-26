@@ -81,7 +81,7 @@ class GraphGenerating extends Procedure implements Screen {
   void moreControls(float y) {
     fill(gui.headColor[2].value);
     text("Methods:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY());
-    methods.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
+    methods.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.gap()+gui.thisFont.stepY());
     if (methods.value>0) {
       fill(gui.headColor[2].value);
       text("Coordinates:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY(2)+methods.radioHeight+gui.thisFont.gap());

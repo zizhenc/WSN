@@ -1,5 +1,5 @@
 class Switcher {
-  float x, y, switchWidth, switchHeight;
+  float x, y, switchHeight;
   boolean value=true;
   String[] label=new String[2];
   Switcher(String labelI, String labelII) {
@@ -13,7 +13,6 @@ class Switcher {
     pushStyle();
     textAlign(LEFT, CENTER);
     rectMode(CORNER);
-    switchWidth=gui.thisFont.stepY(2)+textWidth(label[0].length()>label[1].length()?label[0]:label[1])+gui.thisFont.stepX();
     switchHeight=gui.thisFont.stepY();
     this.x=screenX(x, y);
     this.y=screenY(x, y);

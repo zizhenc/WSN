@@ -13,9 +13,9 @@ class Region {
         sphereTangency(vertex);
         break;
       case 5:
-      case 6:
         torusTangency(vertex);
         break;
+      case 6:
       case 7:
       case 8:
         space(vertex);
