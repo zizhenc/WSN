@@ -32,6 +32,8 @@ class Component {
     setPartites(primary, relay);
   }
   void restart() {
+    for (Vertex node=degreeList[0].next; node!=null; node=node.next)
+      node.order=0;
     for (Vertex list : degreeList)
       list.clean();
     generateDegreeList();
@@ -43,7 +45,7 @@ class Component {
           for (Vertex node=degreeList[i].next; node!=null; node=node.next)
             node.setEdgeIndicator();
         int index=2;
-        while (degreeList[index].value==0&&index<degreeList.length)
+        while (index<degreeList.length&&degreeList[index].value==0)
           index++;
         if (index<degreeList.length) {
           depthFirstSearch(degreeList[index].next, null);
@@ -121,13 +123,11 @@ class Component {
     tails[0]=tails[1]=tails[2]=0;
   }
   void countTails() {
-    if (degreeList[0].value>0) {
-      for (Vertex node=degreeList[0].next; node!=null; node=node.next)
-        node.mark=0;
-      for (Vertex node=degreeList[0].next; node!=null; node=node.next)
-        if (node.mark==0)
-          tailTraverse(node);
-    }
+    for (Vertex node=degreeList[0].next; node!=null; node=node.next)
+      node.mark=0;
+    for (Vertex node=degreeList[0].next; node!=null; node=node.next)
+      if (node.mark==0)
+        tailTraverse(node);
   }
   void tailTraverse(Vertex nodeA) {//determine # of tail components
     switch(nodeA.order) {

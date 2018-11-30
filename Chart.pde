@@ -1,7 +1,7 @@
 class Chart {
   String labelX, labelY;
   int stepX, stepY;
-  float minX, maxX, minY, maxY, intervalX, intervalY, gapX, gapY, rangeX, rangeY, frameX, frameY, x, y, xFrameLength, yFrameLength;
+  float minX, maxX, minY, maxY, intervalX, intervalY, gapX, gapY, rangeX, rangeY, x, y, chartWidth, chartHeight;
   boolean measureX, measureY;//measure locations in X and Y directions, false means left or up to the cursor, true means right or bottom to the cursor
   LinkedList<Float>[] points;
   Chart(String labelX, String labelY, int plots) {
@@ -17,20 +17,19 @@ class Chart {
     this.minY=minY;
     this.maxY=maxY;
   }
-  void initialize(float x, float y, float xFrameLength, float yFrameLength) {
-    this.x=x;
-    this.y=y;
-    this.xFrameLength=xFrameLength;
-    this.yFrameLength=yFrameLength;
+  void initialize(float x, float y, float chartWidth, float chartHeight) {
+    this.x=screenX(x, y);
+    this.y=screenY(x, y);
+    this.chartWidth=chartWidth;
+    this.chartHeight=chartHeight;
   }
   void arrow(float x1, float y1, float x2, float y2) {
     line(x1, y1, x2, y2);
     pushMatrix();
     translate(x2, y2);
     rotate(atan2(x1-x2, y2-y1));
-    line(0, 0, -6, -6);
-    line(0, 0, 6, -6);
-    point(0, 0);
+    line(0, 0, -3, -6);
+    line(0, 0, 3, -6);
     popMatrix();
   }
   void clean() {
