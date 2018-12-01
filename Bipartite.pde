@@ -2,9 +2,7 @@ abstract class Bipartite extends Procedure implements Screen {
   int _N, _E;
   boolean goOn;
   int[][] nodes=new int[2][8];//0-> primary, 1-> relay
-  color[] colour={color(random(128, 256), random(128, 256), random(128, 256)), color(random(128, 256), random(128, 256), random(128, 256)), color(random(128, 256), random(128, 256), random(128, 256))};
-  String[] headers={"Degree", "Primary", "Relay", "Total"}, modalLabels={"Table", "Plot"};
-  //Plot plot=new Plot("Degree", "Vertex", 3);
+  String[] headers={"Degree", "Primary", "Relay", "Total"}, modalLabels={"Table", "Bar chart"};
   BarChart barChart=new BarChart("Degree", "Vertex", 3);
   Color primary, relay;
   Radio modals=new Radio(modalLabels);
@@ -49,7 +47,7 @@ abstract class Bipartite extends Procedure implements Screen {
       component=new Component(primary, relay);
     else
       component.reset(primary, relay);
-    barChart.setRange(0, 7, 0, max(primary.vertices.size(), relay.vertices.size()));
+    barChart.setRange(0, 7, 0, primary.vertices.size()+relay.vertices.size());
     regionAmount.setPreference(1, primary.vertices.size()+relay.vertices.size());
     region.amount=round(regionAmount.value);
     interval.setPreference(1, ceil((primary.vertices.size()+relay.vertices.size())/3.0), 1);
@@ -192,34 +190,7 @@ abstract class Bipartite extends Procedure implements Screen {
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+i+1));
     if (modals.value==1) {
       setPlot();
-      barChart.initialize(gui.thisFont.stepX(2), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
-      barChart.frame();
-      /*
-      plot.initialize(gui.thisFont.stepX(2), gui.thisFont.stepY(startHeight+1+len), gui.margin(), gui.margin());
-       plot.frame();
-       if (primaryPlot.value) {
-       stroke(colour[0]);
-       strokeWeight(gui.unit());
-       plot.linesAt(0);
-       strokeWeight(gui.unit(4));
-       plot.pointsAt(0);
-       }
-       if (relayPlot.value) {
-       stroke(colour[1]);
-       strokeWeight(gui.unit());
-       plot.linesAt(1);
-       strokeWeight(gui.unit(4));
-       plot.pointsAt(1);
-       }
-       if (totalPlot.value) {
-       stroke(colour[2]);
-       strokeWeight(gui.unit());
-       plot.linesAt(2);
-       strokeWeight(gui.unit(4));
-       plot.pointsAt(2);
-       }
-       plot.measure();
-       */
+      barChart.display(gui.thisFont.stepX(2), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
     } else {
       setTable();
       table.display(gui.thisFont.stepX(2), gui.thisFont.stepY(startHeight+len+1));
@@ -385,13 +356,5 @@ abstract class Bipartite extends Procedure implements Screen {
       barChart.points[1].addLast(nodes[1][i]+0.0);
       barChart.points[2].addLast(nodes[0][i]+nodes[1][i]+0.0);
     }
-    /*
-    plot.clean();
-     for (int i=0; i<8; i++) {
-     plot.points[0].addLast(nodes[0][i]+0.0);
-     plot.points[1].addLast(nodes[1][i]+0.0);
-     plot.points[2].addLast(nodes[0][i]+nodes[1][i]+0.0);
-     }
-     */
   }
 }

@@ -1,35 +1,75 @@
-class Chart {
+abstract class Chart {
   String labelX, labelY;
-  int stepX, stepY;
-  float minX, maxX, minY, maxY, intervalX, intervalY, gapX, gapY, rangeX, rangeY, x, y, chartWidth, chartHeight;
+  int stepX, stepY, minX, maxX, minY, maxY;
+  float intervalX, intervalY, gapX, gapY, rangeX, rangeY, x, y, chartWidth, chartHeight, xStart, yStart;
+  color[] colour;
   boolean measureX, measureY;//measure locations in X and Y directions, false means left or up to the cursor, true means right or bottom to the cursor
+  boolean[] chart;
   LinkedList<Float>[] points;
+  abstract void graduation();
+  abstract void chartAt(int index);
   Chart(String labelX, String labelY, int plots) {
     this.labelX=labelX;
     this.labelY=labelY;
     points=new LinkedList[plots];
-    for (int i=0; i!=points.length; i++)
+    colour=new color[plots];
+    chart=new boolean[plots];
+    for (int i=0; i!=plots; i++) {
       points[i]=new LinkedList<Float>();
+      colour[i]=color(random(128, 256), random(128, 256), random(128, 256));
+    }
   }
-  void setRange(float minX, float maxX, float minY, float maxY) {
-    this.minX=minX;
-    this.maxX=maxX;
-    this.minY=minY;
-    this.maxY=maxY;
-  }
-  void initialize(float x, float y, float chartWidth, float chartHeight) {
+  void display(float x, float y, float chartWidth, float chartHeight) {
+    pushStyle();
+    stroke(gui.frameColor.value);
     this.x=screenX(x, y);
     this.y=screenY(x, y);
     this.chartWidth=chartWidth;
     this.chartHeight=chartHeight;
+    rangeX=chartWidth-gui.thisFont.stepX(2)-textWidth(labelX+maxY)-gui.thisFont.gap();
+    rangeY=chartHeight-gui.thisFont.stepY(2)-gui.thisFont.gap(2);
+    stepX=stepY=1;
+    intervalX=gapX=rangeX/(maxX-minX+1);
+    intervalY=gapY=rangeY/(maxY-minY);
+    while (gapX<=textWidth(maxX+"")) {
+      stepX++;
+      gapX=rangeX*stepX/(maxX-minX+1);
+    }
+    while (gapY<=gui.thisFont.stepY()) {
+      stepY++;
+      gapY=rangeY*stepY/(maxY-minY);
+    }
+    xStart=x+textWidth(maxY+"")+gui.thisFont.stepX();
+    yStart=y+chartHeight-gui.thisFont.stepY()-gui.thisFont.gap();
+    strokeWeight(gui.unit(2));
+    fill(gui.headColor[3].value);
+    textAlign(LEFT, TOP);
+    text(labelY, x, y);
+    textAlign(LEFT, CENTER);
+    text(labelX, x+chartWidth-textWidth(labelX), yStart);
+    arrow(xStart, y+chartHeight-gui.thisFont.stepY(), xStart, y+gui.thisFont.stepY());
+    arrow(xStart-gui.thisFont.gap(), yStart, x+chartWidth-gui.thisFont.stepX()-textWidth(labelX), yStart);
+    strokeWeight(gui.unit());
+    graduation();
+    for (int i=0; i<points.length; i++) {
+      fill(colour[i]);
+      chartAt(i);
+    }
+    popStyle();
+  }
+  void setRange(int minX, int maxX, int minY, int maxY) {
+    this.minX=minX;
+    this.maxX=maxX;
+    this.minY=minY;
+    this.maxY=maxY;
   }
   void arrow(float x1, float y1, float x2, float y2) {
     line(x1, y1, x2, y2);
     pushMatrix();
     translate(x2, y2);
     rotate(atan2(x1-x2, y2-y1));
-    line(0, 0, -3, -6);
-    line(0, 0, 3, -6);
+    line(0, 0, -gui.unit(3), -gui.unit(6));
+    line(0, 0, gui.unit(3), -gui.unit(6));
     popMatrix();
   }
   void clean() {
