@@ -3,9 +3,9 @@ abstract class Chart {
   int stepX, stepY, minX, maxX, minY, maxY;
   float intervalX, intervalY, gapX, gapY, rangeX, rangeY, x, y, chartWidth, chartHeight, xStart, yStart;
   color[] colour;
-  boolean measureX, measureY;//measure locations in X and Y directions, false means left or up to the cursor, true means right or bottom to the cursor
   boolean[] chart;
   LinkedList<Float>[] points;
+  abstract String measure();
   abstract void graduation();
   abstract void chartAt(int index);
   Chart(String labelX, String labelY, int plots) {
@@ -49,6 +49,29 @@ abstract class Chart {
     text(labelX, x+chartWidth-textWidth(labelX), yStart);
     arrow(xStart, y+chartHeight-gui.thisFont.stepY(), xStart, y+gui.thisFont.stepY());
     arrow(xStart-gui.thisFont.gap(), yStart, x+chartWidth-gui.thisFont.stepX()-textWidth(labelX), yStart);
+    if (mouseX>x+textWidth(maxY+"")&&mouseX<x+chartWidth-textWidth(labelX)&&mouseY>=y&&mouseY<=y+chartHeight-gui.thisFont.stepY()) {
+      dottedLine(x, mouseY, x+chartWidth, mouseY);
+      dottedLine(mouseX, y, mouseX, y+chartHeight);
+      fill(gui.headColor[3].value);
+      float xPos, yPos;
+      int alignX, alignY;
+      if (mouseX<xStart+(rangeX+gui.thisFont.gap())/2) {
+        alignX=LEFT;
+        xPos=mouseX+gui.thisFont.stepX();
+      } else {
+        alignX=RIGHT;
+        xPos=mouseX-gui.thisFont.stepX();
+      }
+      if (mouseY>y+gui.thisFont.stepY()+(rangeY+gui.thisFont.gap())/2) {
+        alignY=BOTTOM;
+        yPos=mouseY-gui.thisFont.gap();
+      } else {
+        alignY=TOP;
+        yPos=mouseY+gui.thisFont.gap();
+      }
+      textAlign(alignX, alignY);
+      text(measure(), xPos, yPos);
+    }
     strokeWeight(gui.unit());
     graduation();
     for (int i=0; i<points.length; i++) {
@@ -57,7 +80,7 @@ abstract class Chart {
     }
     popStyle();
   }
-  void setRange(int minX, int maxX, int minY, int maxY) {
+  void initialize(int minX, int maxX, int minY, int maxY) {
     this.minX=minX;
     this.maxX=maxX;
     this.minY=minY;

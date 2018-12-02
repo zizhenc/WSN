@@ -8,7 +8,7 @@ abstract class Bipartite extends Procedure implements Screen {
   Radio modals=new Radio(modalLabels);
   Region region=new Region();
   Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
-  Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block"), primaryPlot=new Checker("Primary plot"), relayPlot=new Checker("Relay plot"), totalPlot=new Checker("Total plot");
+  Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block"), primaryPlot=new Checker("Primary"), relayPlot=new Checker("Relay"), totalPlot=new Checker("Total");
   ExTable table;
   Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
   Component component;
@@ -47,7 +47,7 @@ abstract class Bipartite extends Procedure implements Screen {
       component=new Component(primary, relay);
     else
       component.reset(primary, relay);
-    barChart.setRange(0, 7, 0, primary.vertices.size()+relay.vertices.size());
+    barChart.initialize(0, 7, 0, primary.vertices.size()+relay.vertices.size());
     regionAmount.setPreference(1, primary.vertices.size()+relay.vertices.size());
     region.amount=round(regionAmount.value);
     interval.setPreference(1, ceil((primary.vertices.size()+relay.vertices.size())/3.0), 1);
@@ -232,20 +232,15 @@ abstract class Bipartite extends Procedure implements Screen {
     fill(gui.headColor[2].value);
     text("Chart modals:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY());
     modals.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
+    if (modals.value==1) {
+      fill(gui.headColor[3].value);
+      text("Plots:", width-gui.margin()+gui.thisFont.stepX(4), y+modals.radioHeight);
+    }
   }
   void moreMouseReleases() {
     if (backbone.active())
       setComponent(round(backbone.value));
     if (modals.active()) {
-      if (modals.value==0) {
-        if (parts.getLast()==totalPlot)
-          for (int i=0; i<3; i++)
-            parts.removeLast();
-      } else if (parts.getLast()!=totalPlot) {
-        parts.addLast(primaryPlot);
-        parts.addLast(relayPlot);
-        parts.addLast(totalPlot);
-      }
     }
     if (showRegion.active())
       if (showRegion.value) {

@@ -10,33 +10,9 @@ class BarChart extends Chart {
         rect(xStart+gapX/2+i.previousIndex()*intervalX-barWidth*points.length/2+index*barWidth, yStart, barWidth, -value*intervalY);
     }
   }
-  /*
-   void measure() {
-   if (mouseX>=x-gui.thisFont.stepX()&&mouseX<=x+xFrameLength&&mouseY>=y-gui.thisFont.stepX()&&mouseY<=y+yFrameLength) {
-   pushStyle();
-   strokeWeight(gui.unit(2));
-   dottedLine(x, mouseY, x+xFrameLength, mouseY);
-   dottedLine(mouseX, y, mouseX, y+xFrameLength);
-   fill(gui.headColor[3].value);
-   float xPos, yPos;
-   if (mouseX<x+textWidth(maxY+"")+gui.thisFont.stepX()+frameX/2) {
-   textAlign(LEFT);
-   xPos=mouseX+gui.thisFont.stepX();
-   } else {
-   textAlign(RIGHT);
-   xPos=mouseX-gui.thisFont.stepX();
-   }
-   if (mouseY>y+gui.thisFont.stepY()+frameY/2) {
-   measureY=false;
-   yPos=mouseY-gui.thisFont.stepY(0.5);
-   } else {
-   measureY=true;
-   yPos=mouseY+gui.thisFont.stepY();
-   }
-   text(String.format("(%.2f, %.2f)", (mouseX-x-textWidth(maxX+""+maxY+"")-gui.thisFont.stepX())/intervalX, (y+gui.thisFont.stepY()+frameY-mouseY)/intervalY), xPos, yPos);
-   popStyle();
-   }
-   }*/
+  String measure() {
+    return String.format("(%d, %.2f)", max(0, floor((mouseX-xStart)/intervalX)), (yStart-mouseY)/intervalY);
+  }
   void graduation() {
     barWidth=intervalX/(points.length+1);
     for (int i=0; i<=(maxX-minX)/stepX; i++)
