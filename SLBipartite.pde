@@ -24,9 +24,9 @@ class SLBipartite extends Bipartite {
   }
   void data() {
     fill(gui.headColor[1].value);
-    text("Smallest-last coloring bipartites...", gui.body.stepX(), gui.body.stepY());
+    text("Smallest-last coloring bipartites...", gui.thisFont.stepX(), gui.thisFont.stepY());
     fill(gui.headColor[2].value);
-    text("Graph information:", gui.body.stepX(2), gui.body.stepY(2));
+    text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
     word[0]="Topology: "+graph.topology;
     word[1]="N: "+graph.vertex.length;
     word[2]=String.format("r: %.3f", graph.r);
@@ -38,8 +38,8 @@ class SLBipartite extends Bipartite {
     word[8]="Maximum min-degree: "+graph.maxMinDegree;
     word[9]="Smallest-last coloring colors: "+graph._SLColors.size();
     fill(gui.bodyColor[0].value);
-    for (int i=0; i<10; i++)
-      text(word[i], gui.body.stepX(3), gui.body.stepY(3+i));
+    for (int i=0; i<word.length; i++)
+      text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
     runtimeData(13);
   }
 }

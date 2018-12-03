@@ -1,16 +1,15 @@
-class RLPartite extends Partite {
-  RLPartite() {
-    word=new String[13];
+class PrimarySet extends IndependentSet {
+  PrimarySet() {
+    word=new String[11];
   }
   void setColorPool() {
-    colorPool=graph._RLColors;
+    colorPool=graph._PYColors;
   }
   void data() {
     fill(gui.headColor[1].value);
-    text("Relay coloring partites...", gui.thisFont.stepX(), gui.thisFont.stepY());
+    text("Primary independent sets...", gui.thisFont.stepX(), gui.thisFont.stepY());
     fill(gui.headColor[2].value);
     text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
-    int surplusOrder=surplus();
     word[0]="Topology: "+graph.topology;
     word[1]="N: "+graph.vertex.length;
     word[2]=String.format("r: %.3f", graph.r);
@@ -22,17 +21,9 @@ class RLPartite extends Partite {
     word[8]="Maximum min-degree: "+graph.maxMinDegree;
     word[9]="Smallest-last coloring colors: "+graph._SLColors.size();
     word[10]=String.format("Primary colors: %d (%.2f %%)", graph._PYColors.size(), graph.primaries*100.0/graph.vertex.length);
-    word[11]=String.format("Relay colors: %d (%.2f%%)", graph._RLColors.size(), (graph.vertex.length-graph.primaries-surplusOrder)*100.0/graph.vertex.length);
-    word[12]=String.format("Surplus cardinality: %d (%.2f%%)", surplusOrder, surplusOrder*100.0/graph.vertex.length);
     fill(gui.bodyColor[0].value);
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
-    runtimeData(16);
-  }
-  int surplus() {
-    int order=0;
-    for (int i=0; i<graph.connectivity-1; i++)
-      order+=graph.relayList[i].size();
-    return order;
+    runtimeData(14);
   }
 }

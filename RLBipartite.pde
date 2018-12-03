@@ -1,13 +1,22 @@
-class RLPartite extends Partite {
-  RLPartite() {
+class RLBipartite extends Bipartite {
+  RLBipartite() {
     word=new String[13];
   }
-  void setColorPool() {
-    colorPool=graph._RLColors;
+  void setComponent(int index) {
+    if (index>graph._RLColors.size())
+      primary=relay=gui.mainColor;
+    else {
+      relay=graph._RLColors.get(index-1);
+      primary=graph._PYColors.get(relay.index-graph._SLColors.size());
+    }
+    reset();
+  }
+  int getAmount() {
+    return graph._RLColors.size();
   }
   void data() {
     fill(gui.headColor[1].value);
-    text("Relay coloring partites...", gui.thisFont.stepX(), gui.thisFont.stepY());
+    text("Relay coloring bipartites...", gui.thisFont.stepX(), gui.thisFont.stepY());
     fill(gui.headColor[2].value);
     text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
     int surplusOrder=surplus();

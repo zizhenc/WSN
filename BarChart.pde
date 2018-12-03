@@ -1,17 +1,17 @@
 class BarChart extends Chart {
   float barWidth;
-  BarChart(String labelX, String labelY, int bars) {
-    super(labelX, labelY, bars);
+  BarChart(String labelX, String labelY, String[] bar) {
+    super(labelX, labelY, bar);
   }
-  void chartAt(int index) {
+  void chartAt(int index, int sequence) {
     for (ListIterator<Float> i=points[index].listIterator(); i.hasNext(); ) {
       float value=i.next();
       if (value>0)
-        rect(xStart+gapX/2+i.previousIndex()*intervalX-barWidth*points.length/2+index*barWidth, yStart, barWidth, -value*intervalY);
+        rect(xStart+gapX/2+i.previousIndex()*intervalX-barWidth*plots/2+sequence*barWidth, yStart, barWidth, -value*intervalY);
     }
   }
   String measure() {
-    return String.format("(%d, %.2f)", max(0, floor((mouseX-xStart)/intervalX)), (yStart-mouseY)/intervalY);
+    return String.format("(%d, %.2f)", max(0, floor((mouseX-xStart)/intervalX)), max(0, (yStart-mouseY)/intervalY));
   }
   void graduation() {
     barWidth=intervalX/(points.length+1);

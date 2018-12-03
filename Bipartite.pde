@@ -3,14 +3,15 @@ abstract class Bipartite extends Procedure implements Screen {
   boolean goOn;
   int[][] nodes=new int[2][8];//0-> primary, 1-> relay
   String[] headers={"Degree", "Primary", "Relay", "Total"}, modalLabels={"Table", "Bar chart"};
-  BarChart barChart=new BarChart("Degree", "Vertex", 3);
+  BarChart barChart=new BarChart("Degree", "Vertex", new String[]{"Primary", "Relay", "Total"});
   Color primary, relay;
   Radio modals=new Radio(modalLabels);
   Region region=new Region();
   Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
-  Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block"), primaryPlot=new Checker("Primary"), relayPlot=new Checker("Relay"), totalPlot=new Checker("Total");
+  Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block");
   ExTable table;
   Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
+  Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
   HashSet<Vertex> domain=new HashSet<Vertex>();
   abstract int getAmount();
@@ -27,9 +28,11 @@ abstract class Bipartite extends Procedure implements Screen {
   }
   void setting() {
     initialize();
-    showNode.value=showEdge.value=minorComponents.value=giantComponent.value=minorBlocks.value=giantBlock.value=primaryPlot.value=relayPlot.value=totalPlot.value=true;
+    showNode.value=showEdge.value=minorComponents.value=giantComponent.value=minorBlocks.value=giantBlock.value=plot[0].value=plot[1].value=plot[2].value=true;
     tails.value=showRegion.value=false;
     edgeWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
+    for (int i=0; i<plot.length; i++)
+      barChart.setPlot(i, plot[i].value);
     setComponent(1);
     backbone.setPreference(1, getAmount());
   }
@@ -190,10 +193,10 @@ abstract class Bipartite extends Procedure implements Screen {
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+i+1));
     if (modals.value==1) {
       setPlot();
-      barChart.display(gui.thisFont.stepX(2), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
+      barChart.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
     } else {
       setTable();
-      table.display(gui.thisFont.stepX(2), gui.thisFont.stepY(startHeight+len+1));
+      table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap());
     }
   }
   void displayEdge(Vertex nodeA, Vertex nodeB) {
@@ -233,15 +236,22 @@ abstract class Bipartite extends Procedure implements Screen {
     text("Chart modals:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY());
     modals.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
     if (modals.value==1) {
-      fill(gui.headColor[3].value);
-      text("Plots:", width-gui.margin()+gui.thisFont.stepX(4), y+modals.radioHeight);
+      fill(gui.headColor[2].value);
+      text("Plots:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY(2)+gui.thisFont.gap()+modals.radioHeight);
+      for (int i=0; i<plot.length; i++)
+        plot[i].display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY(2)+gui.thisFont.gap(2)+modals.radioHeight+(plot[0].checkerHeight+gui.thisFont.gap())*i);
     }
   }
   void moreMouseReleases() {
+    modals.active();
+    if (modals.value==1)
+      for (int i=0; i<plot.length; i++)
+        if (plot[i].active()) {
+          plot[i].value=!plot[i].value;
+          barChart.setPlot(i, plot[i].value);
+        }
     if (backbone.active())
       setComponent(round(backbone.value));
-    if (modals.active()) {
-    }
     if (showRegion.active())
       if (showRegion.value) {
         if (tunes.getLast()!=regionAmount)

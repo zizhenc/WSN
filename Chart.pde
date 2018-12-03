@@ -1,22 +1,24 @@
 abstract class Chart {
-  String labelX, labelY;
-  int stepX, stepY, minX, maxX, minY, maxY;
+  int stepX, stepY, minX, maxX, minY, maxY, plots;
   float intervalX, intervalY, gapX, gapY, rangeX, rangeY, x, y, chartWidth, chartHeight, xStart, yStart;
-  color[] colour;
-  boolean[] chart;
+  String labelX, labelY;
+  String[] plot;
+  int[] active;
+  SysColor[] colour;
   LinkedList<Float>[] points;
   abstract String measure();
   abstract void graduation();
-  abstract void chartAt(int index);
-  Chart(String labelX, String labelY, int plots) {
+  abstract void chartAt(int index, int sequence);
+  Chart(String labelX, String labelY, String[] plot) {
     this.labelX=labelX;
     this.labelY=labelY;
-    points=new LinkedList[plots];
-    colour=new color[plots];
-    chart=new boolean[plots];
-    for (int i=0; i!=plots; i++) {
+    this.plot=plot;
+    points=new LinkedList[plot.length];
+    colour=new SysColor[plot.length];
+    active=new int[plot.length];
+    for (int i=0; i!=plot.length; i++) {
       points[i]=new LinkedList<Float>();
-      colour[i]=color(random(128, 256), random(128, 256), random(128, 256));
+      colour[i]=new SysColor(floor(random(16777216-11184810.6667/plot.length*(i+1), 16777216-11184810.6667/plot.length*i)));
     }
   }
   void display(float x, float y, float chartWidth, float chartHeight) {
@@ -74,11 +76,22 @@ abstract class Chart {
     }
     strokeWeight(gui.unit());
     graduation();
-    for (int i=0; i<points.length; i++) {
-      fill(colour[i]);
-      chartAt(i);
-    }
+    textAlign(LEFT, CENTER);
+    noStroke();
+    for (int i=0, sequence=0; i<plot.length; i++)
+      if (active[i]==1) {
+        fill(colour[i].value);
+        rect(xStart+rangeX+gui.thisFont.gap(), y+gui.thisFont.stepY(sequence+1), gui.thisFont.gap(), gui.thisFont.gap());
+        text(plot[i], xStart+rangeX+gui.thisFont.gap(3), y+gui.thisFont.stepY(sequence+1)+gui.thisFont.gap(0.5));
+        chartAt(i, sequence++);
+      }
     popStyle();
+  }
+  void setPlot(int index, boolean onOff) {
+    active[index]=onOff?1:0;
+    plots=0;
+    for (int chart : active)
+      plots+=chart;
   }
   void initialize(int minX, int maxX, int minY, int maxY) {
     this.minX=minX;
@@ -96,7 +109,7 @@ abstract class Chart {
     popMatrix();
   }
   void clean() {
-    for (int i=0; i!=points.length; i++)
+    for (int i=0; i!=plot.length; i++)
       points[i].clear();
   }
   void dottedLine(float x1, float y1, float x2, float y2) {

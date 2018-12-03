@@ -1,5 +1,5 @@
-class RLPartite extends Partite {
-  RLPartite() {
+class RelaySet extends IndependentSet {
+  RelaySet() {
     word=new String[13];
   }
   void setColorPool() {
@@ -7,7 +7,7 @@ class RLPartite extends Partite {
   }
   void data() {
     fill(gui.headColor[1].value);
-    text("Relay coloring partites...", gui.thisFont.stepX(), gui.thisFont.stepY());
+    text("Relay independent sets...", gui.thisFont.stepX(), gui.thisFont.stepY());
     fill(gui.headColor[2].value);
     text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
     int surplusOrder=surplus();

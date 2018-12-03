@@ -19,7 +19,7 @@ class Navigation {
     items[1].addFirst("Save backbone summary [6]");//202
     items[1].addFirst("Save domination degree [7]");//201
     items[1].addFirst("Files [F]");//200
-    items[2].addFirst("Terminal Clique [1]");//305
+    items[2].addFirst("Terminal clique [1]");//305
     items[2].addFirst("Primary independent sets [2]");//304
     items[2].addFirst("Relay independent sets [3]");//303
     items[2].addFirst("Backbones [4]");//302
@@ -179,7 +179,7 @@ class Navigation {
         //else
         //error.logOut("File save error - Computation not finished!");
         break;
-    case 305://Cliques
+    case 305://Terminal clique
       if (end>=3)
         nextPage=11;
       break;

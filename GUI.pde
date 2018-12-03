@@ -2,7 +2,7 @@ class GUI {
   static final int SCALE=0, WIDTH=1, HEIGHT=2;
   int kind=-1;//cursor kind
   float angle, moveX, moveY, x, y, boxWidth, boxHeight;
-  String _V="3.1415";
+  String _V="3.14159";
   boolean load, lock, showFPS, showMessage;
   String[] loadText={"Loading", "Loading.", "Loading..", "Loading..."}, message=new String[2];
   Font body, head, thisFont;
@@ -13,10 +13,10 @@ class GUI {
   SysColor backgroundColor=new SysColor(0), frameColor=new SysColor(255, 165, 0), baseColor=new SysColor(70, 70, 70), highlightColor=new SysColor(255, 255, 255);
   SysColor[] headColor={new SysColor(255, 255, 0), new SysColor(255, 0, 0), new SysColor(0, 255, 0), new SysColor(255, 0, 255)}, bodyColor={new SysColor(0, 255, 255), new SysColor(200, 200, 200), new SysColor(255, 165, 0)}, partColor={new SysColor(0, 255, 255), new SysColor(255, 0, 255), new SysColor(0, 255, 0), new SysColor(138, 43, 226), new SysColor(0, 255, 255)};
   int getWidth() {
-    return 0.86*displayHeight*1366/768>displayWidth?round(0.86*displayWidth):round(0.86*displayHeight*1366/768);
+    return 0.86*displayHeight*1920/1080>displayWidth?round(0.86*displayWidth):round(0.86*displayHeight*1920/1080);
   }
   int getHeight() {
-    return 0.86*displayHeight*1366/768>displayWidth?round(0.86*displayWidth*768/1366):round(0.86*displayHeight);
+    return 0.86*displayHeight*1920/1080>displayWidth?round(0.86*displayWidth*1080/1920):round(0.86*displayHeight);
   }
   float margin() {
     return thisFont.stepX(3)+textWidth("Welcome to DragonZ-WSN world!");
@@ -35,7 +35,7 @@ class GUI {
     return unit(1);
   }
   float unit(float factor) {
-    return height*factor/768;
+    return height*factor/1080;
   }
   boolean active() {
     return !load||showMessage;
@@ -44,7 +44,7 @@ class GUI {
     surface.setLocation((displayWidth-width)/2, round(0.035*displayHeight));
     surface.setResizable(true);
     surface.setTitle("Wireless Sensor Networks");
-    body=new Font("AmericanTypewriter-Bold-24.vlw", 14);
+    body=new Font("AmericanTypewriter-Bold-24.vlw", 18);
     head=new Font("AmericanTypewriter-Bold-48.vlw", 30);
     cover[0]=new Image("RedDragon.jpg");
     cover[1]=new Image("BlueDragon.jpg");
