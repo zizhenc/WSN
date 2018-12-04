@@ -32,27 +32,27 @@ class Color extends SysColor {
             maxDistance=d;
           if (d<minDistance)
             minDistance=d;
-          nodeA.links.addLast(nodeB);
-          nodeB.links.addLast(nodeA);
+          nodeA.arcs.addLast(nodeB);
+          nodeB.arcs.addLast(nodeA);
         }
       }
     } else if (cycles[0]==-1) {
       cycles[0]=cycles[1]=0;
       for (nodeIterator=vertices.listIterator(); nodeIterator.hasNext(); ) {
         Vertex nodeA=nodeIterator.next();
-        for (ListIterator<Vertex> i=nodeA.links.listIterator(); i.hasNext(); ) {
+        for (ListIterator<Vertex> i=nodeA.arcs.listIterator(); i.hasNext(); ) {
           Vertex nodeI=i.next();
           if (nodeI.value>nodeA.value)
-            for (ListIterator<Vertex> j=nodeA.links.listIterator(i.nextIndex()); j.hasNext(); ) {
+            for (ListIterator<Vertex> j=nodeA.arcs.listIterator(i.nextIndex()); j.hasNext(); ) {
               Vertex nodeJ=j.next();
               if (nodeJ.value>nodeA.value)
-                if (nodeI.links.contains(nodeJ))
+                if (nodeI.arcs.contains(nodeJ))
                   cycles[0]++;
                 else {
                   boolean getOut=false;
-                  for (Vertex nodeB : nodeI.links) {
-                    for (Vertex nodeC : nodeJ.links)
-                      if (nodeB!=nodeA&&nodeB==nodeC&&!nodeA.links.contains(nodeC)) {
+                  for (Vertex nodeB : nodeI.arcs) {
+                    for (Vertex nodeC : nodeJ.arcs)
+                      if (nodeB!=nodeA&&nodeB==nodeC&&!nodeA.arcs.contains(nodeC)) {
                         cycles[1]++;
                         getOut=true;
                         break;
@@ -70,15 +70,15 @@ class Color extends SysColor {
   }
   void initialize() {
     for (Vertex node : vertices)
-      if (node.links==null)
-        node.links=new LinkedList<Vertex>();
+      if (node.arcs==null)
+        node.arcs=new LinkedList<Vertex>();
       else
-        node.links.clear();
+        node.arcs.clear();
     reset();
   }
   void restart() {
     for (Vertex node : vertices)
-      node.links.clear();
+      node.arcs.clear();
     reset();
   }
   void reset() {

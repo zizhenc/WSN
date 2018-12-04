@@ -36,24 +36,25 @@ class Backbone extends Result implements Screen {
     setComponent(1);
     backbone.setPreference(1, graph._RLColors.size());
   }
+  /*
   void setComponent(int index) {
-    if (graph._RLColors.isEmpty()) {
-      primary=relay=gui.mainColor;
-      component=new NeoComponent(primary, relay);
-    } else {
-      if (graph.component[index]==null) {
-        relay=graph._RLColors.get(index);
-        primary=graph._PYColors.get(relay.index-graph._SLColors.size());
-        component=graph.component[index]=new NeoComponent(primary, relay);
-      } else {
-        component=graph.component[index];
-        primary=component.primary;
-        relay=component.relay;
-      }
-    }
-    region.amount=round(regionAmount.value);
-    plot.setRange(0, 7, 0, primary.vertices.size()+relay.vertices.size());
-  }
+   if (graph._RLColors.isEmpty()) {
+   primary=relay=gui.mainColor;
+   component=new NeoComponent(primary, relay);
+   } else {
+   if (graph.component[index]==null) {
+   relay=graph._RLColors.get(index);
+   primary=graph._PYColors.get(relay.index-graph._SLColors.size());
+   component=graph.component[index]=new NeoComponent(primary, relay);
+   } else {
+   component=graph.component[index];
+   primary=component.primary;
+   relay=component.relay;
+   }
+   }
+   region.amount=round(regionAmount.value);
+   plot.setRange(0, 7, 0, primary.vertices.size()+relay.vertices.size());
+   }*/
   void show() {
     _N=_E=0;//mainColor->giantBlock partsColor[0]->minorBlocks partsColor[1]->tails partsColor[2]->minorComponents
     for (int i=0; i<2; i++)
@@ -223,8 +224,8 @@ class Backbone extends Result implements Screen {
   }
   void moreControls(float y) {
     fill(gui.headColor[2].value);
-    text("Chart modals:", width-gui.body.margin()+gui.body.stepX(), y);
-    modals.display(width-gui.body.margin()+gui.body.stepX(2), y+gui.body.stepY(0.5));
+    text("Chart modals:", width-gui.margin()+gui.thisFont.stepX(), y);
+    modals.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY(0.5));
   }
   void moreMouseReleases() {
     if (backbone.inRange())
@@ -251,9 +252,9 @@ class Backbone extends Result implements Screen {
   }
   void data() {
     fill(gui.headColor[1].value);
-    text("Backbones...", gui.body.stepX(), gui.body.stepY());
+    text("Backbones...", gui.thisFont.stepX(), gui.thisFont.stepY());
     fill(gui.headColor[2].value);
-    text("Graph information:", gui.body.stepX(2), gui.body.stepY(2));
+    text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
     word[0]="Topology: "+graph.topology;
     word[1]="N: "+graph.vertex.length;
     word[2]=String.format("r: %.3f", graph.r);
@@ -269,9 +270,9 @@ class Backbone extends Result implements Screen {
     word[12]=String.format("Surplus size: %d (%.2f%%)", graph.surplus.size(), graph.surplus.size()*100.0/graph.vertex.length);
     fill(gui.bodyColor[0].value);
     for (int i=0; i<12; i++)
-      text(word[i], gui.body.stepX(3), gui.body.stepY(3+i));
+      text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
     fill(gui.headColor[2].value);
-    text("Runtime data:", gui.body.stepX(2), gui.body.stepY(15));
+    text("Runtime data:", gui.thisFont.stepX(2), gui.thisFont.stepY(15));
     word[0]="Vertices: "+_N;
     word[1]="Edges: "+_E;
     word[2]=String.format("Average degree: %.2f", _E*2.0/_N);
@@ -287,10 +288,10 @@ class Backbone extends Result implements Screen {
     word[len-1]="Primary set #"+(primary.index+1)+" & relay set #"+round(backbone.value);
     fill(gui.bodyColor[0].value);
     for (int i=0; i<len; i++)
-      text(word[i], gui.body.stepX(3), gui.body.stepY(16+i));
+      text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(16+i));
     if (modals.value==1) {
       setPlot();
-      plot.initialize(gui.body.stepX(2), gui.body.stepY(16+len), gui.body.margin(), gui.body.margin());
+      plot.initialize(gui.thisFont.stepX(2), gui.thisFont.stepY(16+len), gui.margin(), gui.margin());
       plot.frame();
       if (primaryPlot.value) {
         stroke(colour[0]);
@@ -316,7 +317,7 @@ class Backbone extends Result implements Screen {
       plot.measure();
     } else {
       setTable();
-      table.display(gui.body.stepX(2), gui.body.stepY(16+len));
+      table.display(gui.thisFont.stepX(2), gui.thisFont.stepY(16+len));
     }
   }
   void moreKeyReleases() {
