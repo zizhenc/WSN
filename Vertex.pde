@@ -5,7 +5,7 @@ class Vertex {//value: vertex ID or list size; degree: degreeList index or degre
   HashMap<Color, LinkedList<Vertex>> colorNeighbors;
   Color primeColor, relayColor;
   Vertex previous, next;
-  LinkedList<Vertex> neighbors, links;
+  LinkedList<Vertex> neighbors, arcs, links;
   LinkedList<Color>[] colorList;
   ListIterator<Vertex> edgeIndicator;
   Vertex () {
