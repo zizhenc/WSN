@@ -51,8 +51,11 @@ class NodeDistributing extends Procedure implements Screen {
     word[1]="N: "+graph.vertex.length;
     word[2]=String.format("r: %.4f", graph.r);
     fill(gui.bodyColor[0].value);
-    for (int i=0; i<3; i++)
+    for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
-    text(String.format("Vertices: %d (%.2f %%)", (distributedNodes.value&&showNode.value?_N:0), (distributedNodes.value&&showNode.value?_N:0)*100.0/graph.vertex.length), gui.thisFont.stepX(3), gui.thisFont.stepY(7));
+    word[0]=String.format("Vertices: %d (%.2f %%)", distributedNodes.value&&showNode.value?_N:0, (distributedNodes.value&&showNode.value?_N:0)*100.0/graph.vertex.length);
+    word[1]=String.format("Complete: %.2f %%", _N*100.0/graph.vertex.length);
+    text(word[0], gui.thisFont.stepX(3), gui.thisFont.stepY(7));
+    text(word[1], gui.thisFont.stepX(3), gui.thisFont.stepY(8));
   }
 }

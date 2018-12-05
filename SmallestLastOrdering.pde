@@ -124,29 +124,26 @@ class SmallestLastOrdering extends Procedure implements Screen {
     word[5]="Deg(Min.): "+graph.minDegree; 
     word[6]=String.format("Deg(Avg.): %.2f", graph._E*2.0/graph.vertex.length); 
     fill(gui.bodyColor[0].value); 
-    for (int i=0; i<7; i++)
+    for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
     int edges=0, vertices=0; 
     if (showNode.value) {
       if (remainingGraph.value)
-        vertices+=_N;
+        vertices=_N;
       else if (showMeasurement.value)
-        vertices+=degreeList[0].value+degreeList[1].value;
+        vertices=degreeList[0].value+degreeList[1].value;
       if (deletedGraph.value)
         vertices+=graph.vertex.length-_N;
     }
-    if (showEdge.value) {
+    if (showEdge.value)
       if (showMeasurement.value)
         edges=degreeList[1].value*degreeList[1].degree+degreeList[0].value*degreeList[0].degree; 
-      else {
-        if (deletedGraph.value&&remainingGraph.value)
-          edges=graph._E;
-        else if (remainingGraph.value)
-          edges=degree[0];
-        else
-          edges=_E;
-      }
-    }
+      else if (deletedGraph.value&&remainingGraph.value)
+        edges=graph._E;
+      else if (remainingGraph.value)
+        edges=degree[0];
+      else if (deletedGraph.value)
+        edges=_E;
     word[0]=String.format("Vertices: %d (%.2f %%)", vertices, vertices*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", edges, edges*100.0/graph._E);
     word[2]=String.format("Average degree: %.2f", edges*2.0/vertices); 

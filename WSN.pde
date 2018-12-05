@@ -6,7 +6,7 @@ import java.util.ListIterator;
 GUI gui=new GUI();
 Error error=new Error();
 Graph graph;
-Screen[] screen=new Screen[15];
+Screen[] screen=new Screen[16];
 Navigation navigation=new Navigation();
 void settings() {
   size(gui.getWidth(), gui.getHeight(), P3D);
@@ -37,7 +37,8 @@ void loadScreens() {
   screen[11]=new Clique();
   screen[12]=new PrimarySet();
   screen[13]=new RelaySet();
-  screen[14]=new Scene();
+  screen[14]=new Backbone();
+  screen[15]=new Scene();
   gui.load=true;
 }
 void keyPressed() {

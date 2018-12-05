@@ -57,7 +57,7 @@ abstract class Partite extends Procedure implements Screen {
         if (showEdge.value) {
           stroke(gui.mainColor.value);
           strokeWeight(edgeWeight.value);
-          for (Vertex nodeB : nodeA.links)
+          for (Vertex nodeB : nodeA.arcs)
             if (nodeA.value<nodeB.value) {
               _E++;
               if (showMeasurement.value) {

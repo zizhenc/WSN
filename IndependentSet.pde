@@ -71,7 +71,7 @@ abstract class IndependentSet extends Result implements Screen {
         if (showEdge.value) {
           stroke(gui.mainColor.value);
           strokeWeight(edgeWeight.value);
-          for (Vertex nodeB : nodeA.links)
+          for (Vertex nodeB : nodeA.arcs)
             if (nodeA.value<nodeB.value) {
               _E++;
               if (showMeasurement.value) {
@@ -196,7 +196,6 @@ abstract class IndependentSet extends Result implements Screen {
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+1+i));
   }
-
   void setDomains(Vertex nodeA) {
     domain.add(nodeA);
     for (Vertex nodeB : nodeA.neighbors)

@@ -98,12 +98,12 @@ class GraphGenerating extends Procedure implements Screen {
     word[1]="N: "+graph.vertex.length;
     word[2]=String.format("r: %.3f", graph.r);
     fill(gui.bodyColor[0].value);
-    for (int i=0; i<3; i++)
+    for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
     word[0]=String.format("Vertices: %d (%.2f %%)", _N, _N*100.0/graph.vertex.length);
     word[1]="Edges: "+(generatedGraph.value&&showEdge.value?graph._E:0);
     word[2]=String.format("Average degree: %.2f", generatedGraph.value&&showEdge.value?graph._E*2.0/_N:0);
-    for (int i=0; i<3; i++)
+    for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(7+i));
   }
   void moreMouseReleases() {

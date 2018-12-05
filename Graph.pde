@@ -10,6 +10,7 @@ class Graph {
   Vertex[] vertex;
   Method[] method=new Method[3];
   Topology topology;
+  Component[] backbone;
   LinkedList<Vertex> clique=new LinkedList<Vertex>();
   LinkedList<Vertex>[] relayList;
   Graph(Topology topology, int _N, double r) {

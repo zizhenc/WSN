@@ -1,6 +1,6 @@
 class Color extends SysColor {
   int index;
-  int[] cycles={-1, 0};
+  int[] cycles={-1, -1};//cycles are used to count 3,4-cycles, cycles[0] also used to determine cycle counting complete, cycles[1] to determine whether the colour needs initialize
   double distance, maxDistance, minDistance;
   LinkedList<Vertex> vertices=new LinkedList<Vertex>();
   ListIterator<Vertex> nodeIterator;
@@ -11,6 +11,12 @@ class Color extends SysColor {
   Color(int r, int g, int b, int index) {
     super(r, g, b);
     this.index=index;
+  }
+  boolean deployed() {
+    return cycles[1]>-1&&nodeIterator!=null&&nodeIterator.nextIndex()>0;
+  }
+  void reset() {
+    cycles[1]=-1;
   }
   boolean deploying() {
     if (nodeIterator.hasNext()) {
@@ -37,7 +43,7 @@ class Color extends SysColor {
         }
       }
     } else if (cycles[0]==-1) {
-      cycles[0]=cycles[1]=0;
+      cycles[0]=0;
       for (nodeIterator=vertices.listIterator(); nodeIterator.hasNext(); ) {
         Vertex nodeA=nodeIterator.next();
         for (ListIterator<Vertex> i=nodeA.arcs.listIterator(); i.hasNext(); ) {
@@ -69,19 +75,17 @@ class Color extends SysColor {
     return true;
   }
   void initialize() {
+    if (cycles[1]==-1) {
+      cycles[1]=0;
+      restart();
+    }
+  }
+  void restart() {
     for (Vertex node : vertices)
       if (node.arcs==null)
         node.arcs=new LinkedList<Vertex>();
       else
         node.arcs.clear();
-    reset();
-  }
-  void restart() {
-    for (Vertex node : vertices)
-      node.arcs.clear();
-    reset();
-  }
-  void reset() {
     nodeIterator=vertices.listIterator();
     distance=maxDistance=0;
     minDistance=Integer.MAX_VALUE;
@@ -90,6 +94,6 @@ class Color extends SysColor {
     for (Vertex node : vertices)
       node.clearColor(this);
     vertices.clear();
-    cycles[0]=-1;//reset cycles
+    cycles[0]=cycles[1]=-1;//reset cycles
   }
 }
