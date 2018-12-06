@@ -64,7 +64,10 @@ class GraphGenerating extends Procedure implements Screen {
       if (nodeA.mark<0) {
         if (remainingVertices.value) {
           stroke(gui.partColor[0].value);
-          displayNode(nodeA);
+          if (showNode.value) {
+            displayNode(nodeA);
+            _N++;
+          }
         }
       } else if (generatedGraph.value) {
         stroke(gui.mainColor.value);
@@ -74,7 +77,10 @@ class GraphGenerating extends Procedure implements Screen {
             if (nodeA.value<nodeB.value)
               line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
         }
-        displayNode(nodeA);
+        if (showNode.value) {
+          displayNode(nodeA);
+          _N++;
+        }
       }
     }
   }
@@ -122,11 +128,5 @@ class GraphGenerating extends Procedure implements Screen {
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='e')
       showEdge.value=!showEdge.value;
-  }
-  void displayNode(Vertex node) {
-    if (showNode.value) {
-      displayNode((float)node.x, (float)node.y, (float)node.z);
-      _N++;
-    }
   }
 }

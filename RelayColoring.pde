@@ -73,7 +73,7 @@ class RelayColoring extends Procedure implements Screen {
                 line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
               }
           }
-          displayNode(nodeA, colour.value);
+          displayNode(nodeA, colour);
         }
     for (int i=graph._PYColors.size(); i<graph._SLColors.size(); i++)
       for (Vertex nodeA : graph._SLColors.get(i).vertices) {
@@ -87,7 +87,10 @@ class RelayColoring extends Procedure implements Screen {
                 line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
               }
           }
-          displayNode(nodeA);
+          if (showNode.value) {
+            _N++;
+            displayNode(nodeA);
+          }
         }
         if (coloredGraph.value&&nodeA.sequence==2) {
           if (showEdge.value) {
@@ -99,7 +102,7 @@ class RelayColoring extends Procedure implements Screen {
                 line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
               }
           }
-          displayNode(nodeA, nodeA.relayColor.value);
+          displayNode(nodeA, nodeA.relayColor);
         }
         if (uncoloredGraph.value&&nodeA.sequence==1) {
           stroke(gui.partColor[4].value);
@@ -111,22 +114,21 @@ class RelayColoring extends Procedure implements Screen {
                 line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
               }
           }
-          displayNode(nodeA);
+          if (showNode.value) {
+            _N++;
+            displayNode(nodeA);
+          }
         }
       }
   }
-  void displayNode(Vertex node) {
+  void displayNode(Vertex node, Color colour) {
     if (showNode.value) {
       _N++;
-      displayNode((float)node.x, (float)node.y, (float)node.z);
+      stroke(colour.value);
+      displayNode(node);
     }
   }
-  void displayNode(Vertex node, color colour) {
-    if (showNode.value) {
-      _N++;
-      stroke(colour);
-      displayNode((float)node.x, (float)node.y, (float)node.z);
-    }
+  void displayEdge(Vertex nodeA, Vertex nodeB, boolean condition) {
   }
   void data() {
     fill(gui.headColor[1].value);

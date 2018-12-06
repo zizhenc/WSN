@@ -35,7 +35,7 @@ class NodeDistributing extends Procedure implements Screen {
     if (distributedNodes.value&&showNode.value) {
       stroke(gui.mainColor.value);
       for (int i=0; i<_N; i++)
-        displayNode((float)graph.vertex[i].x, (float)graph.vertex[i].y, (float)graph.vertex[i].z);
+        displayNode(graph.vertex[i]);
     }
   }
   void restart() {

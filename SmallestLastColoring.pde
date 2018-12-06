@@ -61,11 +61,10 @@ class SmallestLastColoring extends Procedure implements Screen {
         if (showEdge.value) {
           strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.neighbors)
-            if (nodeB.value<_N&&coloredGraph.value||nodeA.value>nodeB.value&&nodeB.value>=_N)
-              displayEdge(nodeA, nodeB);
+            displayEdge(nodeA, nodeB, nodeB.value<_N&&coloredGraph.value||nodeA.value>nodeB.value&&nodeB.value>=_N);
         }
         if (showNode.value)
-          displayNode((float)nodeA.x, (float)nodeA.y, (float)nodeA.z);
+          displayNode(nodeA);
       }
     }
     if (coloredGraph.value)
@@ -75,25 +74,26 @@ class SmallestLastColoring extends Procedure implements Screen {
           stroke(gui.mainColor.value);
           strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.neighbors)
-            if (nodeA.value>nodeB.value&&nodeB.value<_N)
-              displayEdge(nodeA, nodeB);
+            displayEdge(nodeA, nodeB, nodeA.value>nodeB.value&&nodeB.value<_N);
         }
         if (showNode.value) {
           stroke(nodeA.primeColor.value);
-          displayNode((float)nodeA.x, (float)nodeA.y, (float)nodeA.z);
+          displayNode(nodeA);
         }
       }
   }
-  void displayEdge(Vertex nodeA, Vertex nodeB) {
-    _E++;
-    if (showMeasurement.value) {
-      nodeM.setCoordinates((nodeA.x+nodeB.x)/2, (nodeA.y+nodeB.y)/2, (nodeA.z+nodeB.z)/2);
-      stroke(gui.partColor[nodeA.value<nodeB.value?1:2].value);
-      line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeM.x, (float)nodeM.y, (float)nodeM.z);
-      stroke(gui.partColor[nodeA.value<nodeB.value?2:1].value);
-      line((float)nodeM.x, (float)nodeM.y, (float)nodeM.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-    } else
-      line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+  void displayEdge(Vertex nodeA, Vertex nodeB, boolean condition) {
+    if (condition) {
+      _E++;
+      if (showMeasurement.value) {
+        nodeM.setCoordinates((nodeA.x+nodeB.x)/2, (nodeA.y+nodeB.y)/2, (nodeA.z+nodeB.z)/2);
+        stroke(gui.partColor[nodeA.value<nodeB.value?1:2].value);
+        line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeM.x, (float)nodeM.y, (float)nodeM.z);
+        stroke(gui.partColor[nodeA.value<nodeB.value?2:1].value);
+        line((float)nodeM.x, (float)nodeM.y, (float)nodeM.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+      } else
+        line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+    }
   }
   void data() {
     fill(gui.headColor[1].value);

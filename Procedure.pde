@@ -75,12 +75,12 @@ abstract class Procedure {
   }
   void moreControls(float y) {
   }
-  void displayNode(float x, float y, float z) {
+  void displayNode(Vertex node) {
     if (projection.value)
-      strokeWeight(nodeWeight.value+(modelZ(x, y, z)-modelZ(0, 0, 0))/height*nodeWeight.value);
+      strokeWeight(nodeWeight.value+(modelZ((float)node.x, (float)node.y, (float)node.z)-modelZ(0, 0, 0))/height*nodeWeight.value);
     else
       strokeWeight(nodeWeight.value);
-    point(x, y, z);
+    point((float)node.x, (float)node.y, (float)node.z);
   }
   void keyPress() {
     if (!capture.active) {

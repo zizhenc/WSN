@@ -70,14 +70,14 @@ class Partitioning extends Procedure implements Screen {
           if (showEdge.value) {
             strokeWeight(edgeWeight.value);
             for (Vertex nodeB : nodeA.neighbors)
-              if (nodeA.value>nodeB.value&&(selectedGraph.value||nodeB.primeColor.index>=pivot)) {
+              if (nodeA.value>nodeB.value&&nodeB.primeColor.index>=pivot||selectedGraph.value&&nodeB.primeColor.index<pivot) {
                 _E++;
                 line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
               }
           }
           if (showNode.value) {
             ++_N;
-            displayNode((float)nodeA.x, (float)nodeA.y, (float)nodeA.z);
+            displayNode(nodeA);
           }
         }
     }
@@ -89,7 +89,7 @@ class Partitioning extends Procedure implements Screen {
             strokeWeight(edgeWeight.value);
             stroke(gui.partColor[1].value);
             for (Vertex nodeB : nodeA.neighbors)
-              if (nodeA.value>nodeB.value&&(remainingGraph.value||nodeB.primeColor.index<pivot)) {
+              if (nodeA.value>nodeB.value&&nodeB.primeColor.index<pivot) {
                 _E++;    
                 line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
               }
@@ -97,7 +97,7 @@ class Partitioning extends Procedure implements Screen {
           if (showNode.value) {
             ++_N;
             stroke(colour.value);
-            displayNode((float)nodeA.x, (float)nodeA.y, (float)nodeA.z);
+            displayNode(nodeA);
           }
         }
       }
@@ -123,13 +123,15 @@ class Partitioning extends Procedure implements Screen {
     word[8]="Maximum min-degree: "+graph.maxMinDegree;
     word[9]="Smallest-last coloring colors: "+graph._SLColors.size();
     fill(gui.bodyColor[0].value);
-    for (int i=0; i<10; i++)
-      text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i)); 
+    for (int i=0; i<word.length; i++)
+      text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
     word[0]=String.format("Vertices: %d (%.2f %%)", _N, _N*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", _E, _E*100.0/graph._E);
     word[2]=String.format("Average degree: %.2f", _E*2.0/_N);
     word[3]="Primary colors: "+pivot;
-    for (int i=0; i<4; i++)
+    if (modals.value==1)
+      word[4]=String.format("Complete: %.2f%%", 100*selectColorSets.value/graph._SLColors.size());
+    for (int i=0; i<(modals.value==0?4:5); i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(14+i));
   }
   void moreControls(float y) {

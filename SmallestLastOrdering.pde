@@ -59,7 +59,8 @@ class SmallestLastOrdering extends Procedure implements Screen {
       }
     }
   }
-  void highlight(Vertex list) {
+  void highlight(Vertex list, SysColor colour) {
+    stroke(colour.value);
     for (Vertex nodeA=list.next; nodeA!=null; nodeA=nodeA.next) {
       if (showEdge.value) {
         strokeWeight(edgeWeight.value);
@@ -67,7 +68,8 @@ class SmallestLastOrdering extends Procedure implements Screen {
           if (nodeB.value<_N)
             line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
       }
-      displayNode(nodeA);
+      if (showNode.value)
+        displayNode(nodeA);
     }
   }
   void show() {
@@ -81,7 +83,8 @@ class SmallestLastOrdering extends Procedure implements Screen {
             if (nodeB.value<_N&&nodeA.value<nodeB.value)
               line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
         }
-        displayNode(nodeA);
+        if (showNode.value)
+          displayNode(nodeA);
       }
     }
     if (deletedGraph.value) {
@@ -100,14 +103,13 @@ class SmallestLastOrdering extends Procedure implements Screen {
               ++_E;
             }
         }
-        displayNode(nodeA);
+        if (showNode.value)
+          displayNode(nodeA);
       }
     }
     if (showMeasurement.value) {
-      stroke(gui.partColor[1].value);
-      highlight(degreeList[1]);
-      stroke(gui.partColor[2].value);
-      highlight(degreeList[0]);
+      highlight(degreeList[1], gui.partColor[1]);
+      highlight(degreeList[0], gui.partColor[2]);
     }
   }
   void data() {
@@ -167,9 +169,5 @@ class SmallestLastOrdering extends Procedure implements Screen {
     case 'm' : 
       showMeasurement.value=!showMeasurement.value;
     }
-  }
-  void displayNode(Vertex node) {
-    if (showNode.value)
-      displayNode((float)node.x, (float)node.y, (float)node.z);
   }
 }
