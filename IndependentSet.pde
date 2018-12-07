@@ -34,7 +34,7 @@ abstract class IndependentSet extends Result implements Screen {
       colour=gui.mainColor;
     else
       colour=colorPool.get(round(partiteIndex.value)-1);
-    colour.initialize();
+    colour.initialize(domain);
     regionAmount.setPreference(1, colour.vertices.size());
     region.amount=round(regionAmount.value);
     while (colour.deploying());

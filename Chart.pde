@@ -1,11 +1,11 @@
 abstract class Chart {
   int stepX, stepY, minX, maxX, minY, maxY, plots;
+  int[] active;
   float intervalX, intervalY, gapX, gapY, rangeX, rangeY, x, y, chartWidth, chartHeight, xStart, yStart;
   String labelX, labelY;
   String[] plot;
-  int[] active;
+  ArrayList<Float>[] points;
   SysColor[] colour;
-  LinkedList<Float>[] points;
   abstract String measure();
   abstract void graduation();
   abstract void chartAt(int index, int sequence);
@@ -13,11 +13,11 @@ abstract class Chart {
     this.labelX=labelX;
     this.labelY=labelY;
     this.plot=plot;
-    points=new LinkedList[plot.length];
+    points=new ArrayList[plot.length];
     colour=new SysColor[plot.length];
     active=new int[plot.length];
     for (int i=0; i!=plot.length; i++) {
-      points[i]=new LinkedList<Float>();
+      points[i]=new ArrayList<Float>();
       colour[i]=new SysColor(floor(random(16777216-11184810.6667/plot.length*(i+1), 16777216-11184810.6667/plot.length*i)));
     }
   }

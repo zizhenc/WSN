@@ -4,10 +4,10 @@ class BarChart extends Chart {
     super(labelX, labelY, bar);
   }
   void chartAt(int index, int sequence) {
-    for (ListIterator<Float> i=points[index].listIterator(); i.hasNext(); ) {
-      float value=i.next();
+    for (int i=0; i<points[index].size(); i++) {
+      float value=points[index].get(i);
       if (value>0)
-        rect(xStart+gapX/2+i.previousIndex()*intervalX-barWidth*plots/2+sequence*barWidth, yStart, barWidth, -value*intervalY);
+        rect(xStart+gapX/2+i*intervalX-barWidth*plots/2+sequence*barWidth, yStart, barWidth, -value*intervalY);
     }
   }
   String measure() {

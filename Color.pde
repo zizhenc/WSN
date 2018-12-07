@@ -1,5 +1,5 @@
 class Color extends SysColor {
-  int index;
+  int domination=-1, index;
   int[] cycles={-1, -1};//cycles are used to count 3,4-cycles, cycles[0] also used to determine cycle counting complete, cycles[1] to determine whether the colour needs initialize
   double distance, maxDistance, minDistance;
   LinkedList<Vertex> vertices=new LinkedList<Vertex>();
@@ -14,9 +14,6 @@ class Color extends SysColor {
   }
   boolean deployed() {
     return cycles[1]>-1&&nodeIterator!=null&&nodeIterator.nextIndex()>0;
-  }
-  void reset() {
-    cycles[1]=-1;
   }
   boolean deploying() {
     if (nodeIterator.hasNext()) {
@@ -74,10 +71,22 @@ class Color extends SysColor {
       return false;
     return true;
   }
-  void initialize() {
+  void reset() {
+    cycles[1]=-1;
+  }
+  void initialize(HashSet<Vertex> domain) {
     if (cycles[1]==-1) {
       cycles[1]=0;
       restart();
+    }
+    if (domination==-1) {
+      domain.clear();
+      for (Vertex nodeA : vertices) {
+        domain.add(nodeA);
+        for (Vertex nodeB : nodeA.neighbors)
+          domain.add(nodeB);
+      }
+      domination=domain.size();
     }
   }
   void restart() {
@@ -94,6 +103,6 @@ class Color extends SysColor {
     for (Vertex node : vertices)
       node.clearColor(this);
     vertices.clear();
-    cycles[0]=cycles[1]=-1;//reset cycles
+    domination=cycles[0]=cycles[1]=-1;//reset cycles
   }
 }

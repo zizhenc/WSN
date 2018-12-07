@@ -1,9 +1,7 @@
 abstract class Bipartite extends Procedure implements Screen {
   int _N, _E;
   boolean goOn;
-  int[][] nodes=new int[2][8];//0-> primary, 1-> relay
   String[] headers={"Degree", "Primary", "Relay", "Total"}, modalLabels={"Table", "Bar chart"};
-  BarChart barChart=new BarChart("Degree", "Vertex", new String[]{"Primary", "Relay", "Total"});
   Color primary, relay;
   Radio modals=new Radio(modalLabels);
   Region region=new Region();
@@ -11,6 +9,7 @@ abstract class Bipartite extends Procedure implements Screen {
   Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block");
   ExTable table;
   Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
+  BarChart barChart=new BarChart("Degree", "Vertex", new String[]{"Primary", "Relay", "Total"});
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
   HashSet<Vertex> domain=new HashSet<Vertex>();
@@ -25,6 +24,11 @@ abstract class Bipartite extends Procedure implements Screen {
     tunes.addLast(edgeWeight);
     tunes.addLast(backbone);
     table=new ExTable(headers, 8);
+    for (int i=0; i<8; i++) {
+      table.setInt(7-i, 0, i);
+      for (int j=0; j<plot.length; j++)
+        barChart.points[j].add(0.0);
+    }
   }
   void setting() {
     initialize();
@@ -81,11 +85,7 @@ abstract class Bipartite extends Procedure implements Screen {
     }
   }
   void show() {
-    _N=_E=0;//mainColor->giantBlock partsColor[0]->minorBlocks partsColor[1]->tails partsColor[2]->minorComponents
-    for (int i=0; i<2; i++)
-      for (int j=0; j<8; j++)
-        nodes[i][j]=0;
-    domain.clear();
+    clearStatistics();
     if (goOn) {
       if (giantComponent.value)
         for (int i=1; i<component.degreeList.length; i++)
@@ -116,19 +116,19 @@ abstract class Bipartite extends Procedure implements Screen {
               int count=0;
               strokeWeight(edgeWeight.value);
               for (Vertex nodeB : nodeA.links) {
-                if (nodeB.order==-2&&!tails.value||nodeB.order>-2&&!minorBlocks.value||nodeB.order<-2&&!giantBlock.value)
+                if (nodeB.order==-2&&!tails.value||nodeB.order>-4&&nodeB.order!=-2&&!minorBlocks.value||nodeB.order<-3&&!giantBlock.value)
                   count++;
                 else {
                   if (nodeB.order==-2)
                     stroke(gui.partColor[1].value);
-                  else if (nodeB.order>-2)
+                  else if (nodeB.order>-4)
                     stroke(gui.partColor[0].value);
-                  else if (nodeB.order<-2)
+                  else if (nodeB.order<-3)
                     stroke(gui.mainColor.value);
                   displayEdge(nodeA, nodeB);
                 }
               }
-              nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()-count]++;
+              analyze(nodeA, nodeA.links.size()-count);
             }
             displayNode(nodeA);
           }
@@ -152,7 +152,7 @@ abstract class Bipartite extends Procedure implements Screen {
               else
                 displayEdge(nodeA, nodeB);
             }
-          nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()-count]++;
+          analyze(nodeA, nodeA.links.size()-count);
         }
         displayNode(nodeA);
       }
@@ -161,7 +161,7 @@ abstract class Bipartite extends Procedure implements Screen {
         if (list!=component.giant[1])
           for (Vertex nodeA : list) {
             if (showEdge.value) {
-              nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()]++;
+              analyze(nodeA, nodeA.links.size());
               stroke(gui.partColor[2].value);
               strokeWeight(edgeWeight.value);
               for (Vertex nodeB : nodeA.links)
@@ -169,6 +169,32 @@ abstract class Bipartite extends Procedure implements Screen {
             }
             displayNode(nodeA);
           }
+  }
+  void displayEdge(Vertex nodeA, SysColor colour) {
+    if (showEdge.value) {
+      int count=0;
+      strokeWeight(edgeWeight.value);
+      for (Vertex nodeB : nodeA.links)
+        if (nodeB.order==-2&&!tails.value)
+          count++;
+        else {
+          stroke(nodeB.order==-2?gui.partColor[1].value:colour.value);
+          displayEdge(nodeA, nodeB);
+        }
+      analyze(nodeA, nodeA.links.size()-count);
+    }
+  }
+  void displayNode(Vertex nodeA) {
+    if (showNode.value) {
+      domain.add(nodeA);
+      for (Vertex nodeB : nodeA.neighbors)
+        domain.add(nodeB);
+      ++_N;
+      if (showRegion.value)
+        region.display(_N, nodeA);
+      stroke((nodeA.primeColor==primary?primary:relay).value);
+      super.displayNode(nodeA);
+    }
   }
   void runtimeData(int startHeight) {
     fill(gui.headColor[2].value);
@@ -191,44 +217,15 @@ abstract class Bipartite extends Procedure implements Screen {
     word[len-1]="Primary partite #"+(primary.index+1)+" & relay partite #"+(relay.index+1);
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+i+1));
-    if (modals.value==1) {
-      setPlot();
+    if (modals.value==1)
       barChart.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
-    } else {
-      setTable();
+    else
       table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap());
-    }
   }
   void displayEdge(Vertex nodeA, Vertex nodeB) {
     if (nodeA.value<nodeB.value) {
       ++_E;
       line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-    }
-  }
-  void displayEdge(Vertex nodeA, SysColor colour) {
-    if (showEdge.value) {
-      int count=0;
-      strokeWeight(edgeWeight.value);
-      for (Vertex nodeB : nodeA.links)
-        if (nodeB.order==-2&&!tails.value)
-          count++;
-        else {
-          stroke(nodeB.order==-2?gui.partColor[1].value:colour.value);
-          displayEdge(nodeA, nodeB);
-        }
-      nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()-count]++;
-    }
-  }
-  void displayNode(Vertex nodeA) {
-    if (showNode.value) {
-      domain.add(nodeA);
-      for (Vertex nodeB : nodeA.neighbors)
-        domain.add(nodeB);
-      ++_N;
-      if (showRegion.value)
-        region.display(_N, nodeA);
-      stroke((nodeA.primeColor==primary?primary:relay).value);
-      displayNode((float)nodeA.x, (float)nodeA.y, (float)nodeA.z);
     }
   }
   void moreControls(float y) {
@@ -346,20 +343,36 @@ abstract class Bipartite extends Procedure implements Screen {
       amount+=component.components.size()-2+component.components.getFirst().size();
     return amount;
   }
-  void setTable() {
-    for (int i=0; i<8; i++) {
-      table.setInt(7-i, 3, nodes[0][i]+nodes[1][i]);
-      table.setInt(7-i, 0, i);
-      for (int j=0; j<2; j++)
-        table.setInt(7-i, j+1, nodes[j][i]);
+  void clearStatistics() {
+    _N=_E=0;//mainColor->giantBlock partsColor[0]->minorBlocks partsColor[1]->tails partsColor[2]->minorComponents
+    domain.clear();
+    switch(modals.value) {
+    case 0:
+      for (int i=0; i<8; i++)
+        for (int j=0; j<plot.length; j++)
+          table.setInt(i, j+1, 0);
+      break;
+    case 1:
+      for (int i=0; i<8; i++)
+        for (int j=0; j<plot.length; j++)
+          barChart.points[j].set(i, 0.0);
     }
   }
-  void setPlot() {
-    barChart.clean();
-    for (int i=0; i<8; i++) {
-      barChart.points[0].addLast(nodes[0][i]+0.0);
-      barChart.points[1].addLast(nodes[1][i]+0.0);
-      barChart.points[2].addLast(nodes[0][i]+nodes[1][i]+0.0);
+  void analyze(Vertex node, int degree) {
+    int category=node.primeColor==primary?0:1, tValue;
+    float bValue;
+    switch(modals.value) {
+    case 0:
+      tValue=table.getInt(7-degree, category+1)+1;
+      table.setInt(7-degree, category+1, tValue);
+      tValue=table.getInt(7-degree, 3)+1;
+      table.setInt(7-degree, 3, tValue);
+      break;
+    case 1:
+      bValue=barChart.points[category].get(degree)+1;
+      barChart.points[category].set(degree, bValue);
+      bValue=barChart.points[2].get(degree)+1;
+      barChart.points[2].set(degree, bValue);
     }
   }
 }

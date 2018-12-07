@@ -31,6 +31,7 @@ class RelayColoring extends Procedure implements Screen {
     }
   }
   void restart() {
+    graph.backbone=null;
     for (Color colour : graph._RLColors)
       colour.clean();
     graph._RLColors.clear();
@@ -66,12 +67,7 @@ class RelayColoring extends Procedure implements Screen {
         for (Vertex nodeA : colour.vertices) {
           if (showEdge.value) {
             stroke(gui.partColor[1].value);
-            strokeWeight(edgeWeight.value);
-            for (Vertex nodeB : nodeA.neighbors)
-              if (nodeA.value>nodeB.value&&(nodeB.sequence==0||surplus.value&&nodeB.sequence==3||coloredGraph.value&&nodeB.sequence==2||uncoloredGraph.value&&nodeB.sequence==1)) {
-                _E++;
-                line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-              }
+            displayEdge(nodeA);
           }
           displayNode(nodeA, colour);
         }
@@ -79,14 +75,8 @@ class RelayColoring extends Procedure implements Screen {
       for (Vertex nodeA : graph._SLColors.get(i).vertices) {
         if (surplus.value&&nodeA.sequence==3) {
           stroke(gui.mainColor.value);
-          if (showEdge.value) {
-            strokeWeight(edgeWeight.value);
-            for (Vertex nodeB : nodeA.neighbors)
-              if (nodeA.value>nodeB.value&&(coloredGraph.value&&nodeB.sequence==2||nodeB.sequence==3||primaryGraph.value&&nodeB.sequence==0||uncoloredGraph.value&&nodeB.sequence==1)) {
-                _E++;
-                line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-              }
-          }
+          if (showEdge.value)
+            displayEdge(nodeA);
           if (showNode.value) {
             _N++;
             displayNode(nodeA);
@@ -95,25 +85,14 @@ class RelayColoring extends Procedure implements Screen {
         if (coloredGraph.value&&nodeA.sequence==2) {
           if (showEdge.value) {
             stroke(gui.partColor[2].value);
-            strokeWeight(edgeWeight.value);
-            for (Vertex nodeB : nodeA.neighbors)
-              if (nodeA.value>nodeB.value&&(surplus.value&&nodeB.sequence==3||nodeB.sequence==2||primaryGraph.value&&nodeB.sequence==0||uncoloredGraph.value&&nodeB.sequence==1)) {
-                _E++;
-                line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-              }
+            displayEdge(nodeA);
           }
           displayNode(nodeA, nodeA.relayColor);
         }
         if (uncoloredGraph.value&&nodeA.sequence==1) {
           stroke(gui.partColor[4].value);
-          if (showEdge.value) {
-            strokeWeight(edgeWeight.value);
-            for (Vertex nodeB : nodeA.neighbors)
-              if (nodeA.value>nodeB.value&&(surplus.value&&nodeB.sequence==3||coloredGraph.value&&nodeB.sequence==2||primaryGraph.value&&nodeB.sequence==0||nodeB.sequence==1)) {
-                _E++;
-                line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-              }
-          }
+          if (showEdge.value)
+            displayEdge(nodeA);
           if (showNode.value) {
             _N++;
             displayNode(nodeA);
@@ -128,7 +107,13 @@ class RelayColoring extends Procedure implements Screen {
       displayNode(node);
     }
   }
-  void displayEdge(Vertex nodeA, Vertex nodeB, boolean condition) {
+  void displayEdge(Vertex nodeA) {
+    strokeWeight(edgeWeight.value);
+    for (Vertex nodeB : nodeA.neighbors)
+      if (nodeA.value>nodeB.value&&(primaryGraph.value&&nodeB.sequence==0||uncoloredGraph.value&&nodeB.sequence==1||coloredGraph.value&&nodeB.sequence==2||surplus.value&&nodeB.sequence==3)) {
+        _E++;
+        line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+      }
   }
   void data() {
     fill(gui.headColor[1].value);
@@ -165,6 +150,7 @@ class RelayColoring extends Procedure implements Screen {
         graph.connectivity=round(connectivity.value);
         restart();
       } else {
+        graph.backbone=null;
         for (int i=graph.connectivity-1; i<round(connectivity.value)-1; i++)
           for (Vertex node : graph.relayList[i])
             node.sequence=3;

@@ -1,6 +1,5 @@
 class Backbone extends Result implements Screen {
   int _N, _E;
-  int[][] nodes=new int[2][8];//0-> primary, 1-> relay
   String[] headers={"Degree", "Primary", "Relay", "Total"}, modalLabels={"Table", "Bar chart"};
   BarChart barChart=new BarChart("Degree", "Vertex", new String[]{"Primary", "Relay", "Total"});
   Color primary, relay;
@@ -12,6 +11,7 @@ class Backbone extends Result implements Screen {
   Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
+  int[][] nodes;
   HashSet<Vertex> domain=new HashSet<Vertex>();
   Backbone() {
     parts.addLast(minorComponents);
@@ -165,13 +165,10 @@ class Backbone extends Result implements Screen {
     word[len-1]="Primary partite #"+(primary.index+1)+" & relay partite #"+(relay.index+1);
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(17+i));
-    if (modals.value==1) {
-      setPlot();
+    if (modals.value==1)
       barChart.display(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
-    } else {
-      setTable();
-      table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap());
-    }
+    else 
+    table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap());
   }
   int surplus() {
     int order=0;
@@ -311,21 +308,5 @@ class Backbone extends Result implements Screen {
     if (minorComponents.value)
       amount+=component.components.size()-2+component.components.getFirst().size();
     return amount;
-  }
-  void setTable() {
-    for (int i=0; i<8; i++) {
-      table.setInt(7-i, 3, nodes[0][i]+nodes[1][i]);
-      table.setInt(7-i, 0, i);
-      for (int j=0; j<2; j++)
-        table.setInt(7-i, j+1, nodes[j][i]);
-    }
-  }
-  void setPlot() {
-    barChart.clean();
-    for (int i=0; i<8; i++) {
-      barChart.points[0].addLast(nodes[0][i]+0.0);
-      barChart.points[1].addLast(nodes[1][i]+0.0);
-      barChart.points[2].addLast(nodes[0][i]+nodes[1][i]+0.0);
-    }
   }
 }

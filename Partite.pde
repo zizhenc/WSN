@@ -51,7 +51,6 @@ abstract class Partite extends Procedure implements Screen {
   void show() {
     if (partite.value) {
       _E=0;
-      domain.clear();
       for (ListIterator<Vertex> i=colour.vertices.listIterator(); i.hasNext(); ) {
         Vertex nodeA=i.next();
         if (showEdge.value) {
@@ -77,9 +76,8 @@ abstract class Partite extends Procedure implements Screen {
             }
         }
         if (showNode.value) {
-          setDomains(nodeA);
           stroke(colour.value);
-          displayNode((float)nodeA.x, (float)nodeA.y, (float)nodeA.z);
+          displayNode(nodeA);
           if (showRegion.value) {
             strokeWeight(edgeWeight.value);
             region.display(i.nextIndex(), nodeA);
@@ -164,7 +162,7 @@ abstract class Partite extends Procedure implements Screen {
       colour=gui.mainColor;
     else
       colour=colorPool.get(round(partiteIndex.value)-1);
-    colour.initialize();
+    colour.initialize(domain);
     reset();
     regionAmount.setPreference(1, colour.vertices.size());
     region.amount=round(regionAmount.value);
@@ -206,7 +204,7 @@ abstract class Partite extends Procedure implements Screen {
     word[0]=String.format("Vertices: %d (%.2f %%)", (showNode.value&&partite.value)?colour.vertices.size():0, ((showNode.value&&partite.value)?colour.vertices.size():0)*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", _E, _E*100.0/graph._E);
     word[2]=String.format("Average degree: %.2f", (showNode.value&&partite.value)?_E*2.0/colour.vertices.size():0);
-    word[3]=String.format("Dominates: %d (%.2f%%)", domain.size(), domain.size()*100.0/graph.vertex.length);
+    word[3]=String.format("Dominates: %d (%.2f%%)", colour.domination, colour.domination*100.0/graph.vertex.length);
     word[4]=String.format("Maximum distance: %.3f", (_E==0)?0:colour.maxDistance);
     word[5]=String.format("Minimum distance: %.3f", (_E==0)?0:colour.minDistance);
     word[6]=String.format("Average distance: %.3f", (_E==0)?0:colour.distance/_E);
@@ -221,10 +219,5 @@ abstract class Partite extends Procedure implements Screen {
     }
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+1+i));
-  }
-  void setDomains(Vertex nodeA) {
-    domain.add(nodeA);
-    for (Vertex nodeB : nodeA.neighbors)
-      domain.add(nodeB);
   }
 }
