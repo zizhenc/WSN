@@ -16,7 +16,7 @@ class Graph {
   Graph(Topology topology, int _N, double r) {
     this.topology=topology;
     this.r=r;
-    relayList=new LinkedList[topology.plane()?5:7];//2D possible max degree=5, 3D is 7
+    relayList=new LinkedList[topology.connectivity()];//2D possible max degree=5, 3D is 7
     for (int i=0; i<relayList.length; i++)
       relayList[i]=new LinkedList<Vertex>();
     vertex=new Vertex[_N];
@@ -150,6 +150,13 @@ class Graph {
         pushRelayList(index, nodeA);
       return index;
     }
+  }
+  Component getBackbone(int index) {
+    if (backbone==null)
+      backbone=new Component[_RLColors.size()];
+    if (backbone[index]==null)
+      backbone[index]=new Component(_PYColors.get(_RLColors.get(index).index-_SLColors.size()), _RLColors.get(index), topology.connectivity());
+    return backbone[index];
   }
   void pushRelayList(int index, Vertex node) {
     while (--index>0&&node.colorList[index-1].isEmpty());

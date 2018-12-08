@@ -24,7 +24,7 @@ class RelayColoring extends Procedure implements Screen {
         slot=new boolean[graph._PYColors.size()];
       if (graph._RLColors.isEmpty()) {
         interval.setPreference(ceil((graph.vertex.length-graph.primaries)*7.0/3200), ceil((graph.vertex.length-graph.primaries)/3.0), ceil((graph.vertex.length-graph.primaries)*7.0/3200));
-        connectivity.setPreference(graph.connectivity, graph.topology.plane()?5:7);
+        connectivity.setPreference(graph.connectivity, graph.topology.connectivity());
         reset();
       } else
         restart();

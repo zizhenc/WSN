@@ -22,7 +22,7 @@ class Cube extends Topology {
       return avg;
   }
   Vertex generateVertex(int value) {
-    return new Vertex(value, rnd.nextDouble()*xRange-xRange/2, rnd.nextDouble()*yRange-yRange/2, rnd.nextDouble()*zRange-zRange/2, plane());
+    return new Vertex(value, rnd.nextDouble()*xRange-xRange/2, rnd.nextDouble()*yRange-yRange/2, rnd.nextDouble()*zRange-zRange/2, connectivity());
   }
   String toString() {
     return "Cube";

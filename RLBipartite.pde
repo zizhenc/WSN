@@ -6,13 +6,14 @@ class RLBipartite extends Bipartite {
     if (index>graph._RLColors.size())
       primary=relay=gui.mainColor;
     else {
-      relay=graph._RLColors.get(index-1);
-      primary=graph._PYColors.get(relay.index-graph._SLColors.size());
+      component=graph.getBackbone(index-1);
+      primary=component.primary;
+      relay=component.relay;
     }
     reset();
   }
   int getAmount() {
-    return graph._RLColors.size();
+    return graph.backbone.length;
   }
   void data() {
     fill(gui.headColor[1].value);

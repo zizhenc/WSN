@@ -24,6 +24,6 @@ class Square extends Topology {
     return "Square";
   }
   Vertex generateVertex(int index) {
-    return new Vertex(index, rnd.nextDouble()*xRange-xRange/2, rnd.nextDouble()*yRange-yRange/2, zRange, plane());
+    return new Vertex(index, rnd.nextDouble()*xRange-xRange/2, rnd.nextDouble()*yRange-yRange/2, zRange, connectivity());
   }
 }

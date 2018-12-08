@@ -27,6 +27,6 @@ class Torus extends Topology {
   }
   Vertex generateVertex(int index) {
     double[] u={rnd.nextDouble()*2*Math.PI, rnd.nextDouble()*2*Math.PI};
-    return new Vertex(index, (1+Math.cos(u[1])/2)*Math.cos(u[0]), (1+Math.cos(u[1])/2)*Math.sin(u[0]), Math.sin(u[1])/2, plane());
+    return new Vertex(index, (1+Math.cos(u[1])/2)*Math.cos(u[0]), (1+Math.cos(u[1])/2)*Math.sin(u[0]), Math.sin(u[1])/2, connectivity());
   }
 }

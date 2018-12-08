@@ -5,8 +5,8 @@ abstract class Topology {
   abstract double getR(double avg, int n);
   abstract double getAvg(double r, int n);
   abstract Vertex generateVertex(int value);
-  boolean plane() {
-    return value<6;
+  int connectivity() {
+    return value<6?5:7;
   }
   int characteristic() {
     return (value==5||value==6)?0:2;

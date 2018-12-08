@@ -23,6 +23,6 @@ class Disk extends Topology {
     return "Disk";
   }
   Vertex generateVertex(int index) {
-    return new Vertex(Math.sqrt(rnd.nextDouble()*range/2), Math.PI/2, rnd.nextDouble()*2*Math.PI, index, plane());
+    return new Vertex(Math.sqrt(rnd.nextDouble()*range/2), Math.PI/2, rnd.nextDouble()*2*Math.PI, index, connectivity());
   }
 }

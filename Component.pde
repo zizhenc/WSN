@@ -5,7 +5,7 @@ class Component {
   Stack<Vertex> stack=new Stack<Vertex>();
   LinkedList<Vertex>[] giant=new LinkedList[2];//giant[0]->giant block; giant[1]->giant component
   LinkedList<LinkedList<Vertex>> blocks=new LinkedList<LinkedList<Vertex>>(), components=new LinkedList<LinkedList<Vertex>>();//first component is for singletons
-  int[] tails=new int[3];//0->tailsTouchGiantBlock, 1->tailsTouchMinorBlocks, 2->tailsTouchBothBlocks
+  int[] tails=new int[4];//0->tailsTouchGiantBlock, 1->tailsTouchMinorBlocks, 2->tailsTouchBothBlocks, 3->block components
   Component(Color primary, Color relay) {
     degreeList=new Vertex[8];
     initialize(primary, relay);
@@ -21,7 +21,7 @@ class Component {
     setPartites(primary, relay);
   }
   void reset(Color primary, Color relay) {
-    order=0;
+    tails[3]=order=0;
     stack.clear();
     blocks.clear();
     for (Vertex list : degreeList)
@@ -55,7 +55,13 @@ class Component {
           for (ListIterator<LinkedList<Vertex>> j=blocks.listIterator(blocks.size()-1); j.hasPrevious(); )
             j.previous().getLast().order=-1;//separating vertex in minor blocks indicator
           for (Vertex node : giant[0])
-            node.order=node.order==-1?-3:-4;//-3: separating vertex in giant block indicator, -4: giant block indicator
+            if (node.order==-1) {
+              node.order=-3;
+              tails[3]++;
+            } else
+              node.order=-4;//-3: separating vertex in giant block indicator, -4: giant block indicator
+          clearTailCounts();
+          countTails();
         }
       }
       return false;

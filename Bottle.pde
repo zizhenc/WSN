@@ -30,6 +30,6 @@ class Bottle extends Topology {
     double[] u={rnd.nextDouble()*Math.PI, rnd.nextDouble()*2*Math.PI};
     return new Vertex(index, 2*Math.cos(u[0])*(30*Math.sin(u[0])+60*Math.sin(u[0])*Math.pow(Math.cos(u[0]), 6)-3*Math.cos(u[1])-5*Math.sin(u[0])*Math.cos(u[0])*Math.cos(u[1])-90*Math.sin(u[0])*Math.pow(Math.cos(u[0]), 4))/15, 
       -2+Math.sin(u[0])*(3*Math.cos(u[0])*Math.cos(u[0])*Math.cos(u[1])+48*Math.cos(u[1])*Math.pow(Math.cos(u[0]), 4)+60*Math.sin(u[0])+5*Math.sin(u[0])*Math.cos(u[1])*Math.pow(Math.cos(u[0]), 3)+80*Math.sin(u[0])*Math.cos(u[1])*Math.pow(Math.cos(u[0]), 5)-3*Math.cos(u[1])-48*Math.cos(u[1])*Math.pow(Math.cos(u[0]), 6)-5*Math.sin(u[0])*Math.cos(u[0])*Math.cos(u[1])-80*Math.sin(u[0])*Math.cos(u[1])*Math.pow(Math.cos(u[0]), 7))/15, 
-      Math.sin(u[1])*2*(3+5*Math.sin(u[0])*Math.cos(u[0]))/15, plane());
+      Math.sin(u[1])*2*(3+5*Math.sin(u[0])*Math.cos(u[0]))/15, connectivity());
   }
 }

@@ -27,6 +27,6 @@ class Triangle extends Topology {
   }
   Vertex generateVertex(int index) {
     double[] r={rnd.nextDouble(), rnd.nextDouble()};
-    return new Vertex(index, (1-Math.sqrt(r[0]))/2-r[1]*Math.sqrt(r[0])/2, (Math.sqrt(r[0])-1)*Math.sqrt(3)/6-r[1]*Math.sqrt(r[0])*Math.sqrt(3)/6+(Math.sqrt(r[0])*(1-r[1]))*Math.sqrt(3)/3-Math.sqrt(3)/12, zRange, plane());
+    return new Vertex(index, (1-Math.sqrt(r[0]))/2-r[1]*Math.sqrt(r[0])/2, (Math.sqrt(r[0])-1)*Math.sqrt(3)/6-r[1]*Math.sqrt(r[0])*Math.sqrt(3)/6+(Math.sqrt(r[0])*(1-r[1]))*Math.sqrt(3)/3-Math.sqrt(3)/12, zRange, connectivity());
   }
 }

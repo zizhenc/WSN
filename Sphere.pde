@@ -24,6 +24,6 @@ class Sphere extends Topology {
     return "Sphere";
   }
   Vertex generateVertex(int index) {
-    return new Vertex(range/2, Math.acos(2*rnd.nextDouble()-1), 2*Math.PI*rnd.nextDouble(), index, plane());
+    return new Vertex(range/2, Math.acos(2*rnd.nextDouble()-1), 2*Math.PI*rnd.nextDouble(), index, connectivity());
   }
 }

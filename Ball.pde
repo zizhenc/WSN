@@ -26,6 +26,6 @@ class Ball extends Topology {
   Vertex generateVertex(int value) {
     //return new Vertex(Math.pow(rnd.nextDouble(), 1/3.0), Math.sqrt(rnd.nextDouble())*Math.PI, rnd.nextDouble()*2*Math.PI, index);
     double u=Math.pow(rnd.nextDouble(), 1.0/3), a=rnd.nextDouble()*xRange-xRange/2, b=rnd.nextDouble()*yRange-yRange/2, c=rnd.nextDouble()*zRange-zRange/2;
-    return new Vertex(value, xRange*u*a/(2*Math.sqrt(a*a+b*b+c*c)), yRange*u*b/(2*Math.sqrt(a*a+b*b+c*c)), zRange*u*c/(2*Math.sqrt(a*a+b*b+c*c)), plane());
+    return new Vertex(value, xRange*u*a/(2*Math.sqrt(a*a+b*b+c*c)), yRange*u*b/(2*Math.sqrt(a*a+b*b+c*c)), zRange*u*c/(2*Math.sqrt(a*a+b*b+c*c)), connectivity());
   }
 }

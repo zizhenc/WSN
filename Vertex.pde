@@ -13,7 +13,7 @@ class Vertex {//value: vertex ID or list size; degree: degreeList index or degre
   Vertex(int degree) {
     this.degree=degree;
   }
-  Vertex(int value, double x, double y, double z, boolean plane) {//cartesian system
+  Vertex(int value, double x, double y, double z, int connectivity) {//cartesian system
     this.x=x;
     this.y=y;
     this.z=z;
@@ -21,9 +21,9 @@ class Vertex {//value: vertex ID or list size; degree: degreeList index or degre
     rho=Math.sqrt(x*x+y*y+z*z);
     phi=arctan(y, x);
     theta=rho==0?0:Math.acos(z/rho);
-    initialize(value, plane);
+    initialize(value, connectivity);
   }
-  Vertex(double rho, double theta, double phi, int value, boolean plane) {//spherical system
+  Vertex(double rho, double theta, double phi, int value, int connectivity) {//spherical system
     this.rho=rho;
     this.theta=theta;
     this.phi=phi;
@@ -31,7 +31,7 @@ class Vertex {//value: vertex ID or list size; degree: degreeList index or degre
     y=rho*(theta==Math.PI/2?1:Math.sin(theta))*Math.sin(phi);
     z=theta==Math.PI/2?0:rho*Math.cos(theta);
     pho=theta==Math.PI/2?rho:Math.sqrt(x*x+y*y);
-    initialize(value, plane);
+    initialize(value, connectivity);
   }
   double distance(Vertex node) {
     return Math.sqrt(squaredDistance(node));
@@ -101,10 +101,10 @@ class Vertex {//value: vertex ID or list size; degree: degreeList index or degre
     relayColor=null;
     sequence=0;
   }
-  void initialize(int value, boolean plane) {
+  void initialize(int value, int connectivity) {
     this.value=value;
     neighbors=new LinkedList<Vertex>();
-    colorList=new LinkedList[plane?4:6];//0 means 2 in connectivity 
+    colorList=new LinkedList[connectivity-1];//0 means 2 in connectivity 
     for (int i=0; i<colorList.length; i++)
       colorList[i]=new LinkedList<Color>();
     colorNeighbors=new HashMap<Color, LinkedList<Vertex>>();

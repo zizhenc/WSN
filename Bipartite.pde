@@ -50,10 +50,6 @@ abstract class Bipartite extends Procedure implements Screen {
   }
   void reset() {
     resetParts();
-    if (component==null)
-      component=new Component(primary, relay);
-    else
-      component.reset(primary, relay);
     barChart.initialize(0, 7, 0, primary.vertices.size()+relay.vertices.size());
     regionAmount.setPreference(1, primary.vertices.size()+relay.vertices.size());
     region.amount=round(regionAmount.value);
@@ -89,25 +85,19 @@ abstract class Bipartite extends Procedure implements Screen {
     if (goOn) {
       if (giantComponent.value)
         for (int i=1; i<component.degreeList.length; i++)
-          for (Vertex nodeA=component.degreeList[i].next; nodeA!=null; nodeA=nodeA.next) {
-            displayEdge(nodeA, gui.mainColor);
-            displayNode(nodeA);
-          }
+          for (Vertex nodeA=component.degreeList[i].next; nodeA!=null; nodeA=nodeA.next)
+            showNetwork(nodeA, gui.mainColor);
     } else {
       if (giantBlock.value)
         for (Vertex nodeA : component.giant[0])
-          if (nodeA.order!=-3) {
-            displayEdge(nodeA, gui.mainColor);
-            displayNode(nodeA);
-          }
+          if (nodeA.order!=-3)
+            showNetwork(nodeA, gui.mainColor);
       if (minorBlocks.value)
         for (LinkedList<Vertex> list : component.blocks)
           if (component.giant[0]!=list)
             for (Vertex nodeA : list)
-              if (nodeA.order!=-1&&nodeA.order!=-3) {
-                displayEdge(nodeA, gui.partColor[0]);
-                displayNode(nodeA);
-              }
+              if (nodeA.order!=-1&&nodeA.order!=-3)
+                showNetwork(nodeA, gui.partColor[0]);
       if (!component.blocks.isEmpty())
         for (ListIterator<LinkedList<Vertex>> i=component.blocks.listIterator(component.blocks.size()-1); i.hasPrevious(); ) {
           Vertex nodeA=i.previous().getLast();
@@ -116,21 +106,25 @@ abstract class Bipartite extends Procedure implements Screen {
               int count=0;
               strokeWeight(edgeWeight.value);
               for (Vertex nodeB : nodeA.links) {
-                if (nodeB.order==-2&&!tails.value||nodeB.order>-4&&nodeB.order!=-2&&!minorBlocks.value||nodeB.order<-3&&!giantBlock.value)
+                if (nodeB.order==-2&&!tails.value||nodeB.order>-2&&!minorBlocks.value||nodeB.order<-3&&!giantBlock.value||nodeB.order==-3&&!giantBlock.value&&!minorBlocks.value)
                   count++;
                 else {
                   if (nodeB.order==-2)
                     stroke(gui.partColor[1].value);
-                  else if (nodeB.order>-4)
+                  else if (nodeB.order>-2)
                     stroke(gui.partColor[0].value);
                   else if (nodeB.order<-3)
+                    stroke(gui.mainColor.value);
+                  else if (nodeA.order==-1)
+                    stroke(gui.partColor[0].value);
+                  else
                     stroke(gui.mainColor.value);
                   displayEdge(nodeA, nodeB);
                 }
               }
               analyze(nodeA, nodeA.links.size()-count);
             }
-            displayNode(nodeA);
+            showSensor(nodeA);
           }
         }
     }
@@ -147,14 +141,14 @@ abstract class Bipartite extends Procedure implements Screen {
               else
                 displayEdge(nodeA, nodeB);
             } else {
-              if (nodeB.order<-2&&!giantBlock.value||nodeB.order>-2&&!minorBlocks.value)
+              if (nodeB.order<-3&&!giantBlock.value||nodeB.order>-2&&!minorBlocks.value||nodeB.order==-3&&!giantBlock.value&&!minorBlocks.value)
                 count++;
               else
                 displayEdge(nodeA, nodeB);
             }
           analyze(nodeA, nodeA.links.size()-count);
         }
-        displayNode(nodeA);
+        showSensor(nodeA);
       }
     if (minorComponents.value)
       for (LinkedList<Vertex> list : component.components)
@@ -167,10 +161,10 @@ abstract class Bipartite extends Procedure implements Screen {
               for (Vertex nodeB : nodeA.links)
                 displayEdge(nodeA, nodeB);
             }
-            displayNode(nodeA);
+            showSensor(nodeA);
           }
   }
-  void displayEdge(Vertex nodeA, SysColor colour) {
+  void showNetwork(Vertex nodeA, SysColor colour) {
     if (showEdge.value) {
       int count=0;
       strokeWeight(edgeWeight.value);
@@ -183,8 +177,9 @@ abstract class Bipartite extends Procedure implements Screen {
         }
       analyze(nodeA, nodeA.links.size()-count);
     }
+    showSensor(nodeA);
   }
-  void displayNode(Vertex nodeA) {
+  void showSensor(Vertex nodeA) {
     if (showNode.value) {
       domain.add(nodeA);
       for (Vertex nodeB : nodeA.neighbors)
@@ -193,7 +188,7 @@ abstract class Bipartite extends Procedure implements Screen {
       if (showRegion.value)
         region.display(_N, nodeA);
       stroke((nodeA.primeColor==primary?primary:relay).value);
-      super.displayNode(nodeA);
+      displayNode(nodeA);
     }
   }
   void runtimeData(int startHeight) {
@@ -322,14 +317,10 @@ abstract class Bipartite extends Procedure implements Screen {
         amount+=component.tailsToTwoCore();
       }
     } else {
-      if (play.value) {
-        component.clearTailCounts();
-        component.countTails();
-      }
       if (giantBlock.value)
         amount+=1;
       else if (minorBlocks.value)
-        amount+=component.blocks.size()-1;
+        amount+=component.tails[3];
       if (tails.value) {
         if (!giantBlock.value&&!minorBlocks.value)
           amount+=component.tailsToTwoCore();
