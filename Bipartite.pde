@@ -3,6 +3,7 @@ abstract class Bipartite extends Procedure implements Screen {
   boolean goOn;
   String[] headers={"Degree", "Primary", "Relay", "Total"}, modalLabels={"Table", "Bar chart"};
   Color primary, relay;
+  SysColor[] plotColor=new SysColor[3];
   Radio modals=new Radio(modalLabels);
   Region region=new Region();
   Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
@@ -24,6 +25,7 @@ abstract class Bipartite extends Procedure implements Screen {
     tunes.addLast(edgeWeight);
     tunes.addLast(backbone);
     table=new ExTable(headers, 8);
+    plotColor[2]=gui.mainColor;
     for (int i=0; i<8; i++) {
       table.setInt(7-i, 0, i);
       for (int j=0; j<plot.length; j++)
@@ -50,7 +52,10 @@ abstract class Bipartite extends Procedure implements Screen {
   }
   void reset() {
     resetParts();
+    plotColor[0]=primary;
+    plotColor[1]=relay;
     barChart.initialize(0, 7, 0, primary.vertices.size()+relay.vertices.size());
+    barChart.deployColors(plotColor);
     regionAmount.setPreference(1, primary.vertices.size()+relay.vertices.size());
     region.amount=round(regionAmount.value);
     interval.setPreference(1, ceil((primary.vertices.size()+relay.vertices.size())/3.0), 1);
@@ -90,32 +95,32 @@ abstract class Bipartite extends Procedure implements Screen {
     } else {
       if (giantBlock.value)
         for (Vertex nodeA : component.giant[0])
-          if (nodeA.order!=-3)
+          if (nodeA.order[component.archive]!=-3)
             showNetwork(nodeA, gui.mainColor);
       if (minorBlocks.value)
         for (LinkedList<Vertex> list : component.blocks)
           if (component.giant[0]!=list)
             for (Vertex nodeA : list)
-              if (nodeA.order!=-1&&nodeA.order!=-3)
+              if (nodeA.order[component.archive]!=-1&&nodeA.order[component.archive]!=-3)
                 showNetwork(nodeA, gui.partColor[0]);
       if (!component.blocks.isEmpty())
         for (ListIterator<LinkedList<Vertex>> i=component.blocks.listIterator(component.blocks.size()-1); i.hasPrevious(); ) {
           Vertex nodeA=i.previous().getLast();
-          if (minorBlocks.value||giantBlock.value&&nodeA.order==-3) {
+          if (minorBlocks.value||giantBlock.value&&nodeA.order[component.archive]==-3) {
             if (showEdge.value) {
               int count=0;
               strokeWeight(edgeWeight.value);
               for (Vertex nodeB : nodeA.links) {
-                if (nodeB.order==-2&&!tails.value||nodeB.order>-2&&!minorBlocks.value||nodeB.order<-3&&!giantBlock.value||nodeB.order==-3&&!giantBlock.value&&!minorBlocks.value)
+                if (nodeB.order[component.archive]==-2&&!tails.value||nodeB.order[component.archive]>-2&&!minorBlocks.value||nodeB.order[component.archive]<-3&&!giantBlock.value||nodeB.order[component.archive]==-3&&!giantBlock.value&&!minorBlocks.value)
                   count++;
                 else {
-                  if (nodeB.order==-2)
+                  if (nodeB.order[component.archive]==-2)
                     stroke(gui.partColor[1].value);
-                  else if (nodeB.order>-2)
+                  else if (nodeB.order[component.archive]>-2)
                     stroke(gui.partColor[0].value);
-                  else if (nodeB.order<-3)
+                  else if (nodeB.order[component.archive]<-3)
                     stroke(gui.mainColor.value);
-                  else if (nodeA.order==-1)
+                  else if (nodeA.order[component.archive]==-1)
                     stroke(gui.partColor[0].value);
                   else
                     stroke(gui.mainColor.value);
@@ -136,12 +141,12 @@ abstract class Bipartite extends Procedure implements Screen {
           strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.links)
             if (goOn) {
-              if (nodeB.order!=-2&&!giantComponent.value)
+              if (nodeB.order[component.archive]!=-2&&!giantComponent.value)
                 count++;
               else
                 displayEdge(nodeA, nodeB);
             } else {
-              if (nodeB.order<-3&&!giantBlock.value||nodeB.order>-2&&!minorBlocks.value||nodeB.order==-3&&!giantBlock.value&&!minorBlocks.value)
+              if (nodeB.order[component.archive]<-3&&!giantBlock.value||nodeB.order[component.archive]>-2&&!minorBlocks.value||nodeB.order[component.archive]==-3&&!giantBlock.value&&!minorBlocks.value)
                 count++;
               else
                 displayEdge(nodeA, nodeB);
@@ -169,10 +174,10 @@ abstract class Bipartite extends Procedure implements Screen {
       int count=0;
       strokeWeight(edgeWeight.value);
       for (Vertex nodeB : nodeA.links)
-        if (nodeB.order==-2&&!tails.value)
+        if (nodeB.order[component.archive]==-2&&!tails.value)
           count++;
         else {
-          stroke(nodeB.order==-2?gui.partColor[1].value:colour.value);
+          stroke(nodeB.order[component.archive]==-2?gui.partColor[1].value:colour.value);
           displayEdge(nodeA, nodeB);
         }
       analyze(nodeA, nodeA.links.size()-count);
@@ -310,24 +315,27 @@ abstract class Bipartite extends Procedure implements Screen {
     int amount=0;
     if (goOn) {
       if (giantComponent.value)
-        amount+=1;
+        amount=component.giant[1].isEmpty()?0:1;
       else if (tails.value) {
-        component.clearTailCounts();
         component.countTails();
-        amount+=component.tailsToTwoCore();
+        amount=component.tails[0];
       }
     } else {
-      if (giantBlock.value)
-        amount+=1;
-      else if (minorBlocks.value)
-        amount+=component.tails[3];
+      if (giantBlock.value&&minorBlocks.value)
+        amount=component.giant[0].isEmpty()?0:1;
+      else if (giantBlock.value) {
+        if (!component.giant[0].isEmpty())
+          amount=1;
+      } else if (minorBlocks.value) {
+        amount=component.tails[4];
+      }
       if (tails.value) {
         if (!giantBlock.value&&!minorBlocks.value)
-          amount+=component.tailsToTwoCore();
+          amount+=component.tails[0];
         else if (!giantBlock.value)
-          amount+=component.tailsToGiant();
+          amount+=component.tailsXMinors();
         else if (!minorBlocks.value)
-          amount+=component.tailsToMinors();
+          amount+=component.tailsXGiant();
       }
     }
     if (minorComponents.value)

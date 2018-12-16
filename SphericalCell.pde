@@ -55,7 +55,7 @@ class SphericalCell extends CircularCell {
   }
   void checkHemisphere(int category, int theta, int phi, ListIterator<Vertex> i, LinkedList<Vertex> cell) {
     Vertex nodeA=i.next();
-    nodeA.mark=0;
+    nodeA.lowpoint=0;
     count++;
     for (ListIterator<Vertex> j=cell.listIterator(i.nextIndex()); j.hasNext(); )
       link(nodeA, j.next());

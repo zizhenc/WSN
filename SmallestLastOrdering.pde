@@ -14,10 +14,10 @@ class SmallestLastOrdering extends Procedure implements Screen {
     tunes.addLast(edgeWeight);
   }
   void setting() {
-    remainingGraph.value=showMeasurement.value=showEdge.value=showNode.value=true;
+    initialize();
+    remainingGraph.value=showMeasurement.value=showEdge.value=true;
     edgeWeight.setPreference(gui.unit(0.0005), gui.unit(0.00002), gui.unit(0.002), gui.unit(0.0005), gui.unit(1000));
     deletedGraph.value=false;
-    initialize();
     if (graph.degreeList.isEmpty()) {
       interval.setPreference(ceil(graph.vertex.length*7.0/3200), ceil(graph.vertex.length/3.0), ceil(graph.vertex.length*7.0/3200));
       graph.generateDegreeList();

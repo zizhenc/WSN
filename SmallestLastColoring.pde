@@ -15,11 +15,11 @@ class SmallestLastColoring extends Procedure implements Screen {
     switches.addLast(showMeasurement);
   }
   void setting() {
+    initialize();
     showMeasurement.value=uncoloredGraph.value=showEdge.value=false;
-    coloredGraph.value=showNode.value=true;
+    coloredGraph.value=true;
     edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     arrowWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.001), gui.unit(0.00025), gui.unit(1000));
-    initialize();
     if (navigation.end==3) {
       navigation.end=-4;
       _N=0;

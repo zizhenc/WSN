@@ -1,17 +1,17 @@
 class Backbone extends Result implements Screen {
   int _N, _E;
   String[] headers={"Degree", "Primary", "Relay", "Total"}, modalLabels={"Table", "Bar chart"};
-  BarChart barChart=new BarChart("Degree", "Vertex", new String[]{"Primary", "Relay", "Total"});
   Color primary, relay;
+  SysColor[] plotColor=new SysColor[3];
   Radio modals=new Radio(modalLabels);
   Region region=new Region();
-  Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
+  Slider backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
   Checker minorComponents=new Checker("Minor components"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block");
   ExTable table;
-  Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
+  Switcher showRegion=new Switcher("Region", "Region");
+  BarChart barChart=new BarChart("Degree", "Vertex", new String[]{"Primary", "Relay", "Total"});
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
-  int[][] nodes;
   HashSet<Vertex> domain=new HashSet<Vertex>();
   Backbone() {
     parts.addLast(minorComponents);
@@ -23,78 +23,80 @@ class Backbone extends Result implements Screen {
     tunes.addLast(edgeWeight);
     tunes.addLast(backbone);
     table=new ExTable(headers, 8);
+    plotColor[2]=gui.mainColor;
+    for (int i=0; i<8; i++) {
+      table.setInt(7-i, 0, i);
+      for (int j=0; j<plot.length; j++)
+        barChart.points[j].add(0.0);
+    }
   }
   void setting() {
     initialize();
-    showNode.value=showEdge.value=minorComponents.value=minorBlocks.value=giantBlock.value=plot[0].value=plot[1].value=plot[2].value=true;
+    showEdge.value=minorComponents.value=minorBlocks.value=giantBlock.value=plot[0].value=plot[1].value=plot[2].value=true;
     tails.value=showRegion.value=false;
-    edgeWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     for (int i=0; i<plot.length; i++)
       barChart.setPlot(i, plot[i].value);
     setComponent(1);
     backbone.setPreference(1, graph.backbone.length);
   }
   void setComponent(int index) {
-    if (index>graph._RLColors.size())
+    if (index>graph._RLColors.size()) {
       primary=relay=gui.mainColor;
-    else {
-      relay=graph._RLColors.get(index-1);
-      primary=graph._PYColors.get(relay.index-graph._SLColors.size());
+      if (component==null)
+        component=new Component(primary, relay);
+      else
+        component.reset(primary, relay);
+    } else {
+      component=graph.getBackbone(index-1);
+      primary=component.primary;
+      relay=component.relay;
     }
-    if (component==null)
-      component=new Component(primary, relay);
-    else
-      component.reset(primary, relay);
+    plotColor[0]=primary;
+    plotColor[1]=relay;
     barChart.initialize(0, 7, 0, primary.vertices.size()+relay.vertices.size());
+    barChart.deployColors(plotColor);
     regionAmount.setPreference(1, primary.vertices.size()+relay.vertices.size());
     region.amount=round(regionAmount.value);
-    while (component.deleting());
-    component.clearTailCounts();
-    component.countTails();
   }
   void show() {
-    _N=_E=0;//mainColor->giantBlock partsColor[0]->minorBlocks partsColor[1]->tails partsColor[2]->minorComponents
-    for (int i=0; i<2; i++)
-      for (int j=0; j<8; j++)
-        nodes[i][j]=0;
-    domain.clear();
+    clearStatistics();
     if (giantBlock.value)
       for (Vertex nodeA : component.giant[0])
-        if (nodeA.order!=-3) {
-          displayEdge(nodeA, gui.mainColor);
-          displayNode(nodeA);
-        }
+        if (nodeA.order[1]!=-3)
+          showNetwork(nodeA, gui.mainColor);
     if (minorBlocks.value)
       for (LinkedList<Vertex> list : component.blocks)
         if (component.giant[0]!=list)
           for (Vertex nodeA : list)
-            if (nodeA.order!=-1&&nodeA.order!=-3) {
-              displayEdge(nodeA, gui.partColor[0]);
-              displayNode(nodeA);
-            }
+            if (nodeA.order[1]!=-1&&nodeA.order[1]!=-3)
+              showNetwork(nodeA, gui.partColor[0]);
     if (!component.blocks.isEmpty())
       for (ListIterator<LinkedList<Vertex>> i=component.blocks.listIterator(component.blocks.size()-1); i.hasPrevious(); ) {
         Vertex nodeA=i.previous().getLast();
-        if (minorBlocks.value||giantBlock.value&&nodeA.order==-3) {
+        if (minorBlocks.value||giantBlock.value&&nodeA.order[1]==-3) {
           if (showEdge.value) {
             int count=0;
             strokeWeight(edgeWeight.value);
             for (Vertex nodeB : nodeA.links) {
-              if (nodeB.order==-2&&!tails.value||nodeB.order>-2&&!minorBlocks.value||nodeB.order<-2&&!giantBlock.value)
+              if (nodeB.order[1]==-2&&!tails.value||nodeB.order[1]>-2&&!minorBlocks.value||nodeB.order[1]<-3&&!giantBlock.value||nodeB.order[1]==-3&&!giantBlock.value&&!minorBlocks.value)
                 count++;
               else {
-                if (nodeB.order==-2)
+                if (nodeB.order[1]==-2)
                   stroke(gui.partColor[1].value);
-                else if (nodeB.order>-2)
+                else if (nodeB.order[1]>-2)
                   stroke(gui.partColor[0].value);
-                else if (nodeB.order<-2)
+                else if (nodeB.order[1]<-3)
+                  stroke(gui.mainColor.value);
+                else if (nodeA.order[1]==-1)
+                  stroke(gui.partColor[0].value);
+                else
                   stroke(gui.mainColor.value);
                 displayEdge(nodeA, nodeB);
               }
             }
-            nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()-count]++;
+            analyze(nodeA, nodeA.links.size()-count);
           }
-          displayNode(nodeA);
+          showSensor(nodeA);
         }
       }
     if (tails.value)
@@ -104,27 +106,54 @@ class Backbone extends Result implements Screen {
           stroke(gui.partColor[1].value);
           strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.links)
-            if (nodeB.order<-2&&!giantBlock.value||nodeB.order>-2&&!minorBlocks.value)
+            if (nodeB.order[1]<-3&&!giantBlock.value||nodeB.order[1]>-2&&!minorBlocks.value||nodeB.order[1]==-3&&!giantBlock.value&&!minorBlocks.value)
               count++;
             else
               displayEdge(nodeA, nodeB);
-          nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()-count]++;
+          analyze(nodeA, nodeA.links.size()-count);
         }
-        displayNode(nodeA);
+        showSensor(nodeA);
       }
     if (minorComponents.value)
       for (LinkedList<Vertex> list : component.components)
         if (list!=component.giant[1])
           for (Vertex nodeA : list) {
             if (showEdge.value) {
-              nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()]++;
+              analyze(nodeA, nodeA.links.size());
               stroke(gui.partColor[2].value);
               strokeWeight(edgeWeight.value);
               for (Vertex nodeB : nodeA.links)
                 displayEdge(nodeA, nodeB);
             }
-            displayNode(nodeA);
+            showSensor(nodeA);
           }
+  }
+  void showNetwork(Vertex nodeA, SysColor colour) {
+    if (showEdge.value) {
+      int count=0;
+      strokeWeight(edgeWeight.value);
+      for (Vertex nodeB : nodeA.links)
+        if (nodeB.order[1]==-2&&!tails.value)
+          count++;
+        else {
+          stroke(nodeB.order[1]==-2?gui.partColor[1].value:colour.value);
+          displayEdge(nodeA, nodeB);
+        }
+      analyze(nodeA, nodeA.links.size()-count);
+    }
+    showSensor(nodeA);
+  }
+  void showSensor(Vertex nodeA) {
+    if (showNode.value) {
+      domain.add(nodeA);
+      for (Vertex nodeB : nodeA.neighbors)
+        domain.add(nodeB);
+      ++_N;
+      if (showRegion.value)
+        region.display(_N, nodeA);
+      stroke((nodeA.primeColor==primary?primary:relay).value);
+      displayNode(nodeA);
+    }
   }
   void data() {
     fill(gui.headColor[1].value);
@@ -132,7 +161,7 @@ class Backbone extends Result implements Screen {
     fill(gui.headColor[2].value);
     text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
     text("Runtime data:", gui.thisFont.stepX(2), gui.thisFont.stepY(16));
-    int surplusOrder=surplus();
+    int surplusOrder=graph.surplus();
     word[0]="Topology: "+graph.topology;
     word[1]="N: "+graph.vertex.length;
     word[2]=String.format("r: %.3f", graph.r);
@@ -157,7 +186,7 @@ class Backbone extends Result implements Screen {
     word[5]="Giant component blocks: "+component.blocks.size();
     int len=7;
     if (graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
-      len+=2;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
+      len=9;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
       int faces=_E-_N+components()+graph.topology.characteristic()-1;
       word[len-3]="Faces: "+faces;
       word[len-2]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
@@ -167,45 +196,13 @@ class Backbone extends Result implements Screen {
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(17+i));
     if (modals.value==1)
       barChart.display(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
-    else 
-    table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap());
-  }
-  int surplus() {
-    int order=0;
-    for (int i=0; i<graph.connectivity-1; i++)
-      order+=graph.relayList[i].size();
-    return order;
+    else
+      table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap());
   }
   void displayEdge(Vertex nodeA, Vertex nodeB) {
     if (nodeA.value<nodeB.value) {
       ++_E;
       line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-    }
-  }
-  void displayEdge(Vertex nodeA, SysColor colour) {
-    if (showEdge.value) {
-      int count=0;
-      strokeWeight(edgeWeight.value);
-      for (Vertex nodeB : nodeA.links)
-        if (nodeB.order==-2&&!tails.value)
-          count++;
-        else {
-          stroke(nodeB.order==-2?gui.partColor[1].value:colour.value);
-          displayEdge(nodeA, nodeB);
-        }
-      nodes[nodeA.primeColor==primary?0:1][nodeA.links.size()-count]++;
-    }
-  }
-  void displayNode(Vertex nodeA) {
-    if (showNode.value) {
-      domain.add(nodeA);
-      for (Vertex nodeB : nodeA.neighbors)
-        domain.add(nodeB);
-      ++_N;
-      if (showRegion.value)
-        region.display(_N, nodeA);
-      stroke((nodeA.primeColor==primary?primary:relay).value);
-      displayNode((float)nodeA.x, (float)nodeA.y, (float)nodeA.z);
     }
   }
   void moreControls(float y) {
@@ -293,20 +290,56 @@ class Backbone extends Result implements Screen {
   }
   int components() {
     int amount=0;
-    if (giantBlock.value)
-      amount+=1;
-    else if (minorBlocks.value)
-      amount+=component.blocks.size()-1;
+    if (giantBlock.value&&minorBlocks.value)
+      amount=component.giant[0].isEmpty()?0:1;
+    else if (giantBlock.value) {
+      if (!component.giant[0].isEmpty())
+        amount=1;
+    } else if (minorBlocks.value) {
+      amount=component.tails[4];
+    }
     if (tails.value) {
       if (!giantBlock.value&&!minorBlocks.value)
-        amount+=component.tailsToTwoCore();
+        amount+=component.tails[0];
       else if (!giantBlock.value)
-        amount+=component.tailsToGiant();
+        amount+=component.tailsXMinors();
       else if (!minorBlocks.value)
-        amount+=component.tailsToMinors();
+        amount+=component.tailsXGiant();
     }
     if (minorComponents.value)
       amount+=component.components.size()-2+component.components.getFirst().size();
     return amount;
+  }
+  void clearStatistics() {
+    _N=_E=0;//mainColor->giantBlock partsColor[0]->minorBlocks partsColor[1]->tails partsColor[2]->minorComponents
+    domain.clear();
+    switch(modals.value) {
+    case 0:
+      for (int i=0; i<8; i++)
+        for (int j=0; j<plot.length; j++)
+          table.setInt(i, j+1, 0);
+      break;
+    case 1:
+      for (int i=0; i<8; i++)
+        for (int j=0; j<plot.length; j++)
+          barChart.points[j].set(i, 0.0);
+    }
+  }
+  void analyze(Vertex node, int degree) {
+    int category=node.primeColor==primary?0:1, tValue;
+    float bValue;
+    switch(modals.value) {
+    case 0:
+      tValue=table.getInt(7-degree, category+1)+1;
+      table.setInt(7-degree, category+1, tValue);
+      tValue=table.getInt(7-degree, 3)+1;
+      table.setInt(7-degree, 3, tValue);
+      break;
+    case 1:
+      bValue=barChart.points[category].get(degree)+1;
+      barChart.points[category].set(degree, bValue);
+      bValue=barChart.points[2].get(degree)+1;
+      barChart.points[2].set(degree, bValue);
+    }
   }
 }

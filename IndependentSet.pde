@@ -1,29 +1,26 @@
 abstract class IndependentSet extends Result implements Screen {
   int _E;
   Color colour;
-  Slider partiteIndex=new Slider("Partite #", 1, 1), regionAmount=new Slider("Region amount", 1, 1), edgeWeight=new Slider("Edge weight"), arrowWeight=new Slider("Arrow weight");
+  Slider partiteIndex=new Slider("Partite #", 1, 1), regionAmount=new Slider("Region amount", 1, 1), arrowWeight=new Slider("Arrow weight");
   Region region=new Region();
   Vertex nodeM=new Vertex();
   HashSet<Vertex> domain=new HashSet<Vertex>();
-  Switcher showRegion=new Switcher("Region", "Region"), showEdge=new Switcher("Edge", "Edge"), directed=new Switcher("Undirected", "Directed"), showMeasurement=new Switcher("Measurement", "Measurement");
+  Switcher showRegion=new Switcher("Region", "Region"), directed=new Switcher("Undirected", "Directed"), showMeasurement=new Switcher("Measurement", "Measurement");
   Checker partite=new Checker("Independent set");
   ArrayList<Color> colorPool;
   abstract void setColorPool();
   IndependentSet() {
     parts.addLast(partite);
-    switches.addLast(showEdge);
     switches.addLast(showRegion);
     switches.addLast(showMeasurement);
     switches.addLast(directed);
-    tunes.addLast(edgeWeight);
     tunes.addLast(arrowWeight);
     tunes.addLast(partiteIndex);
   }
   void setting() {
     initialize();
-    showMeasurement.value=showNode.value=showEdge.value=partite.value=true;
+    showEdge.value=showMeasurement.value=partite.value=true;
     directed.value=showRegion.value=false;
-    edgeWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     arrowWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.001), gui.unit(0.00025), gui.unit(1000));
     setColorPool();
     partiteIndex.setPreference(1, colorPool.size());
@@ -93,7 +90,7 @@ abstract class IndependentSet extends Result implements Screen {
         if (showNode.value) {
           setDomains(nodeA);
           stroke(colour.value);
-          displayNode((float)nodeA.x, (float)nodeA.y, (float)nodeA.z);
+          displayNode(nodeA);
           if (showRegion.value) {
             strokeWeight(edgeWeight.value);
             region.display(i.nextIndex(), nodeA);

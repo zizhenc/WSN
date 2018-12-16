@@ -3,7 +3,7 @@ class GraphGenerating extends Procedure implements Screen {
   String[][] coordinateLabels={{"Cartesian system", "Cylindrical system", "Spherical system"}, {"Cartesian system", "Cylindrical system"}};
   Radio methods=new Radio(new String[] {"Exhaustive method", "Sweep method", "Cell method"}), coordinates=new Radio(coordinateLabels[0]);
   Slider edgeWeight=new Slider("Edge weight");
-  Checker remainingVertices=new Checker("Remain vertices"), generatedGraph=new Checker("Generated graph");
+  Checker remainingVertices=new Checker("Remaining vertices"), generatedGraph=new Checker("Generated graph");
   Switcher showEdge=new Switcher("Edge", "Edge");
   GraphGenerating() {
     word=new String[3];
@@ -13,10 +13,10 @@ class GraphGenerating extends Procedure implements Screen {
     tunes.addLast(edgeWeight);
   }
   void setting() {
+    initialize();
     edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     remainingVertices.value=false;
-    showNode.value=showEdge.value=generatedGraph.value=true;
-    initialize();
+    showEdge.value=generatedGraph.value=true;
     if (navigation.end==1) {
       navigation.end=-2;
       interval.setPreference(ceil(graph.vertex.length*7.0/3200), ceil(graph.vertex.length/3.0), ceil(graph.vertex.length*7.0/3200));
@@ -37,8 +37,10 @@ class GraphGenerating extends Procedure implements Screen {
   }
   void reset() {
     navigation.end=-2;
-    for (Vertex node : graph.vertex)
-      node.clearNeighbors();
+    for (Vertex node : graph.vertex) {
+      node.neighbors.clear();
+      node.lowpoint=-1;
+    }
     graph._E=0;
   }
   void updateCoordinates() {//update coodinates when methods changed
@@ -61,7 +63,7 @@ class GraphGenerating extends Procedure implements Screen {
   void show() {
     _N=0;
     for (Vertex nodeA : graph.vertex) {
-      if (nodeA.mark<0) {
+      if (nodeA.lowpoint<0) {
         if (remainingVertices.value) {
           stroke(gui.partColor[0].value);
           if (showNode.value) {

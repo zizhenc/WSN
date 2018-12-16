@@ -3,7 +3,7 @@ class Cell extends Method {
   boolean connecting() {
     return coordinate[index].connecting();
   }
-  void setCoordinate(int index) {
+  void reset() {
     if (coordinate[index]==null)
       switch(index) {
       case 0:
@@ -15,10 +15,6 @@ class Cell extends Method {
       case 2:
         coordinate[2]=new SphericalCell();
       }
-    this.index=index;
-    coordinate[index].reset();
-  }
-  void reset() {
     coordinate[index].reset();
   }
 }

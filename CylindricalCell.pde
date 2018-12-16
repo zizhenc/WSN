@@ -36,7 +36,7 @@ class CylindricalCell extends CircularCell {
     if (i.hasNext()) {
       count++;
       Vertex nodeA=i.next();
-      nodeA.mark=0;
+      nodeA.lowpoint=0;
       for (ListIterator<Vertex> j=ring[z][pho].get(phi).listIterator(i.nextIndex()); j.hasNext(); )
         link(nodeA, j.next());
       if (pho==0) {

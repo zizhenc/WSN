@@ -15,7 +15,7 @@ class Partitioning extends Procedure implements Screen {
   void setting() {
     initialize();
     remainingGraph.value=showEdge.value=false;
-    selectedGraph.value=showNode.value=true;
+    selectedGraph.value=true;
     edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     if (navigation.end==4) {
       selectColorSets.setMax(graph._SLColors.size()-1);

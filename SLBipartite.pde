@@ -20,6 +20,10 @@ class SLBipartite extends Bipartite {
       primary=graph._SLColors.get(primaryIndex);
       relay=graph._SLColors.get(relayIndex);
     }
+    if (component==null)
+      component=new Component(primary, relay);
+    else
+      component.reset(primary, relay);
     reset();
   }
   void data() {

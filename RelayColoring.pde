@@ -37,7 +37,7 @@ class RelayColoring extends Procedure implements Screen {
     graph._RLColors.clear();
     for (LinkedList<Vertex> list : graph.relayList) {
       for (Vertex node : list)
-        node.clearRelayColor();
+        node.clearRelays();
       list.clear();
     }
     reset();
@@ -73,7 +73,7 @@ class RelayColoring extends Procedure implements Screen {
         }
     for (int i=graph._PYColors.size(); i<graph._SLColors.size(); i++)
       for (Vertex nodeA : graph._SLColors.get(i).vertices) {
-        if (surplus.value&&nodeA.sequence==3) {
+        if (surplus.value&&nodeA.order[1]==-5) {
           stroke(gui.mainColor.value);
           if (showEdge.value)
             displayEdge(nodeA);
@@ -82,14 +82,14 @@ class RelayColoring extends Procedure implements Screen {
             displayNode(nodeA);
           }
         }
-        if (coloredGraph.value&&nodeA.sequence==2) {
+        if (coloredGraph.value&&nodeA.relayColor!=null) {
           if (showEdge.value) {
             stroke(gui.partColor[2].value);
             displayEdge(nodeA);
           }
           displayNode(nodeA, nodeA.relayColor);
         }
-        if (uncoloredGraph.value&&nodeA.sequence==1) {
+        if (uncoloredGraph.value&&nodeA.order[1]==-6) {
           stroke(gui.partColor[4].value);
           if (showEdge.value)
             displayEdge(nodeA);
@@ -110,10 +110,18 @@ class RelayColoring extends Procedure implements Screen {
   void displayEdge(Vertex nodeA) {
     strokeWeight(edgeWeight.value);
     for (Vertex nodeB : nodeA.neighbors)
-      if (nodeA.value>nodeB.value&&(primaryGraph.value&&nodeB.sequence==0||uncoloredGraph.value&&nodeB.sequence==1||coloredGraph.value&&nodeB.sequence==2||surplus.value&&nodeB.sequence==3)) {
-        _E++;
-        line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-      }
+      if (nodeA.value>nodeB.value)
+        if (nodeB.primeColor.index<graph._PYColors.size()) {
+          if (primaryGraph.value) {
+            _E++;
+            line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+          }
+        } else {
+          if (coloredGraph.value&&nodeB.relayColor!=null||surplus.value&&nodeB.order[1]==-5||uncoloredGraph.value&&nodeB.order[1]==-6) {
+            _E++;
+            line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+          }
+        }
   }
   void data() {
     fill(gui.headColor[1].value);
@@ -135,7 +143,7 @@ class RelayColoring extends Procedure implements Screen {
     fill(gui.bodyColor[0].value);
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
-    int surplusOrder=surplus();
+    int surplusOrder=graph.surplus();
     word[0]=String.format("Vertices: %d (%.2f %%)", _N, _N*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", _E, _E*100.0/graph._E);
     word[2]=String.format("Average degree: %.2f", _E*2.0/_N);
@@ -151,12 +159,12 @@ class RelayColoring extends Procedure implements Screen {
         restart();
       } else {
         graph.backbone=null;
-        for (int i=graph.connectivity-1; i<round(connectivity.value)-1; i++)
+        for (int i=graph.connectivity-1; i<connectivity.value-1; i++)
           for (Vertex node : graph.relayList[i])
-            node.sequence=3;
+            node.order[1]=-5;
         for (int i=round(connectivity.value)-1; i<graph.connectivity-1; i++)
           for (Vertex node : graph.relayList[i])
-            node.sequence=1;
+            node.order[1]=-6;
         graph.connectivity=round(connectivity.value);
       }
     }
@@ -164,11 +172,5 @@ class RelayColoring extends Procedure implements Screen {
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='e')
       showEdge.value=!showEdge.value;
-  }
-  int surplus() {
-    int order=0;
-    for (int i=0; i<connectivity.value-1; i++)
-      order+=graph.relayList[i].size();
-    return order;
   }
 }

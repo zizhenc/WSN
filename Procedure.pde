@@ -20,6 +20,12 @@ abstract class Procedure {
     tunes.addLast(interval);
     tunes.addLast(nodeWeight);
   }
+  void initialize() {
+    showNode.value=true;
+    play.value=navigation.auto;
+    spin.value=graph.topology.value<4?false:true;
+    nodeWeight.setPreference(gui.unit(0.005), gui.unit(0.0005), gui.unit(0.01), gui.unit(0.00025), gui.unit(1000));
+  }
   void display() {
     pushStyle();
     gui.body.initialize();
@@ -40,11 +46,6 @@ abstract class Procedure {
     if (capture.active)
       capture.display();
     deploying();
-  }
-  void initialize() {
-    play.value=navigation.auto;
-    spin.value=graph.topology.value<4?false:true;
-    nodeWeight.setPreference(gui.unit(0.005), gui.unit(0.0005), gui.unit(0.01), gui.unit(0.00025), gui.unit(1000));
   }
   void controls() {
     fill(gui.headColor[1].value);

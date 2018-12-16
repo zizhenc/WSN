@@ -16,10 +16,15 @@ abstract class Chart {
     points=new ArrayList[plot.length];
     colour=new SysColor[plot.length];
     active=new int[plot.length];
-    for (int i=0; i!=plot.length; i++) {
+    for (int i=0; i!=plot.length; i++)
       points[i]=new ArrayList<Float>();
+  }
+  void deployColors() {
+    for (int i=0; i!=plot.length; i++)
       colour[i]=new SysColor(floor(random(16777216-11184810.6667/plot.length*(i+1), 16777216-11184810.6667/plot.length*i)));
-    }
+  }
+  void deployColors(SysColor[] colour) {
+    this.colour=colour;
   }
   void display(float x, float y, float chartWidth, float chartHeight) {
     pushStyle();

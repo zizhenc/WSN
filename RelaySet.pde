@@ -10,7 +10,7 @@ class RelaySet extends IndependentSet {
     text("Relay independent sets...", gui.thisFont.stepX(), gui.thisFont.stepY());
     fill(gui.headColor[2].value);
     text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
-    int surplusOrder=surplus();
+    int surplusOrder=graph.surplus();
     word[0]="Topology: "+graph.topology;
     word[1]="N: "+graph.vertex.length;
     word[2]=String.format("r: %.3f", graph.r);
@@ -28,11 +28,5 @@ class RelaySet extends IndependentSet {
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
     runtimeData(16);
-  }
-  int surplus() {
-    int order=0;
-    for (int i=0; i<graph.connectivity-1; i++)
-      order+=graph.relayList[i].size();
-    return order;
   }
 }

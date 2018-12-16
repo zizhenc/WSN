@@ -3,9 +3,13 @@ class RLBipartite extends Bipartite {
     word=new String[13];
   }
   void setComponent(int index) {
-    if (index>graph._RLColors.size())
+    if (index>graph._RLColors.size()) {
       primary=relay=gui.mainColor;
-    else {
+      if (component==null)
+        component=new Component(primary, relay);
+      else
+        component.reset(primary, relay);
+    } else {
       component=graph.getBackbone(index-1);
       primary=component.primary;
       relay=component.relay;
@@ -13,14 +17,14 @@ class RLBipartite extends Bipartite {
     reset();
   }
   int getAmount() {
-    return graph.backbone.length;
+    return graph._RLColors.size();
   }
   void data() {
     fill(gui.headColor[1].value);
     text("Relay coloring bipartites...", gui.thisFont.stepX(), gui.thisFont.stepY());
     fill(gui.headColor[2].value);
     text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
-    int surplusOrder=surplus();
+    int surplusOrder=graph.surplus();
     word[0]="Topology: "+graph.topology;
     word[1]="N: "+graph.vertex.length;
     word[2]=String.format("r: %.3f", graph.r);
@@ -38,11 +42,5 @@ class RLBipartite extends Bipartite {
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
     runtimeData(16);
-  }
-  int surplus() {
-    int order=0;
-    for (int i=0; i<graph.connectivity-1; i++)
-      order+=graph.relayList[i].size();
-    return order;
   }
 }

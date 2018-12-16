@@ -1,16 +1,11 @@
 class Clique extends Result implements Screen {
-  Slider edgeWeight=new Slider("Edge weight");
   Checker showClique=new Checker("Clique");
-  Switcher showEdge=new Switcher("Edge", "Edge");
   Clique() {
     word=new String[8];
     parts.addLast(showClique);
-    switches.addLast(showEdge);
-    tunes.addLast(edgeWeight);
   }
   void setting() {
-    showClique.value=showEdge.value=showNode.value=true;
-    edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
+    showEdge.value=showClique.value=true;
     initialize();
   }
   void show() {
@@ -18,7 +13,7 @@ class Clique extends Result implements Screen {
       stroke(gui.mainColor.value);
       if (showNode.value)
         for (Vertex node : graph.clique)
-          displayNode((float)node.x, (float)node.y, (float)node.z);
+          displayNode(node);
       if (showEdge.value) {
         strokeWeight(edgeWeight.value);
         for (ListIterator<Vertex> i=graph.clique.listIterator(); i.hasNext(); ) {
@@ -36,6 +31,7 @@ class Clique extends Result implements Screen {
     text("Terminal clique...", gui.thisFont.stepX(), gui.thisFont.stepY());
     fill(gui.headColor[2].value);
     text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
+    text("Runtime data:", gui.thisFont.stepX(2), gui.thisFont.stepY(11));
     word[0]="Topology: "+graph.topology;
     word[1]="N: "+graph.vertex.length;
     word[2]=String.format("r: %.3f", graph.r);
@@ -47,11 +43,8 @@ class Clique extends Result implements Screen {
     fill(gui.bodyColor[0].value);
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
-    fill(gui.headColor[2].value);
-    text("Runtime data:", gui.thisFont.stepX(2), gui.thisFont.stepY(11));
     word[0]="Vertices: "+(showClique.value&&showNode.value?graph.clique.size():0);
     word[1]="Edges: "+(showClique.value&&showEdge.value?graph.clique.size()*(graph.clique.size()-1)/2:0);
-    fill(gui.bodyColor[0].value);
     for (int i=0; i<2; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(12+i));
   }

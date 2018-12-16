@@ -4,7 +4,7 @@ class Graph {
   float breakpoint;
   double r;
   String timeStamp;
-  boolean partitionModal;
+  boolean partitionMode;//true means auto mode, false means manual mode
   ArrayList<Color> colorLibrary=new ArrayList<Color>(), _SLColors=new ArrayList<Color>(), _RLColors=new ArrayList<Color>(), _PYColors=new ArrayList<Color>();
   ArrayList<Vertex> degreeList=new ArrayList<Vertex>();
   Vertex[] vertex;
@@ -50,7 +50,7 @@ class Graph {
       degreeDistribution[i]=degreeList.get(i).value;
   }
   void order(int vertices, int[] degree, Vertex[] list) {
-    list[0]=degreeList.get(0);
+    list[0]=degreeList.get(0);//list[0] means minDegreeList
     while (list[0].value==0)
       list[0]=degreeList.get(list[0].degree+1);
     while (list[1].value==0)
@@ -86,8 +86,7 @@ class Graph {
       if (node.value<vertex[index].value&&node.primeColor!=null)
         slot[node.primeColor.index]=true;
     int i=0;
-    while (slot[i])
-      i++;
+    for (; slot[i]; i++);
     vertex[index].primeColor=getColor(i);
     if (vertex[index].primeColor.vertices.isEmpty())
       _SLColors.add(vertex[index].primeColor);
@@ -97,10 +96,16 @@ class Graph {
   }
   int selectPrimarySet(int pivot) {
     if (primaries<=0)
+      if(partitionMode){
+      }
+      else{
+      }
+      
+      
       if (partitionModal&&-primaries*100.0/vertex.length>=breakpoint) {
         primaries=-primaries;
         int offset=_PYColors.get(_PYColors.size()-1).vertices.size();
-        if (abs(primaries*100.0/vertex.length-breakpoint)>abs((primaries-offset)*100.0/vertex.length-breakpoint)) {
+        if (primaries*100.0/vertex.length-breakpoint>breakpoint-(primaries-offset)*100.0/vertex.length) {
           primaries-=offset;
           _PYColors.remove(_PYColors.size()-1);
           pivot--;
@@ -143,7 +148,6 @@ class Graph {
           if (nodeA.relayColor.vertices.isEmpty())
             _RLColors.add(nodeA.relayColor);
           nodeA.relayColor.vertices.addLast(nodeA);
-          nodeA.sequence=2;//relayColored indicator
           break;
         }
       if (nodeA.relayColor==null)
@@ -158,10 +162,15 @@ class Graph {
       backbone[index]=new Component(_PYColors.get(_RLColors.get(index).index-_SLColors.size()), _RLColors.get(index), topology.connectivity());
     return backbone[index];
   }
+  void calculateBackbones() {
+    for (int i=0; i<_RLColors.size(); i++)
+      while (getBackbone(i).deleting());
+  }
   void pushRelayList(int index, Vertex node) {
     while (--index>0&&node.colorList[index-1].isEmpty());
     relayList[index].addLast(node);
-    node.sequence=index<connectivity-1?3:1;//surplus:uncolored
+    if (index<connectivity-1)
+      node.order[1]=-5;//surplus indicator
   }
   Color getColor(int index) {
     while (index>=colorLibrary.size())
@@ -172,5 +181,11 @@ class Graph {
     float division=11184810.6667/(maxMinDegree+1);
     int value=floor(random(16777216-division*(index+1), 16777216-division*index));
     return new Color(value, index);
+  }
+  int surplus() {
+    int order=0;
+    for (int i=0; i<connectivity-1; i++)
+      order+=relayList[i].size();
+    return order;
   }
 }

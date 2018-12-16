@@ -1,12 +1,14 @@
 import java.util.Stack;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Comparator;
 import java.util.ListIterator;
 GUI gui=new GUI();
 Error error=new Error();
 Graph graph;
-Screen[] screen=new Screen[16];
+Screen[] screen=new Screen[17];
 Navigation navigation=new Navigation();
 void settings() {
   size(gui.getWidth(), gui.getHeight(), P3D);
@@ -38,7 +40,8 @@ void loadScreens() {
   screen[12]=new PrimarySet();
   screen[13]=new RelaySet();
   screen[14]=new Backbone();
-  screen[15]=new Scene();
+  screen[15]=new Surplus();
+  screen[16]=new Scene();
   gui.load=true;
 }
 void keyPressed() {

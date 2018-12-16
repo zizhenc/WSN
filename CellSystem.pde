@@ -9,7 +9,7 @@ abstract class CellSystem {
   void link(Vertex nodeA, Vertex nodeB) {
     if (nodeA.distance(nodeB)<graph.r) {
       graph._E++;
-      nodeB.mark=0;
+      nodeB.lowpoint=0;
       nodeA.neighbors.addLast(nodeB);
       nodeB.neighbors.addLast(nodeA);
     }

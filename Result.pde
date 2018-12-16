@@ -1,9 +1,9 @@
 abstract class Result {
   float centralX, centralY, centralZ, eyeX, eyeY, eyeZ, spinX, spinY, spinZ;
   String[] word;
-  Slider nodeWeight=new Slider("Node weight");
+  Slider nodeWeight=new Slider("Node weight"), edgeWeight=new Slider("Edge weight");
   Capture capture=new Capture();
-  Switcher spin=new Switcher("Spin", "Spin"), showNode=new Switcher("Node", "Node"), projection=new Switcher("Orthographic", "Perspective");
+  Switcher spin=new Switcher("Spin", "Spin"), showNode=new Switcher("Node", "Node"), showEdge=new Switcher("Edge", "Edge"), projection=new Switcher("Orthographic", "Perspective");
   Button[] button={new Button("Restore"), new Button("Screenshot")};
   LinkedList<Slider> tunes=new LinkedList<Slider>();
   LinkedList<Checker> parts=new LinkedList<Checker>();
@@ -14,7 +14,9 @@ abstract class Result {
     switches.addLast(projection);
     switches.addLast(spin);
     switches.addLast(showNode);
+    switches.addLast(showEdge);
     tunes.addLast(nodeWeight);
+    tunes.addLast(edgeWeight);
   }
   void display() {
     pushStyle();
@@ -39,6 +41,8 @@ abstract class Result {
   void initialize() {
     spin.value=graph.topology.value<4?false:true;
     nodeWeight.setPreference(gui.unit(0.005), gui.unit(0.0005), gui.unit(0.01), gui.unit(0.00025), gui.unit(1000));
+    edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
+    showNode.value=true;
   }
   void moreControls(float y) {
   }
@@ -48,12 +52,12 @@ abstract class Result {
   }
   void moreMouseReleases() {
   }
-  void displayNode(float x, float y, float z) {
+  void displayNode(Vertex node) {
     if (projection.value)
-      strokeWeight(nodeWeight.value+(modelZ(x, y, z)-modelZ(0, 0, 0))/height*nodeWeight.value);
+      strokeWeight(nodeWeight.value+(modelZ((float)node.x, (float)node.y, (float)node.z)-modelZ(0, 0, 0))/height*nodeWeight.value);
     else
       strokeWeight(nodeWeight.value);
-    point(x, y, z);
+    point((float)node.x, (float)node.y, (float)node.z);
   }
   void controls() {
     fill(gui.headColor[1].value);

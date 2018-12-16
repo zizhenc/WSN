@@ -1,16 +1,17 @@
 class Component {
-  int order;//used for block determination (dfs for block selection)
+  int order, archive;//used for block determination (dfs for block selection), archive is for indicating random combination or aimed backbones
   Color primary, relay;
   Vertex[] degreeList;
   Stack<Vertex> stack=new Stack<Vertex>();
   LinkedList<Vertex>[] giant=new LinkedList[2];//giant[0]->giant block; giant[1]->giant component
   LinkedList<LinkedList<Vertex>> blocks=new LinkedList<LinkedList<Vertex>>(), components=new LinkedList<LinkedList<Vertex>>();//first component is for singletons
-  int[] tails=new int[4];//0->tailsTouchGiantBlock, 1->tailsTouchMinorBlocks, 2->tailsTouchBothBlocks, 3->block components
+  int[] tails=new int[5];//0->tails, 1->tailsTouchGiantBlock, 2->tailsTouchMinorBlocks, 3->tailsTouchBothBlocks, 4->block components
   Component(Color primary, Color relay) {
     degreeList=new Vertex[8];
     initialize(primary, relay);
   }
   Component(Color primary, Color relay, int maxDegree) {
+    archive=1;
     degreeList=new Vertex[maxDegree+1];
     initialize(primary, relay);
   }
@@ -21,7 +22,7 @@ class Component {
     setPartites(primary, relay);
   }
   void reset(Color primary, Color relay) {
-    tails[3]=order=0;
+    tails[4]=order=0;
     stack.clear();
     blocks.clear();
     for (Vertex list : degreeList)
@@ -33,7 +34,7 @@ class Component {
   }
   void restart() {
     for (Vertex node=degreeList[0].next; node!=null; node=node.next)
-      node.order=0;
+      node.order[archive]=0;
     for (Vertex list : degreeList)
       list.clean();
     generateDegreeList();
@@ -53,29 +54,28 @@ class Component {
             if (giant[0].size()<block.size())
               giant[0]=block;
           for (ListIterator<LinkedList<Vertex>> j=blocks.listIterator(blocks.size()-1); j.hasPrevious(); )
-            j.previous().getLast().order=-1;//separating vertex in minor blocks indicator
+            j.previous().getLast().order[archive]=-1;//separating vertex in minor blocks indicator
           for (Vertex node : giant[0])
-            if (node.order==-1) {
-              node.order=-3;
-              tails[3]++;
+            if (node.order[archive]==-1) {
+              node.order[archive]=-3;
+              tails[4]++;
             } else
-              node.order=-4;//-3: separating vertex in giant block indicator, -4: giant block indicator
-          clearTailCounts();
-          countTails();
+              node.order[archive]=-4;//-3: separating vertex in giant block indicator, -4: giant block indicator
         }
+        countTails();
       }
       return false;
     } else {
       Vertex nodeA=degreeList[1].pop();
-      nodeA.order=-2;//tail indicator
+      nodeA.order[archive]=-2;//tail indicator
       degreeList[0].push(nodeA);
       for (Vertex nodeB : nodeA.links)
-        if (nodeB.order!=-2) {
+        if (nodeB.order[archive]!=-2) {
           nodeB.solo(degreeList[nodeB.lowpoint]);
           nodeB.lowpoint--;
           degreeList[nodeB.lowpoint].push(nodeB);
           if (nodeB.lowpoint==0)
-            nodeB.order=-2;
+            nodeB.order[archive]=-2;
           break;
         }
       return true;
@@ -92,13 +92,16 @@ class Component {
         nodeA.links.addLast(nodeB);
         nodeB.links.addLast(nodeA);
       }
-      if (nodeA.links.isEmpty())
+      if (nodeA.links.isEmpty()) {
+        nodeA.order[archive]=0;//minor components indicator
         components.getFirst().addLast(nodeA);
+      }
     }
     for (Vertex nodeA : primary.vertices)
-      if (nodeA.links.isEmpty())
+      if (nodeA.links.isEmpty()) {
+        nodeA.order[archive]=0;//minor components indicator
         components.getFirst().addLast(nodeA);
-      else if (nodeA.order==1) {
+      } else if (nodeA.order[archive]==1) {
         components.addLast(new LinkedList<Vertex>());
         depthFirstSearch(nodeA);
       }
@@ -111,85 +114,79 @@ class Component {
   }
   void generateDegreeList() {
     for (Vertex node : giant[1]) {
-      node.mark=0;//mark all nodes to 0 prepare tail-counting and tail-touching
+      node.mark=true;
       node.lowpoint=node.links.size();
       degreeList[node.lowpoint].push(node);
     }
   }
   void initialMarks(Color colour) {
     for (Vertex node : colour.vertices) {
-      node.order=1;//singleton indicator
+      node.order[archive]=1;//temporary mark for dfs to determine components
       if (node.links==null)
         node.links=new LinkedList<Vertex>();
       else
         node.links.clear();
     }
   }
-  void clearTailCounts() {
-    tails[0]=tails[1]=tails[2]=0;
-  }
   void countTails() {
+    tails[0]=tails[1]=tails[2]=tails[3]=0;
     for (Vertex node=degreeList[0].next; node!=null; node=node.next)
-      node.mark=0;
+      node.mark=true;
     for (Vertex node=degreeList[0].next; node!=null; node=node.next)
-      if (node.mark==0)
+      if (node.mark) {
+        tails[0]++;
         tailTraverse(node);
+      }
   }
   void tailTraverse(Vertex nodeA) {//determine # of tail components
-    switch(nodeA.order) {
-    case -1://touch separating vertices in minor blocks
-      tails[1]++;
-      break;
+    switch(nodeA.order[archive]) {
     case -2://tail
-      nodeA.mark=1;
+      nodeA.mark=false;
       for (Vertex nodeB : nodeA.links)
-        if (nodeB.mark==0)
+        if (nodeB.mark)
           tailTraverse(nodeB);
       break;
     case -3://touch separating vertices in the giant block (it touches both blocks)
-      tails[2]++;
+      tails[3]++;
       break;
     case -4://touch the giant block
-      tails[0]++;
+      tails[1]++;
       break;
     default://touch minor blocks
-      tails[1]++;
+      tails[2]++;
     }
   }
-  int tailsToGiant() {
-    return tails[0]+tails[2];
+  int tailsXGiant() {//tails exclude gianttails
+    return tails[0]-tails[1]-tails[3];
   }
-  int tailsToMinors() {
-    return tails[1]+tails[2];
-  }
-  int tailsToTwoCore() {
-    return tails[0]+tails[1]+tails[2];
+  int tailsXMinors() {//tails exclude minortails
+    return tails[0]-tails[2]-tails[3];
   }
   void depthFirstSearch(Vertex nodeA) {
-    nodeA.order=0;//minor component indicator
+    nodeA.order[archive]=0;//minor component indicator
     components.getLast().addLast(nodeA);
     for (Vertex nodeB : nodeA.links)
-      if (nodeB.order==1)
+      if (nodeB.order[archive]==1)
         depthFirstSearch(nodeB);
   }
   void depthFirstSearch(Vertex nodeA, Vertex precessor) {
-    if (nodeA.order==0) {
-      nodeA.order=nodeA.lowpoint=++order;
+    if (nodeA.order[archive]==0) {
+      nodeA.order[archive]=nodeA.lowpoint=++order;
       stack.push(nodeA);
       while (nodeA.edgeIndicator.hasNext()) {
         Vertex nodeB=nodeA.edgeIndicator.next();
-        if (nodeB!=precessor&&nodeB.order!=-2)
+        if (nodeB!=precessor&&nodeB.order[archive]!=-2)
           depthFirstSearch(nodeB, nodeA);
       }
       if (precessor!=null)
-        if (precessor.order==1)
+        if (precessor.order[archive]==1)
           seperate(nodeA, precessor); 
-        else if (nodeA.lowpoint<precessor.order)
+        else if (nodeA.lowpoint<precessor.order[archive])
           precessor.lowpoint=min(precessor.lowpoint, nodeA.lowpoint);
         else
           seperate(nodeA, precessor);
     } else
-      precessor.lowpoint=min(precessor.lowpoint, nodeA.order);
+      precessor.lowpoint=min(precessor.lowpoint, nodeA.order[archive]);
   }
   void seperate(Vertex node, Vertex precessor) {
     blocks.addLast(new LinkedList<Vertex>());
