@@ -4,7 +4,7 @@ class Graph {
   float breakpoint;
   double r;
   String timeStamp;
-  boolean partitionMode;//true means auto mode, false means manual mode
+  boolean mode;//partitioning mode, true means auto mode, false means manual mode
   ArrayList<Color> colorLibrary=new ArrayList<Color>(), _SLColors=new ArrayList<Color>(), _RLColors=new ArrayList<Color>(), _PYColors=new ArrayList<Color>();
   ArrayList<Vertex> degreeList=new ArrayList<Vertex>();
   Vertex[] vertex;
@@ -80,7 +80,7 @@ class Graph {
     degree[0]-=nodeA.degree;//degree when deleted
   }
   void colour(int index, boolean[] slot) {//smallest-last coloring
-    for (int i=0; i<slot.length; i++)
+    for (int i=0; i<=maxMinDegree; i++)
       slot[i]=false;
     for (Vertex node : vertex[index].neighbors)
       if (node.value<vertex[index].value&&node.primeColor!=null)
@@ -95,30 +95,31 @@ class Graph {
     vertex[index].primeColor.vertices.addLast(vertex[index]);
   }
   int selectPrimarySet(int pivot) {
-    if (primaries<=0)
-      if(partitionMode){
-      }
-      else{
-      }
-      
-      
-      if (partitionModal&&-primaries*100.0/vertex.length>=breakpoint) {
-        primaries=-primaries;
-        int offset=_PYColors.get(_PYColors.size()-1).vertices.size();
-        if (primaries*100.0/vertex.length-breakpoint>breakpoint-(primaries-offset)*100.0/vertex.length) {
-          primaries-=offset;
-          _PYColors.remove(_PYColors.size()-1);
-          pivot--;
+    if (primaries<=0) {
+      if (mode) {
+        if (-primaries*100.0/vertex.length<breakpoint)
+          pivot=addPrimaryColor(pivot);
+        else {
+          primaries=-primaries;
+          int offset=_PYColors.get(_PYColors.size()-1).vertices.size();
+          if (primaries*100.0/vertex.length-breakpoint>breakpoint-(primaries-offset)*100.0/vertex.length) {
+            primaries-=offset;
+            _PYColors.remove(_PYColors.size()-1);
+            pivot--;
+          }
         }
       } else if (_PYColors.size()==round(breakpoint))
         primaries=-primaries;
-      else {
-        Color colour=_SLColors.get(pivot);
-        primaries-=colour.vertices.size();
-        _PYColors.add(colour);
-        pivot++;
-      }
+      else
+        pivot=addPrimaryColor(pivot);
+    }
     return pivot;
+  }
+  int addPrimaryColor(int pivot) {
+    Color colour=_SLColors.get(_PYColors.size());
+    primaries-=colour.vertices.size();
+    _PYColors.add(colour);
+    return ++pivot;
   }
   void generateRelayList(int connectivity) {
     for (int i=_PYColors.size(); i<_SLColors.size(); i++)

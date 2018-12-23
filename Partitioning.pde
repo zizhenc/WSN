@@ -1,10 +1,10 @@
 class Partitioning extends Procedure implements Screen {
-  int _N, _E, frame, pivot;
+  int _E, frame, pivot;
   Slider edgeWeight=new Slider("Edge weight"), breakpoint=new Slider("Selected percentile", 55, 1, 100, 1), selectColorSets=new Slider("Selected color sets", 1, 1);
   Switcher showEdge=new Switcher("Edge", "Edge");
   Checker remainingGraph=new Checker("Remaining graph"), selectedGraph=new Checker("Selected graph");
   LinkedList<String> modalLabels=new LinkedList<String>();
-  Radio modals=new Radio(new String[]{"Auto select", "Manual select"});
+  Radio modes=new Radio(new String[]{"Auto select", "Manual select"});
   Partitioning() {
     word=new String[10];
     parts.addLast(remainingGraph);
@@ -20,21 +20,15 @@ class Partitioning extends Procedure implements Screen {
     if (navigation.end==4) {
       selectColorSets.setMax(graph._SLColors.size()-1);
       navigation.end=-5;
+      interval.setPreference(1, graph._SLColors.size(), 1);
       if (graph.primaries==0) {
-        interval.setPreference(1, graph._SLColors.size(), 1);
+        selectColorSets.setValue(graph._SLColors.size()/2);
         if (navigation.auto) {
-          if (graph.partitionModal) {
-            modals.value=0;
-            breakpoint.setValue(graph.breakpoint);
-            selectColorSets.setValue(graph._SLColors.size()/2);
-          } else {
-            modals.value=1;
-            selectColorSets.setValue(graph.breakpoint);
-          }
+          modes.value=graph.mode?0:1;
+          (graph.mode?breakpoint:selectColorSets).setValue(graph.breakpoint);
         } else {
-          selectColorSets.setValue(graph._SLColors.size()/2);
-          graph.partitionModal=modals.value==0?true:false;
-          graph.breakpoint=(graph.partitionModal?breakpoint:selectColorSets).value;
+          graph.mode=modes.value==0?true:false;
+          graph.breakpoint=(graph.mode?breakpoint:selectColorSets).value;
         }
         updateSelection();
       } else
@@ -44,7 +38,7 @@ class Partitioning extends Procedure implements Screen {
   void updateSelection() {//update selection after modal changed
     if (tunes.getLast()!=edgeWeight)
       tunes.removeLast();
-    tunes.addLast(graph.partitionModal?breakpoint:selectColorSets);
+    tunes.addLast(graph.mode?breakpoint:selectColorSets);
   }
   void deploying() {
     if (play.value&&frameCount-frame>frameRate/interval.value) {
@@ -62,7 +56,7 @@ class Partitioning extends Procedure implements Screen {
     }
   }
   void show() {
-    _N=_E=0;
+    _E=0;
     if (remainingGraph.value) {
       stroke(gui.mainColor.value);
       for (int i=pivot; i<graph._SLColors.size(); i++ )
@@ -75,27 +69,24 @@ class Partitioning extends Procedure implements Screen {
                 line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
               }
           }
-          if (showNode.value) {
-            ++_N;
+          if (showNode.value)
             displayNode(nodeA);
-          }
         }
     }
     if (selectedGraph.value) {
       for (int i=0; i<pivot; i++) {
-        Color colour=graph._SLColors.get(i);
+        Color colour=graph._PYColors.get(i);
         for (Vertex nodeA : colour.vertices) {
           if (showEdge.value) {
             strokeWeight(edgeWeight.value);
             stroke(gui.partColor[1].value);
             for (Vertex nodeB : nodeA.neighbors)
               if (nodeA.value>nodeB.value&&nodeB.primeColor.index<pivot) {
-                _E++;    
+                _E++;
                 line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
               }
           }
           if (showNode.value) {
-            ++_N;
             stroke(colour.value);
             displayNode(nodeA);
           }
@@ -125,42 +116,57 @@ class Partitioning extends Procedure implements Screen {
     fill(gui.bodyColor[0].value);
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
-    word[0]=String.format("Vertices: %d (%.2f %%)", _N, _N*100.0/graph.vertex.length);
+    int vertices=getN();
+    word[0]=String.format("Vertices: %d (%.2f %%)", vertices, vertices*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", _E, _E*100.0/graph._E);
-    word[2]=String.format("Average degree: %.2f", _E*2.0/_N);
+    word[2]=String.format("Average degree: %.2f", _E*2.0/vertices);
     word[3]="Primary colors: "+pivot;
-    if (modals.value==1)
-      word[4]=String.format("Complete: %.2f%%", 100*selectColorSets.value/graph._SLColors.size());
-    for (int i=0; i<(modals.value==0?4:5); i++)
+    if (modes.value==1)
+      word[4]=String.format("Complete: %.2f%%", pivot*100/selectColorSets.value);
+    for (int i=0; i<(modes.value==0?4:5); i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(14+i));
   }
   void moreControls(float y) {
     fill(gui.headColor[2].value);
-    text("Partition modals:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY());
-    modals.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
+    text("Partition mode:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY());
+    modes.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
   }
   void moreMouseReleases() {
-    if (modals.active()) {
-      graph.partitionModal=modals.value==0?true:false;
+    if (modes.active()) {
+      graph.mode=modes.value==0?true:false;
       updateSelection();
-      graph.breakpoint=tunes.getLast().value;
       reset();
     }
-    if (tunes.getLast().active()) {
-      graph.breakpoint=tunes.getLast().value;
+    if (tunes.getLast().active())
       reset();
-    }
   }
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='e')
       showEdge.value=!showEdge.value;
   }
   void reset() {
+    graph.breakpoint=tunes.getLast().value;
     navigation.end=-5;
     clean();
   }
   void clean() {
     graph._PYColors.clear();
     pivot=graph.primaries=0;
+  }
+  int getN() {
+    if (selectedGraph.value&&remainingGraph.value)
+      return graph.vertex.length;
+    else if (selectedGraph.value)
+      return getNodes(0, pivot);
+    else if (remainingGraph.value)
+      return getNodes(pivot, graph._SLColors.size());
+    else
+      return 0;
+  }
+  int getNodes(int index, int len) {
+    int sum=0;
+    for (int i=index; i<len; i++)
+      sum+=graph._SLColors.get(i).vertices.size();
+    return sum;
   }
 }

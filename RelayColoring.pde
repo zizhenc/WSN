@@ -15,10 +15,10 @@ class RelayColoring extends Procedure implements Screen {
     switches.addLast(showEdge);
   }
   void setting() {
-    surplus.value=primaryGraph.value=uncoloredGraph.value=showEdge.value=false;
-    coloredGraph.value=showNode.value=true;
-    edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     initialize();
+    surplus.value=primaryGraph.value=uncoloredGraph.value=showEdge.value=false;
+    coloredGraph.value=true;
+    edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     if (navigation.end==5) {
       if (slot==null||slot.length<graph._PYColors.size())
         slot=new boolean[graph._PYColors.size()];

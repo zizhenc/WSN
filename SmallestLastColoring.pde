@@ -25,7 +25,8 @@ class SmallestLastColoring extends Procedure implements Screen {
       _N=0;
       if (graph._SLColors.isEmpty()) {
         interval.setPreference(ceil(graph.vertex.length*7.0/3200), ceil(graph.vertex.length/3.0), ceil(graph.vertex.length*7.0/3200));
-        slot=new boolean[graph.maxMinDegree+1];
+        if (slot==null||slot.length<=graph.maxMinDegree)
+          slot=new boolean[graph.maxMinDegree+1];
       } else {
         for (Color colour : graph._SLColors)
           colour.clean();

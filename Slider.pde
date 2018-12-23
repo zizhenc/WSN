@@ -42,17 +42,17 @@ class Slider {
     this.value=constrain(value, min, max);
   }
   void setPreference(float value, float max) {
-    this.max=max;
+    this.max=max(min, max);
     this.value=constrain(value, min, max);
   }
   void setPreference(float value, float max, float step) {
-    this.max=max;
+    this.max=max(min, max);
     this.value=constrain(value, min, max);
     this.step=step;
   }
   void setPreference(float value, float min, float max, float step, float scale) {
     this.min=min;
-    this.max=max;
+    this.max=max(min, max);
     this.value=constrain(value, min, max);
     this.step=step;
     this.scale=scale;
