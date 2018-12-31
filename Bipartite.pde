@@ -1,15 +1,15 @@
 abstract class Bipartite extends Procedure implements Screen {
   int _N, _E;
   boolean goOn;
-  String[] headers={"Degree", "Primary", "Relay", "Total"}, modalLabels={"Table", "Bar chart"};
+  String[] headers={"Degree", "Primary", "Relay", "Total"}, modeLabels={"Table", "Bar chart"};
   Color primary, relay;
   SysColor[] plotColor=new SysColor[3];
-  Radio modals=new Radio(modalLabels);
+  Radio modes=new Radio(modeLabels);
   Region region=new Region();
-  Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
+  Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1), arrowWeight=new Slider("Arrow weight");
   Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block");
   ExTable table;
-  Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
+  Switcher showEdge=new Switcher("Edge", "Edge"), directed=new Switcher("Undirected", "Directed"), showRegion=new Switcher("Region", "Region");
   BarChart barChart=new BarChart("Degree", "Vertex", new String[]{"Primary", "Relay", "Total"});
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
@@ -22,7 +22,9 @@ abstract class Bipartite extends Procedure implements Screen {
     parts.addLast(giantComponent);
     switches.addLast(showEdge);
     switches.addLast(showRegion);
+    switches.addLast(directed);
     tunes.addLast(edgeWeight);
+    tunes.addLast(arrowWeight);
     tunes.addLast(backbone);
     table=new ExTable(headers, 8);
     plotColor[2]=gui.mainColor;
@@ -34,9 +36,10 @@ abstract class Bipartite extends Procedure implements Screen {
   }
   void setting() {
     initialize();
-    showNode.value=showEdge.value=minorComponents.value=giantComponent.value=minorBlocks.value=giantBlock.value=plot[0].value=plot[1].value=plot[2].value=true;
-    tails.value=showRegion.value=false;
+    showEdge.value=minorComponents.value=giantComponent.value=minorBlocks.value=giantBlock.value=plot[0].value=plot[1].value=plot[2].value=true;
+    tails.value=showRegion.value=directed.value=false;
     edgeWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
+    arrowWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.001), gui.unit(0.00025), gui.unit(1000));
     for (int i=0; i<plot.length; i++)
       barChart.setPlot(i, plot[i].value);
     setComponent(1);
@@ -217,7 +220,7 @@ abstract class Bipartite extends Procedure implements Screen {
     word[len-1]="Primary partite #"+(primary.index+1)+" & relay partite #"+(relay.index+1);
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+i+1));
-    if (modals.value==1)
+    if (modes.value==1)
       barChart.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
     else
       table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap());
@@ -230,18 +233,18 @@ abstract class Bipartite extends Procedure implements Screen {
   }
   void moreControls(float y) {
     fill(gui.headColor[2].value);
-    text("Chart modals:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY());
-    modals.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
-    if (modals.value==1) {
+    text("Chart mode:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY());
+    modes.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
+    if (modes.value==1) {
       fill(gui.headColor[2].value);
-      text("Plots:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY(2)+gui.thisFont.gap()+modals.radioHeight);
+      text("Plots:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY(2)+gui.thisFont.gap()+modes.radioHeight);
       for (int i=0; i<plot.length; i++)
-        plot[i].display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY(2)+gui.thisFont.gap(2)+modals.radioHeight+(plot[0].checkerHeight+gui.thisFont.gap())*i);
+        plot[i].display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY(2)+gui.thisFont.gap(2)+modes.radioHeight+(plot[0].checkerHeight+gui.thisFont.gap())*i);
     }
   }
   void moreMouseReleases() {
-    modals.active();
-    if (modals.value==1)
+    modes.active();
+    if (modes.value==1)
       for (int i=0; i<plot.length; i++)
         if (plot[i].active()) {
           plot[i].value=!plot[i].value;
@@ -345,7 +348,7 @@ abstract class Bipartite extends Procedure implements Screen {
   void clearStatistics() {
     _N=_E=0;//mainColor->giantBlock partsColor[0]->minorBlocks partsColor[1]->tails partsColor[2]->minorComponents
     domain.clear();
-    switch(modals.value) {
+    switch(modes.value) {
     case 0:
       for (int i=0; i<8; i++)
         for (int j=0; j<plot.length; j++)
@@ -360,7 +363,7 @@ abstract class Bipartite extends Procedure implements Screen {
   void analyze(Vertex node, int degree) {
     int category=node.primeColor==primary?0:1, tValue;
     float bValue;
-    switch(modals.value) {
+    switch(modes.value) {
     case 0:
       tValue=table.getInt(7-degree, category+1)+1;
       table.setInt(7-degree, category+1, tValue);
@@ -373,5 +376,29 @@ abstract class Bipartite extends Procedure implements Screen {
       bValue=barChart.points[2].get(degree)+1;
       barChart.points[2].set(degree, bValue);
     }
+  }
+  void arrow(float x1, float y1, float z1, float x2, float y2, float z2) {
+    noFill();
+    PVector tangent=new PVector(x2-x1, y2-y1, z2-z1), yAxis=new PVector(0, 1, 0), normal=tangent.cross(yAxis);
+    pushMatrix();
+    translate((x1+x2)/2, (y1+y2)/2, (z1+z2)/2);
+    rotate(-PVector.angleBetween(tangent, yAxis), normal.x, normal.y, normal.z);
+    float angle = 0, angleIncrement = TWO_PI/4;
+    beginShape(QUAD_STRIP);
+    for (int i = 0; i < 5; ++i) {
+      vertex(0, -arrowWeight.value*5, 0);
+      vertex(arrowWeight.value*4*cos(angle), arrowWeight.value*3, arrowWeight.value*4*sin(angle));
+      angle += angleIncrement;
+    }
+    endShape();
+    angle = 0;
+    beginShape(TRIANGLE_FAN);
+    vertex(0, arrowWeight.value*3, 0);
+    for (int i = 0; i < 5; i++) {
+      vertex(arrowWeight.value*4*cos(angle), arrowWeight.value*3, arrowWeight.value*4*sin(angle));
+      angle += angleIncrement;
+    }
+    endShape();
+    popMatrix();
   }
 }

@@ -3,14 +3,13 @@ class SmallestLastColoring extends Procedure implements Screen {
   boolean[] slot;
   Switcher showEdge=new Switcher("Edge", "Edge"), showMeasurement=new Switcher("Measurement", "Measurement");
   Checker uncoloredGraph=new Checker("Uncolored graph"), coloredGraph=new Checker("Colored graph");
-  Slider edgeWeight=new Slider("Edge weight"), arrowWeight=new Slider("Arrow weight");
+  Slider edgeWeight=new Slider("Edge weight");
   Vertex nodeM=new Vertex();
   SmallestLastColoring() {
     word=new String[9];
     parts.addLast(uncoloredGraph);
     parts.addLast(coloredGraph);
     tunes.addLast(edgeWeight);
-    tunes.addLast(arrowWeight);
     switches.addLast(showEdge);
     switches.addLast(showMeasurement);
   }
@@ -19,7 +18,6 @@ class SmallestLastColoring extends Procedure implements Screen {
     showMeasurement.value=uncoloredGraph.value=showEdge.value=false;
     coloredGraph.value=true;
     edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
-    arrowWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.001), gui.unit(0.00025), gui.unit(1000));
     if (navigation.end==3) {
       navigation.end=-4;
       _N=0;

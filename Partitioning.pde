@@ -19,9 +19,9 @@ class Partitioning extends Procedure implements Screen {
     edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     if (navigation.end==4) {
       selectColorSets.setMax(graph._SLColors.size()-1);
+      interval.setPreference(1, frameRate, 1);
       navigation.end=-5;
-      interval.setPreference(1, graph._SLColors.size(), 1);
-      if (graph.primaries==0) {
+      if (graph.primaries==-1) {
         selectColorSets.setValue(graph._SLColors.size()/2);
         if (navigation.auto) {
           modes.value=graph.mode?0:1;
@@ -44,14 +44,17 @@ class Partitioning extends Procedure implements Screen {
     if (play.value&&frameCount-frame>frameRate/interval.value) {
       if (pivot<graph._PYColors.size())
         pivot++;
-      else if (graph.primaries>0) {
+      else if (graph.primaries<0) {
+        graph.selectPrimarySet();
+        pivot++;
+      } else {
+        pivot=min(pivot, graph._PYColors.size());
         if (navigation.end==-5)
           navigation.end=5;
         if (navigation.auto)
           navigation.go(405);
         play.value=false;
-      } else
-        pivot=graph.selectPrimarySet(pivot);
+      }
       frame=frameCount;
     }
   }
@@ -75,7 +78,7 @@ class Partitioning extends Procedure implements Screen {
     }
     if (selectedGraph.value) {
       for (int i=0; i<pivot; i++) {
-        Color colour=graph._PYColors.get(i);
+        Color colour=graph._SLColors.get(i);
         for (Vertex nodeA : colour.vertices) {
           if (showEdge.value) {
             strokeWeight(edgeWeight.value);
@@ -151,7 +154,8 @@ class Partitioning extends Procedure implements Screen {
   }
   void clean() {
     graph._PYColors.clear();
-    pivot=graph.primaries=0;
+    pivot=0;
+    graph.primaries=-1;
   }
   int getN() {
     if (selectedGraph.value&&remainingGraph.value)

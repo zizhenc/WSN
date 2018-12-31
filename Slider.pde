@@ -35,11 +35,11 @@ class Slider {
   void increaseValue() {
     value=constrain(value+step, min, max);
   }
-  void setMax(float max) {
-    this.max=max(min, max);
-  }
   void setValue(float value) {
     this.value=constrain(value, min, max);
+  }
+  void setMax(float max) {
+    this.max=max(min, max);
   }
   void setPreference(float value, float max) {
     this.max=max(min, max);

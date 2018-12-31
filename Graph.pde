@@ -1,5 +1,5 @@
 class Graph {
-  int _E, maxDegree, minDegree, maxMinDegree, primaries, methodIndex, connectivity=2, coordinateIndex;
+  int _E, maxDegree, minDegree, maxMinDegree, methodIndex, connectivity=2, coordinateIndex, primaries=-1;//primaries is order of selected graph adjusted back 1 for mark when the algorithm stopped or continue.
   int[] degreeDistribution;
   float breakpoint;
   double r;
@@ -94,32 +94,29 @@ class Graph {
       node.categorize(vertex[index]);
     vertex[index].primeColor.vertices.addLast(vertex[index]);
   }
-  int selectPrimarySet(int pivot) {
-    if (primaries<=0) {
+  void selectPrimarySet() {
+    if (primaries<0) {
       if (mode) {
-        if (-primaries*100.0/vertex.length<breakpoint)
-          pivot=addPrimaryColor(pivot);
+        if ((primaries+1)*-100.0/vertex.length<breakpoint)
+          addPrimaryColor();
         else {
-          primaries=-primaries;
+          primaries=-(primaries+1);
           int offset=_PYColors.get(_PYColors.size()-1).vertices.size();
           if (primaries*100.0/vertex.length-breakpoint>breakpoint-(primaries-offset)*100.0/vertex.length) {
             primaries-=offset;
             _PYColors.remove(_PYColors.size()-1);
-            pivot--;
           }
         }
       } else if (_PYColors.size()==round(breakpoint))
-        primaries=-primaries;
+        primaries=-primaries-1;
       else
-        pivot=addPrimaryColor(pivot);
+        addPrimaryColor();
     }
-    return pivot;
   }
-  int addPrimaryColor(int pivot) {
+  void addPrimaryColor() {
     Color colour=_SLColors.get(_PYColors.size());
     primaries-=colour.vertices.size();
     _PYColors.add(colour);
-    return ++pivot;
   }
   void generateRelayList(int connectivity) {
     for (int i=_PYColors.size(); i<_SLColors.size(); i++)
@@ -134,7 +131,7 @@ class Graph {
   }
   int colour(boolean[] slot, int index) {//relay coloring
     if (relayList[index].isEmpty())
-      return index-1;
+      index--;
     else {
       Vertex nodeA=relayList[index].removeFirst();
       for (int i=0; i<_PYColors.size(); i++)
@@ -153,8 +150,8 @@ class Graph {
         }
       if (nodeA.relayColor==null)
         pushRelayList(index, nodeA);
-      return index;
     }
+    return index;
   }
   Component getBackbone(int index) {
     if (backbone==null)

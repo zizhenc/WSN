@@ -13,31 +13,29 @@ abstract class Partite extends Procedure implements Screen {
     parts.addLast(partite);
     switches.addLast(showEdge);
     switches.addLast(showRegion);
+    switches.addLast(showMeasurement);
+    switches.addLast(directed);
     tunes.addLast(edgeWeight);
     tunes.addLast(arrowWeight);
     tunes.addLast(partiteIndex);
   }
   void setting() {
     initialize();
-    showNode.value=partite.value=true;
+    partite.value=true;
     showMeasurement.value=directed.value=showRegion.value=false;
     edgeWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     arrowWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.001), gui.unit(0.00025), gui.unit(1000));
     setColorPool();
     partiteIndex.setPreference(1, colorPool.size());
     setPartite();
+    updateTunes();
   }
   void restart() {
-    reset();
     colour.restart();
   }
   void deploying() {
     for (int i=0; i<interval.value; i++)
       if (play.value&&!colour.deploying()) {
-        if (switches.getLast()!=directed) {
-          switches.addLast(showMeasurement);
-          switches.addLast(directed);
-        }
         if (navigation.auto) {
           if (partiteIndex.value<partiteIndex.max) {
             partiteIndex.increaseValue();
@@ -47,6 +45,19 @@ abstract class Partite extends Procedure implements Screen {
         }
         play.value=navigation.auto;
       }
+  }
+  void updateTunes() {
+    if (showEdge.value) {
+      if (switches.getLast()!=directed) {
+        switches.addLast(showMeasurement);
+        switches.addLast(directed);
+      }
+    } else {
+      if (switches.getLast()==directed) {
+        switches.removeLast();
+        switches.removeLast();
+      }
+    }
   }
   void show() {
     if (partite.value) {
@@ -91,6 +102,8 @@ abstract class Partite extends Procedure implements Screen {
       region.amount=round(regionAmount.value);
     if (partiteIndex.active())
       setPartite();
+    if (showEdge.active())
+      updateTunes();
     if (showRegion.active())
       if (showRegion.value) {
         if (tunes.getLast()!=regionAmount)
@@ -102,6 +115,7 @@ abstract class Partite extends Procedure implements Screen {
     switch (Character.toLowerCase(key)) {
     case 'e':
       showEdge.value=!showEdge.value;
+      updateTunes();
       break;
     case 't':
       showRegion.value=!showRegion.value;
@@ -163,18 +177,12 @@ abstract class Partite extends Procedure implements Screen {
     else
       colour=colorPool.get(round(partiteIndex.value)-1);
     colour.initialize(domain);
-    reset();
     regionAmount.setPreference(1, colour.vertices.size());
     region.amount=round(regionAmount.value);
     interval.setPreference(1, ceil(colour.vertices.size()/3.0), 1);
   }
-  void reset() {
-    if (switches.getLast()==directed) {
-      switches.removeLast();
-      switches.removeLast();
-    }
-  }
   void arrow(float x1, float y1, float z1, float x2, float y2, float z2) {
+    noFill();
     PVector tangent=new PVector(x2-x1, y2-y1, z2-z1), yAxis=new PVector(0, 1, 0), normal=tangent.cross(yAxis);
     pushMatrix();
     translate((x1+x2)/2, (y1+y2)/2, (z1+z2)/2);
