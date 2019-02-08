@@ -13,6 +13,6 @@ class Error {
     String timeStamp=month()+"/"+day()+"/"+year()+" "+hour()+":"+minute()+":"+second()+":"+millis();
     println("["+timeStamp+"]: "+message+"!");
     out.println("["+timeStamp+"]: "+message+".");
-    gui.pop(message+"!", "Error Alert");
+    gui.messageBox(message+"!", "Error Alert");
   }
 }

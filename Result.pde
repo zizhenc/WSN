@@ -3,8 +3,8 @@ abstract class Result {
   String[] word;
   Slider nodeWeight=new Slider("Node weight"), edgeWeight=new Slider("Edge weight");
   Capture capture=new Capture();
-  Switcher spin=new Switcher("Spin", "Spin"), showNode=new Switcher("Node", "Node"), showEdge=new Switcher("Edge", "Edge"), projection=new Switcher("Orthographic", "Perspective");
   Button[] button={new Button("Restore"), new Button("Screenshot")};
+  Switcher spin=new Switcher("Spin", "Spin"), showNode=new Switcher("Node", "Node"), showEdge=new Switcher("Edge", "Edge"), projection=new Switcher("Orthographic", "Perspective");
   LinkedList<Slider> tunes=new LinkedList<Slider>();
   LinkedList<Checker> parts=new LinkedList<Checker>();
   LinkedList<Switcher> switches=new LinkedList<Switcher>();
@@ -17,6 +17,11 @@ abstract class Result {
     switches.addLast(showEdge);
     tunes.addLast(nodeWeight);
     tunes.addLast(edgeWeight);
+  }
+  void initialize() {
+    spin.value=graph.topology.value<4?false:true;
+    nodeWeight.setPreference(gui.unit(0.005), gui.unit(0.0005), gui.unit(0.01), gui.unit(0.00025), gui.unit(1000));
+    edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
   }
   void display() {
     pushStyle();
@@ -32,32 +37,10 @@ abstract class Result {
     rotateY(spinY);
     rotateZ(spinZ);
     show();
-    popMatrix();
-    popStyle();
+    pop();
     navigation.display();
     if (capture.active)
       capture.display();
-  }
-  void initialize() {
-    spin.value=graph.topology.value<4?false:true;
-    nodeWeight.setPreference(gui.unit(0.005), gui.unit(0.0005), gui.unit(0.01), gui.unit(0.00025), gui.unit(1000));
-    edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
-    showNode.value=true;
-  }
-  void moreControls(float y) {
-  }
-  void moreKeyPresses() {
-  }
-  void moreKeyReleases() {
-  }
-  void moreMouseReleases() {
-  }
-  void displayNode(Vertex node) {
-    if (projection.value)
-      strokeWeight(nodeWeight.value+(modelZ((float)node.x, (float)node.y, (float)node.z)-modelZ(0, 0, 0))/height*nodeWeight.value);
-    else
-      strokeWeight(nodeWeight.value);
-    point((float)node.x, (float)node.y, (float)node.z);
   }
   void controls() {
     fill(gui.headColor[1].value);
@@ -76,6 +59,24 @@ abstract class Result {
     text("Tunes:", width-gui.margin()+gui.thisFont.stepX(), gui.thisFont.stepY(5)+button.length*(button[0].buttonHeight+gui.thisFont.gap())+switches.size()*(spin.switchHeight+gui.thisFont.gap())+parts.size()*(parts.getFirst().checkerHeight+gui.thisFont.gap()));
     for (ListIterator<Slider> i=tunes.listIterator(); i.hasNext(); i.next().display(width-gui.margin()+gui.thisFont.stepX(2), gui.thisFont.stepY(5)+button.length*(button[0].buttonHeight+gui.thisFont.gap())+switches.size()*(spin.switchHeight+gui.thisFont.gap())+parts.size()*(parts.getFirst().checkerHeight+gui.thisFont.gap())+nodeWeight.sliderHeight*i.previousIndex(), gui.margin()-gui.thisFont.stepX(3)));
     moreControls(gui.thisFont.stepY(5)+button.length*(button[0].buttonHeight+gui.thisFont.gap())+switches.size()*(spin.switchHeight+gui.thisFont.gap())+parts.size()*(parts.getFirst().checkerHeight+gui.thisFont.gap())+tunes.size()*nodeWeight.sliderHeight);
+  }
+  void relocate() {
+    spinX=spinY=spinZ=centralX=centralY=centralZ=eyeX=eyeY=eyeZ=0;
+  }
+  void moreKeyPresses() {
+  }
+  void moreKeyReleases() {
+  }
+  void moreMouseReleases() {
+  }
+  void moreControls(float y) {
+  }
+  void displayNode(Vertex node) {
+    if (projection.value)
+      strokeWeight(nodeWeight.value+(modelZ((float)node.x, (float)node.y, (float)node.z)-modelZ(0, 0, 0))/height*nodeWeight.value);
+    else
+      strokeWeight(nodeWeight.value);
+    point((float)node.x, (float)node.y, (float)node.z);
   }
   void keyPress() {
     if (!capture.active) {
@@ -124,6 +125,9 @@ abstract class Result {
       navigation.keyRelease();
       if (!navigation.active()) {
         switch(Character.toLowerCase(key)) {
+        case 'e':
+          showEdge.value=!showEdge.value;
+          break;
         case 'x':
           capture.store();
           break;
@@ -147,9 +151,6 @@ abstract class Result {
     }
   }
   void keyType() {
-  }
-  void relocate() {
-    spinX=spinY=spinZ=centralX=centralY=centralZ=eyeX=eyeY=eyeZ=0;
   }
   void mousePress() {
     if (capture.active)

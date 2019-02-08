@@ -12,12 +12,11 @@ class SmallestLastOrdering extends Procedure implements Screen {
     switches.addLast(showEdge);
     switches.addLast(showMeasurement);
     tunes.addLast(edgeWeight);
+    deletedGraph.value=false;
   }
   void setting() {
     initialize();
-    remainingGraph.value=showMeasurement.value=showEdge.value=true;
     edgeWeight.setPreference(gui.unit(0.0005), gui.unit(0.00002), gui.unit(0.002), gui.unit(0.0005), gui.unit(1000));
-    deletedGraph.value=false;
     if (graph.degreeList.isEmpty()) {
       interval.setPreference(ceil(graph.vertex.length*7.0/3200), ceil(graph.vertex.length/3.0), ceil(graph.vertex.length*7.0/3200));
       graph.generateDegreeList();

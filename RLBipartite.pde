@@ -3,17 +3,10 @@ class RLBipartite extends Bipartite {
     word=new String[13];
   }
   void setComponent(int index) {
-    if (index>graph._RLColors.size()) {
-      primary=relay=gui.mainColor;
-      if (component==null)
-        component=new Component(primary, relay);
-      else
-        component.reset(primary, relay);
-    } else {
-      component=graph.getBackbone(index-1);
-      primary=component.primary;
-      relay=component.relay;
-    }
+    graph.initailizeBackbones();
+    component=graph.getBackbone(index-1);
+    primary=component.primary;
+    relay=component.relay;
     reset();
   }
   int getAmount() {

@@ -44,8 +44,8 @@ class GUI {
     surface.setLocation((displayWidth-width)/2, round(0.035*displayHeight));
     surface.setResizable(true);
     surface.setTitle("Wireless Sensor Networks");
-    body=new Font("AmericanTypewriter-Bold-24.vlw", 18);
-    head=new Font("AmericanTypewriter-Bold-48.vlw", 30);
+    body=new Font("AmericanTypewriter-Bold-24.vlw", 19);
+    head=new Font("Apple-Chancery-48.vlw", 50);
     cover[0]=new Image("RedDragon.jpg");
     cover[1]=new Image("BlueDragon.jpg");
     title=new Image("Title.png");
@@ -66,9 +66,8 @@ class GUI {
       loading();
   }
   void loading() {
-    pushStyle();
+    push();
     body.initialize();
-    pushMatrix();
     translate(width/2, logo());
     noStroke();
     fill(backgroundColor.value);
@@ -83,8 +82,7 @@ class GUI {
     ellipse(cos(angle)*unit(10), sin(angle)*unit(10)+thisFont.stepY(3)+unit(15), unit(10), unit(10));
     fill(bodyColor[2].value);
     text(loadText[frameCount/15%4], 0, thisFont.stepY(2));
-    popMatrix();
-    popStyle();
+    pop();
   }
   void messageBox() {
     pushStyle();
@@ -127,7 +125,7 @@ class GUI {
     text(String.format("FPS: %.2f", frameRate), width-thisFont.stepX(), height-thisFont.stepY());
     popStyle();
   }
-  void pop(String mainMessage, String metaMessage) {
+  void messageBox(String mainMessage, String metaMessage) {
     x=width/2;
     y=height/2;
     message[0]=mainMessage;

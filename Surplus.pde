@@ -1,18 +1,17 @@
 class Surplus extends Result implements Screen {
-  Checker surplus=new Checker("Surplus"), minorComponents=new Checker("+Minor components"), tails=new Checker("+Tails"), minorBlocks=new Checker("+Minor blocks"), giantBlock=new Checker("Giant block");
+  Checker surplus=new Checker("Surplus"), minorComponents=new Checker("+Minor components"), tails=new Checker("+Tails"), minorBlocks=new Checker("+Minor blocks"), giantBlocks=new Checker("+Giant blocks");
   int _N, _E;
   Surplus() {
     word=new String[13];
-    parts.addLast(giantBlock);
+    parts.addLast(giantBlocks);
     parts.addLast(surplus);
     parts.addLast(minorComponents);
     parts.addLast(tails);
     parts.addLast(minorBlocks);
+    showEdge.value=tails.value=giantBlocks.value=minorComponents.value=minorBlocks.value=false;
   }
   void setting() {
     initialize();
-    surplus.value=true;
-    showEdge.value=tails.value=giantBlock.value=minorComponents.value=minorBlocks.value=false;
     graph.calculateBackbones();
   }
   void show() {
@@ -22,61 +21,62 @@ class Surplus extends Result implements Screen {
       case -5:
         if (surplus.value) {
           stroke(gui.mainColor.value);
-          displayEdge(nodeA);
-          displayNode(nodeA);
+          showNetwork(nodeA);
         }
         break;
       case 0:
         if (minorComponents.value) {
           stroke(gui.partColor[0].value);
-          displayEdge(nodeA);
-          displayNode(nodeA);
+          showNetwork(nodeA);
         }
         break;
       case -2:
         if (tails.value) {
           stroke(gui.partColor[3].value);
-          displayEdge(nodeA);
-          displayNode(nodeA);
+          showNetwork(nodeA);
+        }
+        break;
+      case -3:
+        if (giantBlocks.value) {
+          stroke(gui.partColor[1].value);
+          showNetwork(nodeA);
+        } else if (minorBlocks.value) {
+          stroke(gui.partColor[2].value);
+          showNetwork(nodeA);
         }
         break;
       case -4:
-        if (giantBlock.value) {
+        if (giantBlocks.value) {
           stroke(gui.partColor[1].value);
-          displayEdge(nodeA);
-          displayNode(nodeA);
+          showNetwork(nodeA);
         }
         break;
       default:
         if (minorBlocks.value) {
           stroke(gui.partColor[2].value);
-          displayEdge(nodeA);
-          displayNode(nodeA);
+          showNetwork(nodeA);
         }
       }
   }
-  void displayNode(Vertex node) {
-    if (showNode.value) {
-      _N++;
-      displayNode(node);
-    }
-  }
-  void displayEdge(Vertex nodeA) {
+  void showNetwork(Vertex nodeA) {
     if (showEdge.value) {
       strokeWeight(edgeWeight.value);
       for (Vertex nodeB : nodeA.neighbors)
-        if (nodeA.value<nodeB.value&&(giantBlock.value&&nodeB.order[1]==-4||minorBlocks.value&&nodeB.order[1]>-2||tails.value&&nodeB.order[1]==-2||minorComponents.value&&nodeB.order[1]==0||surplus.value&&nodeB.order[1]==-5)) {
+        if (nodeA.value<nodeB.value&&((nodeB.order[1]>0||nodeB.order[1]==-1)&&minorBlocks.value||nodeB.order[1]==0&&minorComponents.value||nodeB.order[1]==-2&&tails.value||nodeB.order[1]==-3&&(giantBlocks.value||minorBlocks.value)||nodeB.order[1]==-4&&giantBlocks.value)) {
           _E++;
           line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
         }
     }
+    if (showNode.value) {
+      _N++;
+      displayNode(nodeA);
+    }
   }
   void data() {
     fill(gui.headColor[1].value);
-    text("Relay coloring backbones...", gui.thisFont.stepX(), gui.thisFont.stepY());
+    text("Surplus...", gui.thisFont.stepX(), gui.thisFont.stepY());
     fill(gui.headColor[2].value);
     text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
-    text("Runtime data:", gui.thisFont.stepX(2), gui.thisFont.stepY(15));
     int surplusOrder=graph.surplus();
     word[0]="Topology: "+graph.topology;
     word[1]="N: "+graph.vertex.length;
@@ -94,14 +94,13 @@ class Surplus extends Result implements Screen {
     fill(gui.bodyColor[0].value);
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
-    word[0]="Vertices: "+_N;
-    word[1]="Edges: "+_E;
-    word[2]=String.format("Average degree: %.2f", _E*2.0/_N);
+    fill(gui.headColor[2].value);
+    text("Runtime data:", gui.thisFont.stepX(2), gui.thisFont.stepY(16));
+    fill(gui.bodyColor[0].value);
+    word[0]=String.format("Vertices: %d (%.2f %%)", _N, _N*100.0/graph.vertex.length);
+    word[1]=String.format("Edges: %d (%.2f %%)", _E, _E*100.0/graph._E);
+    word[2]=String.format("Average degree: %.2f", showNode.value?_E*2.0/_N:0);
     for (int i=0; i<3; i++)
-      text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(16+i));
-  }
-  void moreKeyReleases() {
-    if (Character.toLowerCase(key)=='e')
-      showEdge.value=showEdge.value ? false : true;
+      text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(16+i+1));
   }
 }

@@ -32,7 +32,7 @@ class Region {
     line(0, 0, 0, 0.05);
     pushMatrix();
     rotateX(HALF_PI);
-    ellipse(0, 0, (float)graph.r*2, (float)graph.r*2);
+    circle(0, 0, (float)graph.r*2);
     popMatrix();
     popMatrix();
   }
@@ -50,14 +50,14 @@ class Region {
     line(0, 0, 0, 0.05);
     pushMatrix();
     rotateX(HALF_PI);
-    ellipse(0, 0, (float)graph.r*2, (float)graph.r*2);
+    circle(0, 0, (float)graph.r*2);
     popMatrix();
     popMatrix();
   }
   void parallel(Vertex vertex) {
     stroke(gui.highlightColor.value);
     fill(gui.highlightColor.value, 10);
-    ellipse((float)vertex.x, (float)vertex.y, (float)graph.r*2, (float)graph.r*2);
+    circle((float)vertex.x, (float)vertex.y, (float)graph.r*2);
   }
   void space(Vertex vertex) {
     stroke(gui.highlightColor.value);

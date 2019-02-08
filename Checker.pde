@@ -1,7 +1,7 @@
 class Checker {
   float x, y, checkerHeight;
   String label;
-  boolean value;
+  boolean value=true;
   Checker(String label) {
     this.label=label;
   }
@@ -15,7 +15,7 @@ class Checker {
     stroke(gui.frameColor.value);
     strokeWeight(gui.unit(2));
     noFill();
-    rect(x, y, checkerHeight, checkerHeight);
+    square(x, y, checkerHeight);
     fill(gui.bodyColor[2].value);
     text(label, x+checkerHeight+gui.thisFont.stepX(), y+checkerHeight/2);
     if (active()) {

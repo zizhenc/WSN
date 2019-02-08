@@ -5,7 +5,6 @@ class Clique extends Result implements Screen {
     parts.addLast(showClique);
   }
   void setting() {
-    showEdge.value=showClique.value=true;
     initialize();
   }
   void show() {
@@ -47,9 +46,5 @@ class Clique extends Result implements Screen {
     word[1]="Edges: "+(showClique.value&&showEdge.value?graph.clique.size()*(graph.clique.size()-1)/2:0);
     for (int i=0; i<2; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(12+i));
-  }
-  void moreKeyReleases() {
-    if (Character.toLowerCase(key)=='e')
-      showEdge.value=!showEdge.value;
   }
 }

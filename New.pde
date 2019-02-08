@@ -17,8 +17,7 @@ abstract class New implements Screen {
     inputs.add(inputLibrary.get("Press "+(System.getProperty("os.name").contains("Windows")?"Enter":"Return")+" to continue..."));
   }
   void display() {
-    pushStyle();
-    pushMatrix();
+    push();
     gui.body.initialize();
     logoSize=gui.logo();
     translate(width/2, logoSize);
@@ -29,8 +28,7 @@ abstract class New implements Screen {
     inputs.get(index).cin(-textWidth(inputs.get(index).prompt+inputs.get(index).word)/2, gui.thisFont.stepY(1+index));
     imageMode(CENTER);
     animation.display(GUI.HEIGHT, 0, height-logoSize-navigation.barHeight-height/10, height/5);
-    popMatrix();
-    popStyle();
+    pop();
     navigation.display();
   }
   void setting() {

@@ -1,13 +1,13 @@
 class Scene implements Screen {
   int time;
   Image image=new Image("Scene.png");
-  String[] title={"New Graph...", "Node Distributing...", "Graph Generating...", "Smallest-last Ordering...", "Smallest-last Coloring...", "Partitioning...", "Relay Coloring...", "Smallest-last Coloring Partites...", "Relay Coloring Partites...", "Smallest-last Coloring Bipartites...", "Relay Coloring Bipartites...", "Terminal Clique...", "Primary Independent Sets...", "Relay Independent Sets...", "Backbones...", "Surplus...", 
+  String[] title={
+    "New Graph...", 
+    "Node Distributing...", "Graph Generating...", "Smallest-last Ordering...", "Smallest-last Coloring...", "Partitioning...", "Relay Coloring...", "Smallest-last Coloring Partites...", "Relay Coloring Partites...", "Smallest-last Coloring Bipartites...", "Relay Coloring Bipartites...", 
+    "Terminal Clique...", "Primary Independent Sets...", "Relay Independent Sets...", "Backbones...", "Surplus...", 
     "Degree Distribution Histogram...", 
-    "Vertex Degree Plot...", 
-    "Smallest-last Color-size Plot...", 
-    "Relay Color-size Plot...", 
-    "New Computation...", 
-    "New Demonstration...", 
+    "Vertex Degree Plot...", "Smallest-last Color-size Plot...", "Relay Color-size Plot...", 
+    "New Computation...", "New Demonstration...", 
     "Settings...", 
     "About..."
   };
@@ -19,7 +19,7 @@ class Scene implements Screen {
     image.display(width>height?GUI.WIDTH:GUI.HEIGHT, 0, 0, max(width, height));
     gui.head.initialize();
     fill(gui.headColor[0].value);
-    //text(title[navigation.nextPage], gui.thisFont.stepX(), height-gui.thisFont.stepY());
+    text(title[navigation.nextPage], gui.thisFont.stepX(), height-gui.thisFont.stepY());
     popStyle();
     if (millis()-time>1000)
       navigation.page=navigation.nextPage;

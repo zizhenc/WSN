@@ -11,12 +11,11 @@ class GraphGenerating extends Procedure implements Screen {
     parts.addLast(generatedGraph);
     switches.addLast(showEdge);
     tunes.addLast(edgeWeight);
+    remainingVertices.value=false;
   }
   void setting() {
     initialize();
     edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
-    remainingVertices.value=false;
-    showEdge.value=generatedGraph.value=true;
     if (navigation.end==1) {
       navigation.end=-2;
       interval.setPreference(ceil(graph.vertex.length*7.0/3200), ceil(graph.vertex.length/3.0), ceil(graph.vertex.length*7.0/3200));

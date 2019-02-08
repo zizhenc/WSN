@@ -20,10 +20,9 @@ class SLPartite extends Partite {
     word[7]="Terminal clique size: "+graph.clique.size();
     word[8]="Maximum min-degree: "+graph.maxMinDegree;
     word[9]="Smallest-last coloring colors: "+graph._SLColors.size();
-    word[10]=String.format("Primary colors: %d (%.2f %%)", graph._PYColors.size(), graph.primaries*100.0/graph.vertex.length);
     fill(gui.bodyColor[0].value);
-    for (int i=0; i<word.length; i++)
+    for (int i=0; i<10; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
-    runtimeData(14);
+    runtimeData(13);
   }
 }

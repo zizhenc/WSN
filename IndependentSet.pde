@@ -1,100 +1,62 @@
 abstract class IndependentSet extends Result implements Screen {
   int _E;
   Color colour;
-  Slider partiteIndex=new Slider("Partite #", 1, 1), regionAmount=new Slider("Region amount", 1, 1), arrowWeight=new Slider("Arrow weight");
+  Slider partiteIndex=new Slider("Partite #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
   Region region=new Region();
   Vertex nodeM=new Vertex();
+  Checker partite=new Checker("Partite");
+  Switcher showRegion=new Switcher("Region", "Region"), showMeasurement=new Switcher("Measurement", "Measurement"), arrow=new Switcher("Arrow", "Arrow");
   HashSet<Vertex> domain=new HashSet<Vertex>();
-  Switcher showRegion=new Switcher("Region", "Region"), directed=new Switcher("Undirected", "Directed"), showMeasurement=new Switcher("Measurement", "Measurement");
-  Checker partite=new Checker("Independent set");
   ArrayList<Color> colorPool;
   abstract void setColorPool();
   IndependentSet() {
     parts.addLast(partite);
     switches.addLast(showRegion);
     switches.addLast(showMeasurement);
-    switches.addLast(directed);
-    tunes.addLast(arrowWeight);
     tunes.addLast(partiteIndex);
+    showMeasurement.value=showRegion.value=false;
   }
   void setting() {
     initialize();
-    showEdge.value=showMeasurement.value=partite.value=true;
-    directed.value=showRegion.value=false;
-    arrowWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.001), gui.unit(0.00025), gui.unit(1000));
     setColorPool();
     partiteIndex.setPreference(1, colorPool.size());
     setPartite();
   }
-  void setPartite() {//start from 1
-    if (colorPool.isEmpty())
-      colour=gui.mainColor;
-    else
-      colour=colorPool.get(round(partiteIndex.value)-1);
-    colour.initialize(domain);
-    regionAmount.setPreference(1, colour.vertices.size());
-    region.amount=round(regionAmount.value);
-    while (colour.deploying());
-  }
-  void arrow(float x1, float y1, float z1, float x2, float y2, float z2) {
-    PVector tangent=new PVector(x2-x1, y2-y1, z2-z1), yAxis=new PVector(0, 1, 0), normal=tangent.cross(yAxis);
-    pushMatrix();
-    translate((x1+x2)/2, (y1+y2)/2, (z1+z2)/2);
-    rotate(-PVector.angleBetween(tangent, yAxis), normal.x, normal.y, normal.z);
-    float angle = 0, angleIncrement = TWO_PI/4;
-    beginShape(QUAD_STRIP);
-    for (int i = 0; i < 5; ++i) {
-      vertex(0, -arrowWeight.value*5, 0);
-      vertex(arrowWeight.value*4*cos(angle), arrowWeight.value*3, arrowWeight.value*4*sin(angle));
-      angle += angleIncrement;
-    }
-    endShape();
-    angle = 0;
-    beginShape(TRIANGLE_FAN);
-    vertex(0, arrowWeight.value*3, 0);
-    for (int i = 0; i < 5; i++) {
-      vertex(arrowWeight.value*4*cos(angle), arrowWeight.value*3, arrowWeight.value*4*sin(angle));
-      angle += angleIncrement;
-    }
-    endShape();
-    popMatrix();
-  }
   void show() {
-    if (partite.value) {
-      _E=0;
-      domain.clear();
-      for (ListIterator<Vertex> i=colour.vertices.listIterator(); i.hasNext(); ) {
-        Vertex nodeA=i.next();
-        if (showEdge.value) {
-          stroke(gui.mainColor.value);
+    _E=0;
+    for (ListIterator<Vertex> i=colour.vertices.listIterator(); i.hasNext(); ) {
+      Vertex nodeA=i.next();
+      if (showEdge.value)
+        if (showMeasurement.value) {
           strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.arcs)
             if (nodeA.value<nodeB.value) {
               _E++;
-              if (showMeasurement.value) {
-                nodeM.setCoordinates((nodeA.x+nodeB.x)/2, (nodeA.y+nodeB.y)/2, (nodeA.z+nodeB.z)/2);
-                stroke(gui.partColor[nodeA.value<nodeB.value?1:2].value);
-                line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeM.x, (float)nodeM.y, (float)nodeM.z);
-                stroke(gui.partColor[nodeA.value<nodeB.value?2:1].value);
-                line((float)nodeM.x, (float)nodeM.y, (float)nodeM.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-              } else
-                line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-              if (directed.value) {
-                if (nodeA.value<nodeB.value)
-                  arrow((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-                else
-                  arrow((float)nodeB.x, (float)nodeB.y, (float)nodeB.z, (float)nodeA.x, (float)nodeA.y, (float)nodeA.z);
-              }
+              nodeM.setCoordinates((nodeA.x+nodeB.x)/2, (nodeA.y+nodeB.y)/2, (nodeA.z+nodeB.z)/2);
+              stroke(gui.partColor[nodeA.value<nodeB.value?1:2].value);
+              line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeM.x, (float)nodeM.y, (float)nodeM.z);
+              stroke(gui.partColor[nodeA.value<nodeB.value?2:1].value);
+              line((float)nodeM.x, (float)nodeM.y, (float)nodeM.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+              if (arrow.value)
+                arrow((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+            }
+        } else if (partite.value) {
+          stroke(colour.value);
+          strokeWeight(edgeWeight.value);
+          for (Vertex nodeB : nodeA.arcs)
+            if (nodeA.value<nodeB.value) {
+              _E++;
+              line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
             }
         }
+      if (partite.value) {
+        if (showRegion.value) {
+          strokeWeight(edgeWeight.value);
+          region.display(i.nextIndex(), nodeA);
+        }
         if (showNode.value) {
-          setDomains(nodeA);
           stroke(colour.value);
           displayNode(nodeA);
-          if (showRegion.value) {
-            strokeWeight(edgeWeight.value);
-            region.display(i.nextIndex(), nodeA);
-          }
         }
       }
     }
@@ -105,11 +67,32 @@ abstract class IndependentSet extends Result implements Screen {
     if (partiteIndex.active())
       setPartite();
     if (showRegion.active())
-      if (showRegion.value) {
-        if (tunes.getLast()!=regionAmount)
-          tunes.addLast(regionAmount);
-      } else if (tunes.getLast()==regionAmount)
+      if (showRegion.value)
+        tunes.addLast(regionAmount);
+      else
         tunes.removeLast();
+    if (showMeasurement.active())
+      if (showMeasurement.value)
+        switches.addLast(arrow);
+      else
+        switches.removeLast();
+  }
+  void moreKeyReleases() {
+    switch (Character.toLowerCase(key)) {
+    case 't':
+      showRegion.value=!showRegion.value;
+      if (showRegion.value)
+        tunes.addLast(regionAmount);
+      else
+        tunes.removeLast();
+      break;
+    case 'm':
+      showMeasurement.value=!showMeasurement.value;
+      if (showMeasurement.value)
+        switches.addLast(arrow);
+      else
+        switches.removeLast();
+    }
   }
   void moreKeyPresses() {
     switch(key) {
@@ -150,25 +133,40 @@ abstract class IndependentSet extends Result implements Screen {
       setPartite();
     }
   }
-  void moreKeyReleases() {
-    switch (Character.toLowerCase(key)) {
-    case 'e':
-      showEdge.value=!showEdge.value;
-      break;
-    case 't':
-      showRegion.value=!showRegion.value;
-      if (showRegion.value) {
-        if (tunes.getLast()!=regionAmount)
-          tunes.addLast(regionAmount);
-      } else if (tunes.getLast()==regionAmount)
-        tunes.removeLast();
-      break;
-    case 'm':
-      showMeasurement.value=!showMeasurement.value;
-      break;
-    case 'u':
-      directed.value=!directed.value;
+  void setPartite() {//start from 1
+    if (colorPool.isEmpty())
+      colour=gui.mainColor;
+    else
+      colour=colorPool.get(round(partiteIndex.value)-1);
+    colour.initialize(domain);
+    regionAmount.setPreference(1, colour.vertices.size());
+    region.amount=round(regionAmount.value);
+    while (colour.deploy==1)
+      colour.deploying();
+  }
+  void arrow(float x1, float y1, float z1, float x2, float y2, float z2) {
+    noFill();
+    PVector tangent=new PVector(x2-x1, y2-y1, z2-z1), yAxis=new PVector(0, 1, 0), normal=tangent.cross(yAxis);
+    pushMatrix();
+    translate((x1+x2)/2, (y1+y2)/2, (z1+z2)/2);
+    rotate(-PVector.angleBetween(tangent, yAxis), normal.x, normal.y, normal.z);
+    float angle = 0, angleIncrement = TWO_PI/4;
+    beginShape(QUAD_STRIP);
+    for (int i = 0; i < 5; ++i) {
+      vertex(0, -gui.unit(0.005), 0);
+      vertex(gui.unit(0.004)*cos(angle), gui.unit(0.002), gui.unit(0.004)*sin(angle));
+      angle += angleIncrement;
     }
+    endShape();
+    angle = 0;
+    beginShape(TRIANGLE_FAN);
+    vertex(0, gui.unit(0.003), 0);
+    for (int i = 0; i < 5; i++) {
+      vertex(gui.unit(0.004)*cos(angle), gui.unit(0.002), gui.unit(0.004)*sin(angle));
+      angle += angleIncrement;
+    }
+    endShape();
+    popMatrix();
   }
   void runtimeData(int startHeight) {
     fill(gui.headColor[2].value);
@@ -177,12 +175,13 @@ abstract class IndependentSet extends Result implements Screen {
     word[0]=String.format("Vertices: %d (%.2f %%)", (showNode.value&&partite.value)?colour.vertices.size():0, ((showNode.value&&partite.value)?colour.vertices.size():0)*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", _E, _E*100.0/graph._E);
     word[2]=String.format("Average degree: %.2f", (showNode.value&&partite.value)?_E*2.0/colour.vertices.size():0);
-    word[3]=String.format("Dominates: %d (%.2f%%)", domain.size(), domain.size()*100.0/graph.vertex.length);
+    int domination=partite.value&&showNode.value?colour.domination:0;
+    word[3]=String.format("Dominates: %d (%.2f%%)", domination, domination*100.0/graph.vertex.length);
     word[4]=String.format("Maximum distance: %.3f", (_E==0)?0:colour.maxDistance);
     word[5]=String.format("Minimum distance: %.3f", (_E==0)?0:colour.minDistance);
     word[6]=String.format("Average distance: %.3f", (_E==0)?0:colour.distance/_E);
     int len=7;
-    if (!colour.nodeIterator.hasNext()&&graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
+    if (colour.cycles[0]>-1&&graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
       len=11;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
       int faces=showEdge.value?_E-colour.vertices.size()+graph.topology.characteristic():0;
       word[7]="Faces: "+faces;
@@ -192,10 +191,5 @@ abstract class IndependentSet extends Result implements Screen {
     }
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+1+i));
-  }
-  void setDomains(Vertex nodeA) {
-    domain.add(nodeA);
-    for (Vertex nodeB : nodeA.neighbors)
-      domain.add(nodeB);
   }
 }

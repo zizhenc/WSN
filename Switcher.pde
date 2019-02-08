@@ -29,10 +29,10 @@ class Switcher {
       fill(gui.highlightColor.value, 100);
       rect(x, y, 2*switchHeight, switchHeight, switchHeight/2);
       fill(gui.mainColor.value);
-      ellipse(x+1.5*switchHeight, y+switchHeight/2, switchHeight-gui.unit(4), switchHeight-gui.unit(4));
+      circle(x+1.5*switchHeight, y+switchHeight/2, switchHeight-gui.unit(4));
     } else {
       fill(gui.mainColor.value);
-      ellipse(x+switchHeight/2, y+switchHeight/2, switchHeight-gui.unit(4), switchHeight-gui.unit(4));
+      circle(x+switchHeight/2, y+switchHeight/2, switchHeight-gui.unit(4));
     }
     popStyle();
   }

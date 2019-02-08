@@ -1,5 +1,5 @@
 class Component {
-  int order, archive;//used for block determination (dfs for block selection), archive is for indicating random combination or aimed backbones
+  int order, archive;//order for block determination (dfs for block selection), archive is for indicating random combination or aimed backbones (if archive==-1 then need reset)
   Color primary, relay;
   Vertex[] degreeList;
   Stack<Vertex> stack=new Stack<Vertex>();

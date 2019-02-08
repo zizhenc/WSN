@@ -31,13 +31,14 @@ class RelayColoring extends Procedure implements Screen {
     }
   }
   void restart() {
-    graph.backbone=null;
+    for (Component component : graph.backbone)
+      component.archive=-1;
     for (Color colour : graph._RLColors)
       colour.clean();
     graph._RLColors.clear();
     for (LinkedList<Vertex> list : graph.relayList) {
       for (Vertex node : list)
-        node.clearRelays();
+        node.clearColor(null);//clear relay colors
       list.clear();
     }
     reset();
@@ -89,7 +90,7 @@ class RelayColoring extends Procedure implements Screen {
           }
           displayNode(nodeA, nodeA.relayColor);
         }
-        if (uncoloredGraph.value&&nodeA.order[1]==-6) {
+        if (uncoloredGraph.value&&nodeA.order[1]==-6&&nodeA.relayColor==null) {
           stroke(gui.partColor[4].value);
           if (showEdge.value)
             displayEdge(nodeA);
@@ -117,7 +118,7 @@ class RelayColoring extends Procedure implements Screen {
             line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
           }
         } else {
-          if (coloredGraph.value&&nodeB.relayColor!=null||surplus.value&&nodeB.order[1]==-5||uncoloredGraph.value&&nodeB.order[1]==-6) {
+          if (coloredGraph.value&&nodeB.relayColor!=null||surplus.value&&nodeB.order[1]==-5||uncoloredGraph.value&&nodeB.order[1]==-6&&nodeB.relayColor==null) {
             _E++;
             line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
           }

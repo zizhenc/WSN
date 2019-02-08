@@ -1,7 +1,7 @@
 abstract class Chart {
   int stepX, stepY, minX, maxX, minY, maxY, plots;
-  int[] active;
   float intervalX, intervalY, gapX, gapY, rangeX, rangeY, x, y, chartWidth, chartHeight, xStart, yStart;
+  boolean[] active;
   String labelX, labelY;
   String[] plot;
   ArrayList<Float>[] points;
@@ -15,9 +15,12 @@ abstract class Chart {
     this.plot=plot;
     points=new ArrayList[plot.length];
     colour=new SysColor[plot.length];
-    active=new int[plot.length];
-    for (int i=0; i!=plot.length; i++)
+    active=new boolean[plot.length];
+    for (int i=0; i!=plot.length; i++) {
       points[i]=new ArrayList<Float>();
+      active[i]=true;
+    }
+    plots=plot.length;
   }
   void deployColors() {
     for (int i=0; i!=plot.length; i++)
@@ -84,7 +87,7 @@ abstract class Chart {
     textAlign(LEFT, CENTER);
     noStroke();
     for (int i=0, sequence=0; i<plot.length; i++)
-      if (active[i]==1) {
+      if (active[i]) {
         fill(colour[i].value);
         rect(xStart+rangeX+gui.thisFont.gap(), y+gui.thisFont.stepY(sequence+1), gui.thisFont.gap(), gui.thisFont.gap());
         text(plot[i], xStart+rangeX+gui.thisFont.gap(3), y+gui.thisFont.stepY(sequence+1)+gui.thisFont.gap(0.5));
@@ -93,10 +96,13 @@ abstract class Chart {
     popStyle();
   }
   void setPlot(int index, boolean onOff) {
-    active[index]=onOff?1:0;
-    plots=0;
-    for (int chart : active)
-      plots+=chart;
+    if (active[index]!=onOff) {
+      if (onOff)
+        plots++;
+      else
+        plots--;
+      active[index]=onOff;
+    }
   }
   void initialize(int minX, int maxX, int minY, int maxY) {
     this.minX=minX;

@@ -7,7 +7,6 @@ class NodeDistributing extends Procedure implements Screen {
   }
   void setting() {
     initialize();
-    distributedNodes.value=true;
     if (navigation.end==0) {
       navigation.end=-1;
       interval.setPreference(ceil(graph.vertex.length*7.0/3200), ceil(graph.vertex.length/3.0), ceil(graph.vertex.length*7.0/3200));

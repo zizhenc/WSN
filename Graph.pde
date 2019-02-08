@@ -153,14 +153,25 @@ class Graph {
     }
     return index;
   }
-  Component getBackbone(int index) {
-    if (backbone==null)
+  void initailizeBackbones() {
+    if (backbone==null||backbone.length<_RLColors.size())
       backbone=new Component[_RLColors.size()];
+  }
+  Component getBackbone(int index) {
     if (backbone[index]==null)
-      backbone[index]=new Component(_PYColors.get(_RLColors.get(index).index-_SLColors.size()), _RLColors.get(index), topology.connectivity());
+      if (_RLColors.isEmpty())
+        backbone[index]=new Component(gui.mainColor, gui.mainColor, topology.connectivity());
+      else
+        backbone[index]=new Component(_PYColors.get(_RLColors.get(index).index-_SLColors.size()), _RLColors.get(index), topology.connectivity());
+    else if (backbone[index].archive==-1)
+      if (_RLColors.isEmpty())
+        backbone[index].reset(gui.mainColor, gui.mainColor);
+      else
+        backbone[index].reset(_PYColors.get(_RLColors.get(index).index-_SLColors.size()), _RLColors.get(index));
     return backbone[index];
   }
   void calculateBackbones() {
+    initailizeBackbones();
     for (int i=0; i<_RLColors.size(); i++)
       while (getBackbone(i).deleting());
   }

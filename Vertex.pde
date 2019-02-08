@@ -69,19 +69,16 @@ class Vertex {
     this.y=y;
     this.z=z;
   }
-  void clearRelays() {//clean relayColor, relayColor and order[1]
-    for (LinkedList<Color> list : colorList)
-      list.clear();
-    relayColor=null;
-    order[1]=-6;
-  }
   void clearColor(Color colour) {
-    if (colour==primeColor) {
+    if (colour==primeColor) {//use if else to achieve the clearColor(null) usage, which clear relays only
       primeColor=null;
       coloredNeighbors.clear();
+    } else {
+      for (LinkedList<Color> list : colorList)
+        list.clear();
+      relayColor=null;
+      order[1]=-6;
     }
-    if (colour==relayColor)
-      clearRelays();
   }
   void initialize(int value, int connectivity) {
     this.value=value;

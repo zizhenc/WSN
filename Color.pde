@@ -1,6 +1,6 @@
-class Color extends SysColor {
-  int domination=-1, index;
-  int[] cycles={-1, -1};//cycles are used to count 3,4-cycles, cycles[0] also used to determine cycle counting complete, cycles[1] to determine whether the colour needs initialize
+class Color extends SysColor {//Color set has 3 status:0. no change, 1. reset, 2. restart
+  int index, domination, deploy;//0: nochange, -1 algorithm stop ready to restart, 1 deploy
+  int[] cycles={-1, -1};//cycles[0]==-1 means caculating cycles, cycles[1]==-1 means reset status
   double distance, maxDistance, minDistance;
   LinkedList<Vertex> vertices=new LinkedList<Vertex>();
   ListIterator<Vertex> nodeIterator;
@@ -13,73 +13,80 @@ class Color extends SysColor {
     this.index=index;
   }
   boolean deployed() {
-    return cycles[1]>-1&&nodeIterator!=null&&nodeIterator.nextIndex()>0;
+    return cycles[1]>-1&&deploy==1&&nodeIterator.nextIndex()>0;
   }
-  boolean deploying() {
-    if (nodeIterator.hasNext()) {
-      Vertex nodeA=nodeIterator.next();
-      for (ListIterator<Vertex> i=vertices.listIterator(nodeIterator.nextIndex()); i.hasNext(); ) {
-        Vertex nodeB=i.next();
-        boolean connect=true;
-        double squaredDistance=nodeA.squaredDistance(nodeB);
-        for (Vertex nodeC : vertices)
-          if (nodeC!=nodeA&&nodeC!=nodeB)
-            if (nodeA.squaredDistance(nodeC)+nodeB.squaredDistance(nodeC)<=squaredDistance) {
-              connect=false;
-              break;
-            }
-        if (connect) {
-          double d=Math.sqrt(squaredDistance);
-          distance+=d;
-          if (d>maxDistance)
-            maxDistance=d;
-          if (d<minDistance)
-            minDistance=d;
-          nodeA.arcs.addLast(nodeB);
-          nodeB.arcs.addLast(nodeA);
-        }
-      }
-    } else if (cycles[0]==-1) {
-      cycles[0]=0;
-      for (nodeIterator=vertices.listIterator(); nodeIterator.hasNext(); ) {
+  void deploying() {
+    if (deploy==1)
+      if (nodeIterator.hasNext()) {
         Vertex nodeA=nodeIterator.next();
-        for (ListIterator<Vertex> i=nodeA.arcs.listIterator(); i.hasNext(); ) {
-          Vertex nodeI=i.next();
-          if (nodeI.value>nodeA.value)
-            for (ListIterator<Vertex> j=nodeA.arcs.listIterator(i.nextIndex()); j.hasNext(); ) {
-              Vertex nodeJ=j.next();
-              if (nodeJ.value>nodeA.value)
-                if (nodeI.arcs.contains(nodeJ))
-                  cycles[0]++;
-                else {
-                  boolean getOut=false;
-                  for (Vertex nodeB : nodeI.arcs) {
-                    for (Vertex nodeC : nodeJ.arcs)
-                      if (nodeB!=nodeA&&nodeB==nodeC&&!nodeA.arcs.contains(nodeC)) {
-                        cycles[1]++;
-                        getOut=true;
-                        break;
+        for (ListIterator<Vertex> i=vertices.listIterator(nodeIterator.nextIndex()); i.hasNext(); ) {
+          Vertex nodeB=i.next();
+          boolean connect=true;
+          double squaredDistance=nodeA.squaredDistance(nodeB);
+          for (Vertex nodeC : vertices)
+            if (nodeC!=nodeA&&nodeC!=nodeB)
+              if (nodeA.squaredDistance(nodeC)+nodeB.squaredDistance(nodeC)<=squaredDistance) {
+                connect=false;
+                break;
+              }
+          if (connect) {
+            double d=Math.sqrt(squaredDistance);
+            distance+=d;
+            if (d>maxDistance)
+              maxDistance=d;
+            if (d<minDistance)
+              minDistance=d;
+            nodeA.arcs.addLast(nodeB);
+            nodeB.arcs.addLast(nodeA);
+          }
+        }
+      } else {
+        if (cycles[0]==-1) {
+          cycles[0]=0;
+          while (nodeIterator.hasPrevious()) {
+            Vertex nodeA=nodeIterator.previous();
+            for (ListIterator<Vertex> i=nodeA.arcs.listIterator(); i.hasNext(); ) {
+              Vertex nodeI=i.next();
+              if (nodeI.value>nodeA.value)
+                for (ListIterator<Vertex> j=nodeA.arcs.listIterator(i.nextIndex()); j.hasNext(); ) {
+                  Vertex nodeJ=j.next();
+                  if (nodeJ.value>nodeA.value)
+                    if (nodeI.arcs.contains(nodeJ))
+                      cycles[0]++;
+                    else {
+                      boolean getOut=false;
+                      for (Vertex nodeB : nodeI.arcs) {
+                        for (Vertex nodeC : nodeJ.arcs)
+                          if (nodeB!=nodeA&&nodeB==nodeC&&!nodeA.arcs.contains(nodeC)) {
+                            cycles[1]++;
+                            getOut=true;
+                            break;
+                          }
+                        if (getOut)
+                          break;
                       }
-                    if (getOut)
-                      break;
-                  }
+                    }
                 }
             }
+          }
         }
+        deploy=0;
       }
-    } else
-      return false;
-    return true;
   }
-  void reset() {
-    cycles[1]=-1;
+  void initialize() {
+    deploy=1;
+    for (Vertex node : vertices)
+      if (node.arcs==null)
+        node.arcs=new LinkedList<Vertex>();
+      else
+        node.arcs.clear();
+    distance=maxDistance=0;
+    minDistance=Integer.MAX_VALUE;
   }
   void initialize(HashSet<Vertex> domain) {
     if (cycles[1]==-1) {
       cycles[1]=0;
-      restart();
-    }
-    if (domination==-1) {
+      nodeIterator=vertices.listIterator();
       domain.clear();
       for (Vertex nodeA : vertices) {
         domain.add(nodeA);
@@ -87,22 +94,19 @@ class Color extends SysColor {
           domain.add(nodeB);
       }
       domination=domain.size();
-    }
+      initialize();
+    } else if (deploy==-1)
+      restart();
   }
   void restart() {
-    for (Vertex node : vertices)
-      if (node.arcs==null)
-        node.arcs=new LinkedList<Vertex>();
-      else
-        node.arcs.clear();
-    nodeIterator=vertices.listIterator();
-    distance=maxDistance=0;
-    minDistance=Integer.MAX_VALUE;
+    initialize();
+    while (nodeIterator.hasPrevious())
+      nodeIterator.previous();
   }
   void clean() {
     for (Vertex node : vertices)
       node.clearColor(this);
     vertices.clear();
-    domination=cycles[0]=cycles[1]=-1;//reset cycles
+    cycles[0]=cycles[1]=-1;
   }
 }

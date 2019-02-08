@@ -8,11 +8,11 @@ class RLPartite extends Partite {
     for (int i=graph._PYColors.size(); i<graph._SLColors.size(); i++) {
       if (!resetColors&&graph._SLColors.get(i).deployed())
         resetColors=true;
-      graph._SLColors.get(i).reset();
+      graph._SLColors.get(i).deploy=-1;
     }
     if (resetColors)
       for (Color colour : colorPool)
-        colour.reset();
+        colour.deploy=-1;
   }
   void data() {
     fill(gui.headColor[1].value);

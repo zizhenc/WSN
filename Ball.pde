@@ -1,4 +1,4 @@
-class Ball extends Topology {
+ class Ball extends Topology {
   Ball() {
     range=xRange=yRange=zRange=2;
     value=8;

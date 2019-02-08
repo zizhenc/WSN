@@ -6,10 +6,10 @@ abstract class Bipartite extends Procedure implements Screen {
   SysColor[] plotColor=new SysColor[3];
   Radio modes=new Radio(modeLabels);
   Region region=new Region();
-  Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1), arrowWeight=new Slider("Arrow weight");
+  Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
   Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block");
   ExTable table;
-  Switcher showEdge=new Switcher("Edge", "Edge"), directed=new Switcher("Undirected", "Directed"), showRegion=new Switcher("Region", "Region");
+  Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
   BarChart barChart=new BarChart("Degree", "Vertex", new String[]{"Primary", "Relay", "Total"});
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
@@ -22,9 +22,7 @@ abstract class Bipartite extends Procedure implements Screen {
     parts.addLast(giantComponent);
     switches.addLast(showEdge);
     switches.addLast(showRegion);
-    switches.addLast(directed);
     tunes.addLast(edgeWeight);
-    tunes.addLast(arrowWeight);
     tunes.addLast(backbone);
     table=new ExTable(headers, 8);
     plotColor[2]=gui.mainColor;
@@ -33,13 +31,11 @@ abstract class Bipartite extends Procedure implements Screen {
       for (int j=0; j<plot.length; j++)
         barChart.points[j].add(0.0);
     }
+    tails.value=showRegion.value=false;
   }
   void setting() {
     initialize();
-    showEdge.value=minorComponents.value=giantComponent.value=minorBlocks.value=giantBlock.value=plot[0].value=plot[1].value=plot[2].value=true;
-    tails.value=showRegion.value=directed.value=false;
-    edgeWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
-    arrowWeight.setPreference(gui.unit(0.0005), gui.unit(0.000025), gui.unit(0.001), gui.unit(0.00025), gui.unit(1000));
+    edgeWeight.setPreference(gui.unit(0.001), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     for (int i=0; i<plot.length; i++)
       barChart.setPlot(i, plot[i].value);
     setComponent(1);
@@ -188,15 +184,19 @@ abstract class Bipartite extends Procedure implements Screen {
     showSensor(nodeA);
   }
   void showSensor(Vertex nodeA) {
-    if (showNode.value) {
+    if (showNode.value||showRegion.value) {
+      ++_N;
       domain.add(nodeA);
       for (Vertex nodeB : nodeA.neighbors)
         domain.add(nodeB);
-      ++_N;
-      if (showRegion.value)
-        region.display(_N, nodeA);
+    }
+    if (showNode.value) {
       stroke((nodeA.primeColor==primary?primary:relay).value);
       displayNode(nodeA);
+    }
+    if (showRegion.value) {
+      strokeWeight(edgeWeight.value);
+      region.display(_N, nodeA);
     }
   }
   void runtimeData(int startHeight) {
@@ -253,10 +253,9 @@ abstract class Bipartite extends Procedure implements Screen {
     if (backbone.active())
       setComponent(round(backbone.value));
     if (showRegion.active())
-      if (showRegion.value) {
-        if (tunes.getLast()!=regionAmount)
-          tunes.addLast(regionAmount);
-      } else if (tunes.getLast()==regionAmount)
+      if (showRegion.value)
+        tunes.addLast(regionAmount);
+      else
         tunes.removeLast();
     if (showRegion.value&&regionAmount.active())
       region.amount=round(regionAmount.value);
@@ -307,10 +306,9 @@ abstract class Bipartite extends Procedure implements Screen {
       break;
     case 't':
       showRegion.value=!showRegion.value;
-      if (showRegion.value) {
-        if (tunes.getLast()!=regionAmount)
-          tunes.addLast(regionAmount);
-      } else if (tunes.getLast()==regionAmount)
+      if (showRegion.value)
+        tunes.addLast(regionAmount);
+      else
         tunes.removeLast();
     }
   }
@@ -376,29 +374,5 @@ abstract class Bipartite extends Procedure implements Screen {
       bValue=barChart.points[2].get(degree)+1;
       barChart.points[2].set(degree, bValue);
     }
-  }
-  void arrow(float x1, float y1, float z1, float x2, float y2, float z2) {
-    noFill();
-    PVector tangent=new PVector(x2-x1, y2-y1, z2-z1), yAxis=new PVector(0, 1, 0), normal=tangent.cross(yAxis);
-    pushMatrix();
-    translate((x1+x2)/2, (y1+y2)/2, (z1+z2)/2);
-    rotate(-PVector.angleBetween(tangent, yAxis), normal.x, normal.y, normal.z);
-    float angle = 0, angleIncrement = TWO_PI/4;
-    beginShape(QUAD_STRIP);
-    for (int i = 0; i < 5; ++i) {
-      vertex(0, -arrowWeight.value*5, 0);
-      vertex(arrowWeight.value*4*cos(angle), arrowWeight.value*3, arrowWeight.value*4*sin(angle));
-      angle += angleIncrement;
-    }
-    endShape();
-    angle = 0;
-    beginShape(TRIANGLE_FAN);
-    vertex(0, arrowWeight.value*3, 0);
-    for (int i = 0; i < 5; i++) {
-      vertex(arrowWeight.value*4*cos(angle), arrowWeight.value*3, arrowWeight.value*4*sin(angle));
-      angle += angleIncrement;
-    }
-    endShape();
-    popMatrix();
   }
 }

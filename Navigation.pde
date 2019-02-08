@@ -59,8 +59,7 @@ class Navigation {
     return mouseX>width/2+(i-items.length/2.0+0.5)*itemLength-subItemLength/2&&mouseX<width/2+(i-items.length/2.0+0.5)*itemLength+subItemLength/2&&mouseY<height-barHeight*j-barHeight/2&&mouseY>height-barHeight*(1+j)-barHeight/2;
   }
   void display() {
-    pushMatrix();
-    pushStyle();
+    push();
     translate(width/2, height);
     rectMode(CENTER);
     textAlign(CENTER, CENTER);
@@ -115,8 +114,7 @@ class Navigation {
       fill(gui.bodyColor[1].value);
       text("<<- Presentation mode: Ver. "+gui._V+" ->>", 0, gui.thisFont.stepY()-height);
     }
-    popStyle();
-    popMatrix();
+    pop();
   }
   void releaseOption() {
     if (option<0) {

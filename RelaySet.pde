@@ -4,6 +4,15 @@ class RelaySet extends IndependentSet {
   }
   void setColorPool() {
     colorPool=graph._RLColors;
+    boolean resetColors=false;
+    for (int i=graph._PYColors.size(); i<graph._SLColors.size(); i++) {
+      if (!resetColors&&graph._SLColors.get(i).deployed())
+        resetColors=true;
+      graph._SLColors.get(i).deploy=-1;
+    }
+    if (resetColors)
+      for (Color colour : colorPool)
+        colour.deploy=-1;
   }
   void data() {
     fill(gui.headColor[1].value);

@@ -27,7 +27,7 @@ class Radio {
     strokeWeight(gui.unit(2));
     noFill();
     for (int i=0; i<label.length; i++)
-      ellipse(x+diameter/2, y+i*(diameter+gap)+diameter/2, diameter, diameter);
+      circle(x+diameter/2, y+i*(diameter+gap)+diameter/2, diameter);
     fill(gui.bodyColor[2].value);
     for (int i=0; i<label.length; i++)
       text(label[i], x+diameter+gui.thisFont.stepX(), y+diameter*i+diameter/2+gap*i);

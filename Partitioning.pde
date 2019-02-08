@@ -11,11 +11,10 @@ class Partitioning extends Procedure implements Screen {
     parts.addLast(selectedGraph);
     tunes.addLast(edgeWeight);
     switches.addLast(showEdge);
+    remainingGraph.value=showEdge.value=false;
   }
   void setting() {
     initialize();
-    remainingGraph.value=showEdge.value=false;
-    selectedGraph.value=true;
     edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     if (navigation.end==4) {
       selectColorSets.setMax(graph._SLColors.size()-1);
@@ -148,6 +147,17 @@ class Partitioning extends Procedure implements Screen {
       showEdge.value=!showEdge.value;
   }
   void reset() {
+    if (graph.breakpoint<tunes.getLast().value) {
+      boolean resetColors=false;
+      for (Color colour : graph._RLColors)
+        if (colour.deployed()) {
+          resetColors=true;
+          break;
+        }
+      if (resetColors)
+        for (int i=graph._PYColors.size(); i<graph._SLColors.size(); i++)
+          graph._SLColors.get(i).deploy=-1;
+    }
     graph.breakpoint=tunes.getLast().value;
     navigation.end=-5;
     clean();
