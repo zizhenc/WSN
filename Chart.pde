@@ -104,9 +104,17 @@ abstract class Chart {
       active[index]=onOff;
     }
   }
-  void initialize(int minX, int maxX, int minY, int maxY) {
+  void setX(int minX, int maxX) {
     this.minX=minX;
     this.maxX=maxX;
+    for (ArrayList<Float> point : points) {
+      while (point.size()<maxX-minX+1)
+        point.add(0.0f);
+      while (point.size()>maxX-minX+1)
+        point.remove(point.size()-1);
+    }
+  }
+  void setY(int minY, int maxY) {
     this.minY=minY;
     this.maxY=maxY;
   }
@@ -118,10 +126,6 @@ abstract class Chart {
     line(0, 0, -gui.unit(3), -gui.unit(6));
     line(0, 0, gui.unit(3), -gui.unit(6));
     popMatrix();
-  }
-  void clean() {
-    for (int i=0; i!=plot.length; i++)
-      points[i].clear();
   }
   void dottedLine(float x1, float y1, float x2, float y2) {
     float steps=dist(x1, y1, x2, y2)/10;

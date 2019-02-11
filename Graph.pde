@@ -68,8 +68,8 @@ class Graph {
       nodeB.value=nodeA.value;
       nodeA.value=vertices-1;
     }
-    nodeA.avgDegree=degree[0]*2.0/vertices;
-    nodeA.avgOrgDegree=degree[1]*1.0/vertices;
+    nodeA.avgDegree=degree[0]*2f/vertices;
+    nodeA.avgOrgDegree=degree[1]*1f/vertices;
     for (Vertex nodeB : nodeA.neighbors)
       if (nodeB.value<nodeA.value) {
         nodeB.solo(degreeList.get(nodeB.degree));

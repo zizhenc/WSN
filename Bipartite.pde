@@ -26,11 +26,9 @@ abstract class Bipartite extends Procedure implements Screen {
     tunes.addLast(backbone);
     table=new ExTable(headers, 8);
     plotColor[2]=gui.mainColor;
-    for (int i=0; i<8; i++) {
+    for (int i=0; i<8; i++)
       table.setInt(7-i, 0, i);
-      for (int j=0; j<plot.length; j++)
-        barChart.points[j].add(0.0);
-    }
+    barChart.setX(0, 7);
     tails.value=showRegion.value=false;
   }
   void setting() {
@@ -53,7 +51,7 @@ abstract class Bipartite extends Procedure implements Screen {
     resetParts();
     plotColor[0]=primary;
     plotColor[1]=relay;
-    barChart.initialize(0, 7, 0, primary.vertices.size()+relay.vertices.size());
+    barChart.setY(0, primary.vertices.size()+relay.vertices.size());
     barChart.deployColors(plotColor);
     regionAmount.setPreference(1, primary.vertices.size()+relay.vertices.size());
     region.amount=round(regionAmount.value);
@@ -354,25 +352,20 @@ abstract class Bipartite extends Procedure implements Screen {
       break;
     case 1:
       for (int i=0; i<8; i++)
-        for (int j=0; j<plot.length; j++)
-          barChart.points[j].set(i, 0.0);
+        for (ArrayList<Float> point : barChart.points)
+          point.set(i, 0f);
     }
   }
   void analyze(Vertex node, int degree) {
-    int category=node.primeColor==primary?0:1, tValue;
-    float bValue;
+    int category=node.primeColor==primary?0:1;
     switch(modes.value) {
     case 0:
-      tValue=table.getInt(7-degree, category+1)+1;
-      table.setInt(7-degree, category+1, tValue);
-      tValue=table.getInt(7-degree, 3)+1;
-      table.setInt(7-degree, 3, tValue);
+      table.setInt(7-degree, category+1, table.getInt(7-degree, category+1)+1);
+      table.setInt(7-degree, 3, table.getInt(7-degree, 3)+1);
       break;
     case 1:
-      bValue=barChart.points[category].get(degree)+1;
-      barChart.points[category].set(degree, bValue);
-      bValue=barChart.points[2].get(degree)+1;
-      barChart.points[2].set(degree, bValue);
+      barChart.points[category].set(degree, barChart.points[category].get(degree)+1);
+      barChart.points[2].set(degree, barChart.points[2].get(degree)+1);
     }
   }
 }
