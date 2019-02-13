@@ -109,7 +109,7 @@ abstract class Chart {
     this.maxX=maxX;
     for (ArrayList<Float> point : points) {
       while (point.size()<maxX-minX+1)
-        point.add(0.0f);
+        point.add(0f);
       while (point.size()>maxX-minX+1)
         point.remove(point.size()-1);
     }
