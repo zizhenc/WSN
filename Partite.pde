@@ -84,6 +84,7 @@ abstract class Partite extends Procedure implements Screen {
     }
   }
   void moreMousePresses() {
+    edgeWeight.active();
     if (showRegion.value&&regionAmount.active())
       region.amount=round(regionAmount.value);
     if (partiteIndex.active())

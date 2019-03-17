@@ -153,8 +153,8 @@ class RelayColoring extends Procedure implements Screen {
     for (int i=0; i<5; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(15+i));
   }
-  void moreMouseReleases() {
-    showEdge.active();
+  void moreMousePresses() {
+    edgeWeight.active();
     if (connectivity.active()&&round(connectivity.value)!=graph.connectivity) {
       if (connection<connectivity.value) {
         graph.connectivity=round(connectivity.value);
@@ -170,6 +170,9 @@ class RelayColoring extends Procedure implements Screen {
         graph.connectivity=round(connectivity.value);
       }
     }
+  }
+  void moreMouseReleases() {
+    showEdge.active();
   }
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='e')

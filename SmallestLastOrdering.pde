@@ -160,6 +160,9 @@ class SmallestLastOrdering extends Procedure implements Screen {
       text("Min. degree: "+degreeList[0].degree+" ("+degreeList[0].value+(degreeList[0].value<2?" vertex)":" vertices)"), gui.thisFont.stepX(3), gui.thisFont.stepY(18));
     }
   }
+  void moreMousePresses() {
+    edgeWeight.active();
+  }
   void moreMouseReleases() {
     showMeasurement.active();
     showEdge.active();

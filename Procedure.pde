@@ -154,8 +154,8 @@ abstract class Procedure {
   void mousePress() {
     navigation.mousePress();
     if (!navigation.active()) {
-      for (Slider slider : tunes)
-        slider.active();
+      nodeWeight.active();
+      interval.active();
       moreMousePresses();
     }
   }

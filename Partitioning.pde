@@ -133,6 +133,11 @@ class Partitioning extends Procedure implements Screen {
     text("Partition mode:", width-gui.margin()+gui.thisFont.stepX(), y+gui.thisFont.stepY());
     modes.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
   }
+  void moreMousePresses() {
+    edgeWeight.active();
+    if (tunes.getLast().active())
+      reset();
+  }
   void moreMouseReleases() {
     showEdge.active();
     if (modes.active()) {
@@ -140,8 +145,6 @@ class Partitioning extends Procedure implements Screen {
       updateSelection();
       reset();
     }
-    if (tunes.getLast().active())
-      reset();
   }
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='e')

@@ -148,8 +148,8 @@ abstract class Result {
   void mousePress() {
     navigation.mousePress();
     if (!navigation.active()) {
-      for (Slider slider : tunes)
-        slider.active();
+      nodeWeight.active();
+      edgeWeight.active();
       moreMousePresses();
     }
   }

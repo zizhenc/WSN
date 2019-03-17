@@ -113,6 +113,9 @@ class GraphGenerating extends Procedure implements Screen {
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(7+i));
   }
+  void moreMousePresses() {
+    edgeWeight.active();
+  }
   void moreMouseReleases() {
     showEdge.active();
     if (methods.active()) {

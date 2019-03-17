@@ -24,7 +24,7 @@ abstract class Bipartite extends Procedure implements Screen {
     tunes.addLast(edgeWeight);
     tunes.addLast(backbone);
     table=new ExTable(8, "Degree", "Primary", "Relay", "Total");
-    plotColor[2]=gui.mainColor;
+    plotColor[2]=gui.partColor[0];
     for (int i=0; i<8; i++)
       table.setInt(7-i, 0, i);
     barChart.setX(0, 7);
@@ -242,6 +242,7 @@ abstract class Bipartite extends Procedure implements Screen {
     }
   }
   void moreMousePresses() {
+    edgeWeight.active();
     if (showRegion.value&&regionAmount.active())
       region.amount=round(regionAmount.value);
   }
