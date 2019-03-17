@@ -1,16 +1,15 @@
 abstract class Bipartite extends Procedure implements Screen {
   int _N, _E;
   boolean goOn;
-  String[] headers={"Degree", "Primary", "Relay", "Total"}, modeLabels={"Table", "Bar chart"};
   Color primary, relay;
   SysColor[] plotColor=new SysColor[3];
-  Radio modes=new Radio(modeLabels);
+  Radio modes=new Radio("Table", "Bar chart");
   Region region=new Region();
   Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
   Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block");
   ExTable table;
   Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
-  BarChart barChart=new BarChart("Degree", "Vertex", new String[]{"Primary", "Relay", "Total"});
+  BarChart barChart=new BarChart("Degree", "Vertex", plotColor, "Primary", "Relay", "Total");
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
   HashSet<Vertex> domain=new HashSet<Vertex>();
@@ -24,18 +23,17 @@ abstract class Bipartite extends Procedure implements Screen {
     switches.addLast(showRegion);
     tunes.addLast(edgeWeight);
     tunes.addLast(backbone);
-    table=new ExTable(headers, 8);
+    table=new ExTable(8, "Degree", "Primary", "Relay", "Total");
     plotColor[2]=gui.mainColor;
     for (int i=0; i<8; i++)
       table.setInt(7-i, 0, i);
     barChart.setX(0, 7);
+    barChart.setPoints();
     tails.value=showRegion.value=false;
   }
   void setting() {
     initialize();
     edgeWeight.setPreference(gui.unit(0.001), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
-    for (int i=0; i<plot.length; i++)
-      barChart.setPlot(i, plot[i].value);
     setComponent(1);
     backbone.setPreference(1, getAmount());
   }
@@ -52,7 +50,6 @@ abstract class Bipartite extends Procedure implements Screen {
     plotColor[0]=primary;
     plotColor[1]=relay;
     barChart.setY(0, primary.vertices.size()+relay.vertices.size());
-    barChart.deployColors(plotColor);
     regionAmount.setPreference(1, primary.vertices.size()+relay.vertices.size());
     region.amount=round(regionAmount.value);
     interval.setPreference(1, ceil((primary.vertices.size()+relay.vertices.size())/3.0), 1);
@@ -218,9 +215,13 @@ abstract class Bipartite extends Procedure implements Screen {
     word[len-1]="Primary partite #"+(primary.index+1)+" & relay partite #"+(relay.index+1);
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+i+1));
-    if (modes.value==1)
-      barChart.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
-    else
+    if (modes.value==1) {
+      barChart.showFrame(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
+      barChart.showLabels(gui.thisFont.stepX(2)+gui.margin()-textWidth("Degree"), gui.thisFont.stepY(startHeight+len+2));
+      strokeWeight(7.5);
+      barChart.drawPlot[0].display();
+      barChart.showMeasurements();
+    } else
       table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap());
   }
   void displayEdge(Vertex nodeA, Vertex nodeB) {
@@ -240,23 +241,24 @@ abstract class Bipartite extends Procedure implements Screen {
         plot[i].display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY(2)+gui.thisFont.gap(2)+modes.radioHeight+(plot[0].checkerHeight+gui.thisFont.gap())*i);
     }
   }
+  void moreMousePresses() {
+    if (showRegion.value&&regionAmount.active())
+      region.amount=round(regionAmount.value);
+  }
   void moreMouseReleases() {
+    showEdge.active();
     modes.active();
-    if (modes.value==1)
-      for (int i=0; i<plot.length; i++)
-        if (plot[i].active()) {
-          plot[i].value=!plot[i].value;
-          barChart.setPlot(i, plot[i].value);
-        }
-    if (backbone.active())
-      setComponent(round(backbone.value));
     if (showRegion.active())
       if (showRegion.value)
         tunes.addLast(regionAmount);
       else
         tunes.removeLast();
-    if (showRegion.value&&regionAmount.active())
-      region.amount=round(regionAmount.value);
+    if (modes.value==1)
+      for (int i=0; i<plot.length; i++)
+        if (plot[i].active())
+          barChart.setPlot(i, plot[i].value);
+    if (backbone.active())
+      setComponent(round(backbone.value));
   }
   void moreKeyPresses() {
     switch(key) {
@@ -351,8 +353,8 @@ abstract class Bipartite extends Procedure implements Screen {
           table.setInt(i, j+1, 0);
       break;
     case 1:
-      for (int i=0; i<8; i++)
-        for (ArrayList<Float> point : barChart.points)
+      for (ArrayList<Float> point : barChart.points)
+        for (int i=0; i<8; i++)
           point.set(i, 0f);
     }
   }

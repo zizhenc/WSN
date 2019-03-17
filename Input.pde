@@ -1,26 +1,43 @@
 class Input {
   int position;
-  float x, y;
+  float x, y, inputWidth, inputHeight, promptLength, wordLength;
   String prompt, word="", value="";
   Input(String prompt) {
     this.prompt=prompt;
   }
+  Input(String prompt, String value) {
+    this(prompt);
+    this.value=word=value;
+    position=value.length();
+  }
   boolean active() {
-    return mouseX>x&&mouseX<x+textWidth(prompt+word)&&mouseY>y-gui.thisFont.stepY()&&mouseY<y;
+    if (mouseX>x&&mouseX<x+inputWidth&&mouseY>y&&mouseY<y+inputHeight) {
+      if (mouseX-x-promptLength>0)
+        position=round((mouseX-x-promptLength)*word.length()/wordLength);
+      return true;
+    }
+    return false;
   }
   void cin(float x, float y) {
+    pushStyle();
     initialize(x, y);
-    text(prompt+word.substring(0, position)+(frameCount/10%2==0?' ':'|')+word.substring(position, word.length()), x, y);
+    text(prompt+word.substring(0, position)+(frameCount/10%2==0?' ':'|')+word.substring(position, word.length()), x, y+gui.thisFont.stepY());
+    popStyle();
   }
   void display(float x, float y) {
+    pushStyle();
     initialize(x, y);
-    text(prompt+value, x, y);
+    text(prompt+value, x, y+gui.thisFont.stepY());
+    popStyle();
   }
   void initialize(float x, float y) {
+    textAlign(LEFT);
     this.x=screenX(x, y);
     this.y=screenY(x, y);
-    if (active())
-      gui.kind=TEXT;
+    inputWidth=textWidth(prompt+value);
+    inputHeight=gui.thisFont.stepY()+gui.thisFont.gap();
+    wordLength=textWidth(word);
+    promptLength=textWidth(prompt);
   }
   void commit() {
     value=word;
@@ -56,11 +73,5 @@ class Input {
       if (keyCode==LEFT)
         back();
     }
-  }
-  void mousePress() {
-    float offset=mouseX-x-textWidth(prompt);
-    float step=textWidth(word)/word.length();
-    if (offset>0)
-      position=round(offset/step);
   }
 }

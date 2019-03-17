@@ -1,30 +1,84 @@
 class BarChart extends Chart {
-  float barWidth;
-  BarChart(String labelX, String labelY, String[] bar) {
-    super(labelX, labelY, bar);
+  BarChart(String labelX, String labelY, SysColor[] colors, String...bar) {
+    super(labelX, labelY, colors, bar);
+    drawPlot=new DrawPlot[] {
+      new DrawPlot() {
+        void display() {
+          float barWidth=intervalX/plot.length*g.strokeWeight/10;
+          pushStyle();
+          strokeWeight(barWidth);
+          strokeCap(SQUARE);
+          for (int i=0, sequence=0; i<plot.length; i++)
+          if (active[i]) {
+            stroke(colour[i].value);
+            for (int j=0; j<=maxX-minX; j++) {
+              float value=points[i].get(j);
+              if (value>0)
+                line(xStart+gapX/2+j*intervalX-barWidth*plots/2+(sequence+0.5)*barWidth, yStart, xStart+gapX/2+j*intervalX-barWidth*plots/2+(sequence+0.5)*barWidth, yStart-value*intervalY);
+            }
+            sequence++;
+          }
+          popStyle();
+        }
+        void display(int index) {
+          display(index, minX);
+        }
+        void display(int index, int beginIndex) {
+          if (active[index]) {
+            float barWidth=intervalX*g.strokeWeight/10;
+            pushStyle();
+            strokeWeight(barWidth);
+            strokeCap(SQUARE);
+            stroke(colour[index].value);
+            for (int i=beginIndex-minX; i<=points[index].size(); i++) {
+              float value=points[index].get(i-beginIndex+minX);
+              if (value>0)
+                line(xStart+gapX/2+i*intervalX, yStart, xStart+gapX/2+i*intervalX, yStart-value*intervalY);
+            }
+            popStyle();
+          }
+        }
+      }
+    };
   }
-  void chartAt(int index, int sequence) {
-    for (int i=0; i<points[index].size(); i++) {
-      float value=points[index].get(i);
-      if (value>0)
-        rect(xStart+gapX/2+i*intervalX-barWidth*plots/2+sequence*barWidth, yStart, barWidth, -value*intervalY);
-    }
-  }
-  String measure() {
-    return String.format("(%d, %.2f)", max(0, floor((mouseX-xStart)/intervalX)), max(0, (yStart-mouseY)/intervalY));
-  }
-  void graduation() {
-    barWidth=intervalX/(points.length+1);
-    for (int i=0; i<=(maxX-minX)/stepX; i++)
-      line(xStart+i*gapX+gapX/2, yStart+gui.thisFont.gap(), xStart+i*gapX+gapX/2, yStart);
-    for (int i=1; i<=(maxY-minY)/stepY; i++)
-      line(xStart, yStart-gapY*i, xStart-gui.thisFont.gap(), yStart-gapY*i);
+  void showScaleX(float x, float y, int beginIndex, int endIndex) {
+    pushStyle();
+    stroke(gui.frameColor.value);
+    strokeWeight(gui.unit());
+    for (int i=beginIndex; i<=(endIndex-beginIndex)/stepX; i++)
+      line(x+i*gapX+gapX/2, y+gui.thisFont.gap(), x+i*gapX+gapX/2, y);
+    strokeWeight(gui.unit(2));
+    line(x, y, x+(endIndex-beginIndex+1)*intervalX, y);
     fill(gui.bodyColor[0].value);
     textAlign(CENTER);
-    for (int i=0; i<=(maxX-minX)/stepX; i++)
-      text(i*stepX, xStart+i*gapX+gapX/2, y+chartHeight);
+    for (int i=0; i<=(endIndex-beginIndex)/stepX; i++)
+      text(i*stepX+beginIndex, x+i*gapX+gapX/2, y+gui.thisFont.stepY());
+    popStyle();
+  }
+  void showScaleY(float x, float y, int beginIndex, int endIndex) {
+    pushStyle();
+    stroke(gui.frameColor.value);
+    strokeWeight(gui.unit());
+    for (int i=1; i<=(endIndex-beginIndex)/stepY; i++)
+      line(x, y-gapY*i, x-gui.thisFont.gap(), y-gapY*i);
+    strokeWeight(gui.unit(2));
+    line(x, y, x, y-(endIndex-beginIndex)*intervalY);
+    fill(gui.bodyColor[0].value);
     textAlign(RIGHT, CENTER);
-    for (int i=0; i<=(maxY-minY)/stepY; i++)
-      text(i*stepY, xStart-gui.thisFont.stepX(), yStart-gapY*i);
+    for (int i=0; i<=(endIndex-beginIndex)/stepY; i++)
+      text(i*stepY+beginIndex, x-gui.thisFont.stepX(), y-gapY*i);
+    popStyle();
+  }
+  float getX() {
+    return min(max(minX, (mouseX-xStart-gapX/2)/intervalX), maxX);
+  }
+  float getX(float index) {
+    return xStart+gapX/2+index*intervalX;
+  }
+  float getY() {
+    return min(max(minY, (yStart-mouseY)/intervalY), maxY);
+  }
+  float getY(float index) {
+    return yStart-index*intervalY;
   }
 }

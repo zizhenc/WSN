@@ -1,5 +1,5 @@
 class RelayColoring extends Procedure implements Screen {
-  int index, _N, _E;
+  int connection, _N, _E;
   boolean[] slot;
   Slider connectivity=new Slider("Connectivity", 2, 1), edgeWeight=new Slider("Edge weight");
   Switcher showEdge=new Switcher("Edge", "Edge");
@@ -45,12 +45,12 @@ class RelayColoring extends Procedure implements Screen {
   }
   void reset() {
     navigation.end=-6;
-    index=graph.relayList.length-1;
+    connection=graph.relayList.length;
     graph.generateRelayList(2);
   }
   void deploying() {
     for (int i=0; i<interval.value; i++) {
-      if (play.value&&index<connectivity.value-1) {
+      if (play.value&&connection<connectivity.value) {
         if (navigation.end==-6)
           navigation.end=6;
         if (navigation.auto)
@@ -58,7 +58,7 @@ class RelayColoring extends Procedure implements Screen {
         play.value=false;
       }
       if (play.value)
-        index=graph.colour(slot, index);
+        connection=graph.colour(slot, connection);
     }
   }
   void show() {
@@ -154,8 +154,9 @@ class RelayColoring extends Procedure implements Screen {
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(15+i));
   }
   void moreMouseReleases() {
+    showEdge.active();
     if (connectivity.active()&&round(connectivity.value)!=graph.connectivity) {
-      if (index<connectivity.value-1) {
+      if (connection<connectivity.value) {
         graph.connectivity=round(connectivity.value);
         restart();
       } else {

@@ -6,8 +6,8 @@ class Scene implements Screen {
     "Node Distributing...", "Graph Generating...", "Smallest-last Ordering...", "Smallest-last Coloring...", "Partitioning...", "Relay Coloring...", "Smallest-last Coloring Partites...", "Relay Coloring Partites...", "Smallest-last Coloring Bipartites...", "Relay Coloring Bipartites...", 
     "Terminal Clique...", "Primary Independent Sets...", "Relay Independent Sets...", "Backbones...", "Surplus...", 
     "Degree Distribution Histogram...", 
-    "Vertex Degree Plot...", "Smallest-last Color-size Plot...", "Relay Color-size Plot...", 
-    "New Computation...", "New Demonstration...", 
+    "Vertex Degree Plot...", "Color-size Plot...", 
+    "New deployment...", 
     "Settings...", 
     "About..."
   };

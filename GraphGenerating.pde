@@ -1,7 +1,7 @@
 class GraphGenerating extends Procedure implements Screen {
   int _N;
   String[][] coordinateLabels={{"Cartesian system", "Cylindrical system", "Spherical system"}, {"Cartesian system", "Cylindrical system"}};
-  Radio methods=new Radio(new String[] {"Exhaustive method", "Sweep method", "Cell method"}), coordinates=new Radio(coordinateLabels[0]);
+  Radio methods=new Radio("Exhaustive method", "Sweep method", "Cell method"), coordinates=new Radio();
   Slider edgeWeight=new Slider("Edge weight");
   Checker remainingVertices=new Checker("Remaining vertices"), generatedGraph=new Checker("Generated graph");
   Switcher showEdge=new Switcher("Edge", "Edge");
@@ -114,6 +114,7 @@ class GraphGenerating extends Procedure implements Screen {
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(7+i));
   }
   void moreMouseReleases() {
+    showEdge.active();
     if (methods.active()) {
       reset();
       graph.methodIndex=methods.value;

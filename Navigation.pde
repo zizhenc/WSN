@@ -3,13 +3,12 @@ class Navigation {
   boolean auto, lock;//lock item controled by keyboard
   float itemLength, subItemLength, barWidth, barHeight;
   LinkedList<String>[] items=new LinkedList[7];
-  String[] itemTarget={"New demonstration [3]", "Save primary set summary [4]", "Primary independent sets [2]", "Smallest-last coloring bipartites [7]", "Degree distribution histogram [1]", "", "Documentation [1]"};//itemTarget means the longest item (in text) among the whole menu list.
+  String[] itemTarget={"New deployment [2]", "Save primary set summary [4]", "Primary independent sets [2]", "Smallest-last coloring bipartites [7]", "Degree distribution histogram [1]", "", "Documentation [1]"};//itemTarget means the longest item (in text) among the whole menu list.
   Navigation() {
     for (int i=0; i<items.length; i++)
       items[i]=new LinkedList<String>();
-    items[0].addFirst("New graph [1]");//103
-    items[0].addFirst("New computation [2]");//102
-    items[0].addFirst("New demonstration [3]");//101
+    items[0].addFirst("New graph [1]");//102
+    items[0].addFirst("New deployment [2]");//101
     items[0].addFirst("New [N]");//100
     items[1].addFirst("Load graph [1]");//207
     items[1].addFirst("Save graph [2]");//206
@@ -36,10 +35,9 @@ class Navigation {
     items[3].addFirst("Smallest-last coloring bipartites [9]");//402
     items[3].addFirst("Relay coloring bipartites [10]");//401
     items[3].addFirst("Procedures [P]");//400
-    items[4].addFirst("Degree distribution histogram [1]");//504
-    items[4].addFirst("Vertex-degree plot [2]");//503
-    items[4].addFirst("Smallest-last color-size plot [3]");//502
-    items[4].addFirst("Relay color-size plot [4]");//501
+    items[4].addFirst("Degree distribution histogram [1]");//503
+    items[4].addFirst("Vertex-degree plot [2]");//502
+    items[4].addFirst("Color-size plot [3]");//501
     items[4].addFirst("Charts [C]");//500
     items[5].addFirst("Settings [S]");//600
     items[6].addFirst("Documentation [1]");//702
@@ -75,7 +73,6 @@ class Navigation {
       if (itemRange(i)) {
         fill(gui.highlightColor.value, 50);
         rect(itemLength*(i-items.length/2.0+0.5), -barHeight/2, itemLength-gui.unit(6), barHeight-gui.unit(6), gui.unit(10), gui.unit(10), 0, 0);
-        gui.kind=HAND;
       }
       if (option>=100*(i+1)&&option<(i+2)*100) {
         fill(gui.baseColor.value, 150);
@@ -85,10 +82,8 @@ class Navigation {
         rect((i-items.length/2.0+0.5)*itemLength, -(items[i].size()-1)*barHeight/2-1.5*barHeight, subItemLength, (items[i].size()-1)*barHeight, gui.unit(10), gui.unit(10), 0, 0);
         for (int j=1; j<items[i].size(); j++) {
           fill(gui.highlightColor.value, 50);
-          if (subItemRange(i, j)) {
+          if (subItemRange(i, j))
             rect(itemLength*(i-items.length/2.0+0.5), -barHeight*(1+j), subItemLength-gui.unit(6), barHeight-gui.unit(6), gui.unit(10), gui.unit(10), 0, 0);
-            gui.kind=HAND;
-          }
           if (option==100*(i+1)+j)
             fill(gui.bodyColor[0].value);
           else
@@ -112,7 +107,7 @@ class Navigation {
     if (auto) {
       textAlign(CENTER);
       fill(gui.bodyColor[1].value);
-      text("<<- Presentation mode: Ver. "+gui._V+" ->>", 0, gui.thisFont.stepY()-height);
+      text("<<- Presentation mode: Ver. "+gui._V+" ->>", 0, -barHeight-gui.thisFont.gap());
     }
     pop();
   }
@@ -127,14 +122,11 @@ class Navigation {
   }
   void go(int option) {//end from Node distribtuting to Relay coloring is 1 to 6, New graph is 0
     switch(option) {
-    case 103://New Graph
+    case 102://New Graph
       nextPage=0;
       break;
-    case 102://New Computation
-      nextPage=20;
-      break;
-    case 101://New Demonstration
-      nextPage=21;
+    case 101://New Computation
+      nextPage=19;
       break;
     case 207://Load graph
       //selectInput("Select WSN file:", "loadGraph", new File("Results"+System.getProperty("file.separator")+"."), io);
@@ -198,64 +190,60 @@ class Navigation {
         nextPage=15;
       break;
     case 410://Node distributing
-      if (end>=0)
+      if (end>=0&&end<7)
         nextPage=1;
       break;
     case 409://Graph Generating
-      if (end>=1)
+      if (end>=1&&end<7)
         nextPage=2;
       break;
     case 408://Smallest-last Ordering
-      if (end>=2)
+      if (end>=2&&end<7)
         nextPage=3;
       break;
     case 407://Smallest-last Coloring
-      if (end>=3)
+      if (end>=3&&end<7)
         nextPage=4;
       break;
     case 406://Partitioning
-      if (end>=4)
+      if (end>=4&&end<7)
         nextPage=5;
       break;
     case 405://Relay coloring
-      if (end>=5)
+      if (end>=5&&end<7)
         nextPage=6;
       break;
     case 404://Smallest-last coloring partites
-      if (end>=4)
+      if (end>=4&&end<7)
         nextPage=7;
       break;
     case 403://Relay coloring partites
-      if (end>=6)
+      if (end>=6&&end<7)
         nextPage=8;
       break;
     case 402://Smallest-last coloring bipartites
-      if (end>=4)
+      if (end>=4&&end<7)
         nextPage=9;
       break;
     case 401://Relay coloring bipartites
-      if (end>=6)
+      if (end>=6&&end<7)
         nextPage=10;
       break;
-    case 504://Degree distribution histogram
+    case 503://Degree distribution histogram
       if (end>=3)
         nextPage=16;
       break;
-    case 503://Vertex-degree plot
+    case 502://Vertex-degree plot
       if (end>=3)
         nextPage=17;
       break;
-    case 502://Smallest-last Color-size plot
+    case 501://Smallest-last Color-size plot
       if (end>=4)
         nextPage=18;
       break;
-    case 501://Relay Color-size plot
-      if (end>=6)
-        nextPage=19;
-      break;
     case 600://Settings
       if (end>=0||end==-420)
-        nextPage=22;
+        nextPage=20;
       this.option=0;
       break;
     case 702://Documentation

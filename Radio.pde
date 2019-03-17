@@ -1,13 +1,20 @@
 class Radio {
   int value;
-  float x, y, radioHeight, diameter, gap;
+  float x, y, radioWidth, radioHeight, diameter, gap;
   String[] label;
-  Radio(String[] label) {
+  String maxLabel="";
+  Radio(String...label) {
     this.label=label;
+    for (String str : label)
+      if (maxLabel.length()<str.length())
+        maxLabel=str;
+  }
+  boolean inRange(int index) {
+    return mouseX>x&&mouseY>y+(gap+diameter)*index&&mouseX<x+diameter&&mouseY<y+(gap+diameter)*(index+1);
   }
   boolean active() {
     for (int i=0; i<label.length; i++)
-      if (mouseX>x&&mouseY>y+(gap+diameter)*i&&mouseX<x+diameter&&mouseY<y+(gap+diameter)*(i+1)) {
+      if (inRange(i)) {
         value=i;
         return true;
       }
@@ -18,11 +25,16 @@ class Radio {
     textAlign(LEFT, CENTER);
     this.x=screenX(x, y);
     this.y=screenY(x, y);
-    radioHeight=gui.thisFont.stepY(label.length)+gui.thisFont.gap(label.length-1);
     diameter=gui.thisFont.stepY();
+    radioWidth=textWidth(maxLabel)+diameter+gui.thisFont.stepX();
+    radioHeight=gui.thisFont.stepY(label.length)+gui.thisFont.gap(label.length-1);
     gap=gui.thisFont.gap();
-    if (mouseX>this.x&&mouseX<this.x+diameter&&mouseY>this.y&&mouseY<this.y+radioHeight)
-      gui.kind=HAND;
+    for (int i=0; i<label.length; i++)
+      if (inRange(i)) {
+        noStroke();
+        fill(gui.highlightColor.value, 100);
+        circle(x+diameter/2, y+i*(diameter+gap)+diameter/2, diameter);
+      }
     stroke(gui.frameColor.value);
     strokeWeight(gui.unit(2));
     noFill();
@@ -32,7 +44,7 @@ class Radio {
     for (int i=0; i<label.length; i++)
       text(label[i], x+diameter+gui.thisFont.stepX(), y+diameter*i+diameter/2+gap*i);
     stroke(gui.mainColor.value);
-    strokeWeight(gui.unit(4));
+    strokeWeight(diameter/3);
     point(x+diameter/2, y+(diameter+gap)*value+diameter/2);
     popStyle();
   }

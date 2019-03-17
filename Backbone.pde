@@ -1,15 +1,14 @@
 class Backbone extends Result implements Screen {
   int _N, _E;
-  String[] headers={"Degree", "Primary", "Relay", "Total"}, modeLabels={"Table", "Bar chart"};
   Color primary, relay;
   SysColor[] plotColor=new SysColor[3];
-  Radio modes=new Radio(modeLabels);
+  Radio modes=new Radio("Table", "Bar chart");
   Region region=new Region();
   Slider backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
   Checker minorComponents=new Checker("Minor components"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block");
   ExTable table;
   Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
-  BarChart barChart=new BarChart("Degree", "Vertex", new String[]{"Primary", "Relay", "Total"});
+  BarChart barChart=new BarChart("Degree", "Vertex", plotColor, "Primary", "Relay", "Total");
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
   HashSet<Vertex> domain=new HashSet<Vertex>();
@@ -21,11 +20,12 @@ class Backbone extends Result implements Screen {
     parts.addLast(giantBlock);
     switches.addLast(showRegion);
     tunes.addLast(backbone);
-    table=new ExTable(headers, 8);
+    table=new ExTable(8, "Degree", "Primary", "Relay", "Total");
     plotColor[2]=gui.mainColor;
+    barChart.setX(0, 7);
+    barChart.setPoints();
     for (int i=0; i<8; i++)
       table.setInt(7-i, 0, i);
-    barChart.setX(0, 7);
     tails.value=showRegion.value=false;
   }
   void setting() {
@@ -41,7 +41,6 @@ class Backbone extends Result implements Screen {
     plotColor[0]=primary;
     plotColor[1]=relay;
     barChart.setY(0, primary.vertices.size()+relay.vertices.size());
-    barChart.deployColors(plotColor);
     regionAmount.setPreference(1, primary.vertices.size()+relay.vertices.size());
     region.amount=round(regionAmount.value);
     while (component.deleting());
@@ -188,9 +187,13 @@ class Backbone extends Result implements Screen {
     word[len-1]="Primary partite #"+(primary.index+1)+" & relay partite #"+(relay.index+1);
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(16+i+1));
-    if (modes.value==1)
-      barChart.display(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
-    else
+    if (modes.value==1) {
+      barChart.showFrame(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
+      barChart.showLabels(gui.thisFont.stepX(2)+gui.margin()-textWidth("Degree"), gui.thisFont.stepY(18+len));
+      strokeWeight(7.5);
+      barChart.drawPlot[0].display();
+      barChart.showMeasurements();
+    } else
       table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap());
   }
   void displayEdge(Vertex nodeA, Vertex nodeB) {
@@ -210,23 +213,23 @@ class Backbone extends Result implements Screen {
         plot[i].display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY(2)+gui.thisFont.gap(2)+modes.radioHeight+(plot[0].checkerHeight+gui.thisFont.gap())*i);
     }
   }
-  void moreMouseReleases() {
-    modes.active();
-    if (modes.value==1)
-      for (int i=0; i<plot.length; i++)
-        if (plot[i].active()) {
-          plot[i].value=!plot[i].value;
-          barChart.setPlot(i, plot[i].value);
-        }
+  void moreMousePresses() {
     if (backbone.active())
       setComponent(round(backbone.value));
+    if (showRegion.value&&regionAmount.active())
+      region.amount=round(regionAmount.value);
+  }
+  void moreMouseReleases() {
     if (showRegion.active())
       if (showRegion.value)
         tunes.addLast(regionAmount);
       else
         tunes.removeLast();
-    if (showRegion.value&&regionAmount.active())
-      region.amount=round(regionAmount.value);
+    modes.active();
+    if (modes.value==1)
+      for (int i=0; i<plot.length; i++)
+        if (plot[i].active())
+          barChart.setPlot(i, plot[i].value);
   }
   void moreKeyPresses() {
     switch(key) {
@@ -308,8 +311,8 @@ class Backbone extends Result implements Screen {
           table.setInt(i, j+1, 0);
       break;
     case 1:
-      for (int i=0; i<8; i++)
-        for (ArrayList<Float> point : barChart.points)
+      for (ArrayList<Float> point : barChart.points)
+        for (int i=0; i<8; i++)
           point.set(i, 0f);
     }
   }

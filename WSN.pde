@@ -6,80 +6,94 @@ import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.ListIterator;
 GUI gui=new GUI();
-Error error=new Error();
 Graph graph;
-Screen[] screen=new Screen[18];
-Navigation navigation=new Navigation();
+Screen[] screen;
+Error error;
+Navigation navigation;
+Capture capture;
+MessageBox box;
 void settings() {
   size(gui.getWidth(), gui.getHeight(), P3D);
 }
 void setup() {
   gui.initialize();
-  thread("loadScreens");
+  thread("daemon");
 }
 void draw() {
   if (gui.load) {
     background(gui.backgroundColor.value);
     screen[navigation.page].display();
-  }
-  gui.display();
+  } else
+    gui.display();
+  if (box.active)
+    box.display();
+  if (capture.active)
+    capture.display();
 }
-void loadScreens() {
-  screen[0]=new NewGraph();
-  screen[1]=new NodeDistributing();
-  screen[2]=new GraphGenerating();
-  screen[3]=new SmallestLastOrdering();
-  screen[4]=new SmallestLastColoring();
-  screen[5]=new Partitioning();
-  screen[6]=new RelayColoring();
-  screen[7]=new SLPartite();
-  screen[8]=new RLPartite();
-  screen[9]=new SLBipartite();
-  screen[10]=new RLBipartite();
-  screen[11]=new Clique();
-  screen[12]=new PrimarySet();
-  screen[13]=new RelaySet();
-  screen[14]=new Backbone();
-  screen[15]=new Surplus();
-  screen[16]=new DegreeDistribution();
-  screen[17]=new Scene();
-  gui.load=true;
+void daemon() {
+  if (gui.load)
+    graph.compute();
+  else {
+    error=new Error();
+    navigation=new Navigation();
+    capture=new Capture();
+    box=new MessageBox();
+    screen=new Screen[]{
+      new NewGraph(), 
+      new NodeDistributing(), new GraphGenerating(), new SmallestLastOrdering(), new SmallestLastColoring(), new Partitioning(), new RelayColoring(), new SLPartite(), new RLPartite(), new SLBipartite(), new RLBipartite(), 
+      new Clique(), new PrimarySet(), new RelaySet(), new Backbone(), new Surplus(), 
+      new DegreeDistribution(), new VertexDegreePlot(), new ColorSizePlot(), 
+      new NewDeployment(), 
+      new Setting(), 
+      new Scene()
+    };
+    gui.load=true;
+  }
 }
 void keyPressed() {
-  if (gui.active())
-    gui.keyPress();
-  else
-    screen[navigation.page].keyPress();
+  if (!capture.active)
+    if (box.active)
+      box.keyPress();
+    else
+      screen[navigation.page].keyPress();
 }
 void keyReleased() {
-  if (!gui.active())
+  if (capture.active)
+    capture.keyRelease();
+  else if (!box.active)
     screen[navigation.page].keyRelease();
 }
 void keyTyped() {
-  if (!gui.active())
+  if (!capture.active&&!box.active)
     screen[navigation.page].keyType();
 }
 void mousePressed() {
-  if (gui.active())
-    gui.mousePress();
+  if (capture.active)
+    capture.mousePress();
+  else if (box.active)
+    box.mousePress();
   else
     screen[navigation.page].mousePress();
 }
 void mouseReleased() {
-  if (gui.active())
-    gui.mouseRelease();
-  else
-    screen[navigation.page].mouseRelease();
+  if (!capture.active)
+    if (box.active)
+      box.mouseRelease();
+    else
+      screen[navigation.page].mouseRelease();
 }
 void mouseDragged() {
-  if (gui.active())
-    gui.mouseDrag();
-  else
+  if (capture.active)
+    capture.mouseDrag();
+  else if (!box.active)
     screen[navigation.page].mouseDrag();
 }
 void mouseWheel(MouseEvent event) {
-  if (!gui.active())
-    screen[navigation.page].mouseScroll(event);
+  screen[navigation.page].mouseScroll(event);
+}
+void mouseMoved() {
+  if (!capture.active&&box.active)
+    box.mouseMove();
 }
 void exit() {
   error.clean();

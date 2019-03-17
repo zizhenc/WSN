@@ -9,7 +9,16 @@ class Font {
     return gap(1);
   }
   float gap(float factor) {
-    return 2*textDescent()*factor;
+    if (this==gui.thisFont)
+      return 2*textDescent()*factor;
+    else {
+      float value;
+      pushStyle();
+      textFont(font, gui.unit(size));
+      value=2*textDescent()*factor;
+      popStyle();
+      return value;
+    }
   }
   float stepX() {
     return stepX(1);

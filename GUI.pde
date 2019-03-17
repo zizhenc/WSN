@@ -1,17 +1,15 @@
 class GUI {
   static final int SCALE=0, WIDTH=1, HEIGHT=2;
-  int kind=-1;//cursor kind
-  float angle, moveX, moveY, x, y, boxWidth, boxHeight;
-  String _V="3.14159";
-  boolean load, lock, showFPS, showMessage;
-  String[] loadText={"Loading", "Loading.", "Loading..", "Loading..."}, message=new String[2];
+  float angle;
+  String _V="3.1415926";
+  volatile boolean load;
+  String[] loadText={"Loading", "Loading.", "Loading..", "Loading..."};
   Font body, head, thisFont;
   Image title;
-  Button confirm=new Button("Confirm");
   Image[] cover=new Image[2];
   Color mainColor=new Color(255, 255, 0, -1);
   SysColor backgroundColor=new SysColor(0), frameColor=new SysColor(255, 165, 0), baseColor=new SysColor(70, 70, 70), highlightColor=new SysColor(255, 255, 255);
-  SysColor[] headColor={new SysColor(255, 255, 0), new SysColor(255, 0, 0), new SysColor(0, 255, 0), new SysColor(255, 0, 255)}, bodyColor={new SysColor(0, 255, 255), new SysColor(200, 200, 200), new SysColor(255, 165, 0)}, partColor={new SysColor(0, 255, 255), new SysColor(255, 0, 255), new SysColor(0, 255, 0), new SysColor(138, 43, 226), new SysColor(0, 255, 255)};
+  SysColor[] headColor={new SysColor(255, 255, 0), new SysColor(255, 0, 0), new SysColor(0, 255, 0)}, bodyColor={new SysColor(0, 255, 255), new SysColor(200, 200, 200), new SysColor(255, 165, 0)}, partColor={new SysColor(240, 247, 212), new SysColor(255, 0, 255), new SysColor(0, 255, 0), new SysColor(138, 43, 226)};
   int getWidth() {
     return 0.86*displayHeight*1920/1080>displayWidth?round(0.86*displayWidth):round(0.86*displayHeight*1920/1080);
   }
@@ -37,35 +35,35 @@ class GUI {
   float unit(float factor) {
     return height*factor/1080;
   }
-  boolean active() {
-    return !load||showMessage;
-  }
   void initialize() {
     surface.setLocation((displayWidth-width)/2, round(0.035*displayHeight));
     surface.setResizable(true);
     surface.setTitle("Wireless Sensor Networks");
-    body=new Font("AmericanTypewriter-Bold-24.vlw", 19);
-    head=new Font("Apple-Chancery-48.vlw", 50);
+    body=new Font("AmericanTypewriter-Bold-24.vlw", 18);
+    head=new Font("ColonnaMT-60.vlw", 54);
     cover[0]=new Image("RedDragon.jpg");
     cover[1]=new Image("BlueDragon.jpg");
     title=new Image("Title.png");
     background(backgroundColor.value);
   }
-  void display() {
-    if (load) {
-      if (showFPS)
-        _FPS();
-      if (showMessage)
-        messageBox();
-      if (kind>-1) {
-        cursor(kind);
-        kind=ARROW;
-      } else if (kind==ARROW)
-        kind=-1;
-    } else
-      loading();
+  void resetColor() {
+    mainColor.setValue(255, 255, 0);
+    backgroundColor.setValue(0);
+    frameColor.setValue(255, 165, 0);
+    baseColor.setValue(70, 70, 70);
+    highlightColor.setValue(255, 255, 255);
+    headColor[0].setValue(255, 255, 0);
+    headColor[1].setValue(255, 0, 0);
+    headColor[2].setValue(0, 255, 0);
+    bodyColor[0].setValue(0, 255, 255);
+    bodyColor[1].setValue(200, 200, 200);
+    bodyColor[2].setValue(255, 165, 0);
+    partColor[0].setValue(240, 247, 212);
+    partColor[1].setValue(255, 0, 255);
+    partColor[2].setValue(0, 255, 0);
+    partColor[3].setValue(138, 43, 226);
   }
-  void loading() {
+  void display() {
     push();
     body.initialize();
     translate(width/2, logo());
@@ -83,73 +81,5 @@ class GUI {
     fill(bodyColor[2].value);
     text(loadText[frameCount/15%4], 0, thisFont.stepY(2));
     pop();
-  }
-  void messageBox() {
-    pushStyle();
-    gui.body.initialize();
-    stroke(gui.frameColor.value);
-    strokeWeight(gui.unit(2));
-    fill(gui.baseColor.value, 100);
-    rectMode(CENTER);
-    boxHeight=gui.thisFont.stepY(10);
-    boxWidth=boxHeight*1366/768;
-    rect(x, y, boxWidth, boxHeight, gui.unit(18), 0, gui.unit(18), 0);
-    if (textWidth(message[0]+"  ")>boxWidth) {
-      String[] word=message[0].split(" ");
-      float count=gui.thisFont.stepX();
-      message[0]="";
-      for (String str : word) {
-        count+=textWidth(str+' ');
-        if (count>boxWidth) {
-          message[0]+=System.getProperty("line.separator");
-          count=gui.thisFont.stepX()+textWidth(str+' ');
-        }
-        message[0]+=str+' ';
-      }
-    }
-    textAlign(LEFT, CENTER);
-    fill(gui.bodyColor[0].value);
-    text(message[0], x-boxWidth/2+gui.thisFont.stepX(), y);
-    confirm.buttonMode(CENTER);
-    confirm.display(x, y+gui.thisFont.stepY(4)-gui.unit(4));
-    textAlign(CENTER);
-    fill(gui.headColor[2].value);
-    text(message[1], x, y-boxHeight/2+gui.thisFont.stepY());
-    popStyle();
-  }
-  void _FPS() {
-    pushStyle();
-    body.initialize();
-    textAlign(RIGHT);
-    fill(bodyColor[1].value);
-    text(String.format("FPS: %.2f", frameRate), width-thisFont.stepX(), height-thisFont.stepY());
-    popStyle();
-  }
-  void messageBox(String mainMessage, String metaMessage) {
-    x=width/2;
-    y=height/2;
-    message[0]=mainMessage;
-    message[1]=metaMessage;
-    showMessage=true;
-  }
-  void keyPress() {
-    if (key==ENTER||key==RETURN||key==' ')
-      showMessage=false;
-  }
-  void mousePress() {
-    lock=mouseX>x-boxWidth/2&&mouseX<x+boxWidth/2&&mouseY>y-boxHeight/2&&mouseY<y+boxHeight/2?true:false;
-    moveX=mouseX-x;
-    moveY=mouseY-y;
-  }
-  void mouseRelease() {
-    lock=false;
-    if (confirm.active())
-      showMessage=false;
-  }
-  void mouseDrag() {
-    if (lock) {
-      x=mouseX-moveX;
-      y=mouseY-moveY;
-    }
   }
 }

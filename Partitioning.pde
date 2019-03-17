@@ -134,6 +134,7 @@ class Partitioning extends Procedure implements Screen {
     modes.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
   }
   void moreMouseReleases() {
+    showEdge.active();
     if (modes.active()) {
       graph.mode=modes.value==0?true:false;
       updateSelection();

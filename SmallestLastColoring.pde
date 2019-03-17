@@ -132,6 +132,10 @@ class SmallestLastColoring extends Procedure implements Screen {
     for (int i=0; i<5; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(13+i));
   }
+  void moreMouseReleases() {
+    showMeasurement.active();
+    showEdge.active();
+  }
   void moreKeyReleases() {
     switch (Character.toLowerCase(key)) {
     case 'e':

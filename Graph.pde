@@ -21,6 +21,40 @@ class Graph {
       relayList[i]=new LinkedList<Vertex>();
     vertex=new Vertex[_N];
   }
+  Graph(Topology topology, int _N, double r, int methodIndex, int coordinateIndex, boolean mode, float breakpoint, int connectivity) {
+    this(topology, _N, r);
+    this.methodIndex=methodIndex;
+    this.coordinateIndex=coordinateIndex;
+    this.mode=mode;
+    this.breakpoint=breakpoint;
+    this.connectivity=connectivity;
+  }
+  void compute() {
+    for (int i=0; i<vertex.length; i++)
+      vertex[i]=topology.generateVertex(i);
+    initialize();
+    while (method[methodIndex].connecting());
+    generateDegreeList();
+    int[] degree=new int[]{_E, 2*_E};
+    Vertex[] list=new Vertex[2];
+    list[1]=degreeList.get(maxDegree);
+    int amount=vertex.length;
+    while (amount>0) {
+      order(amount, degree, list);
+      amount--;
+    }
+    boolean[] slot=new boolean[maxMinDegree+1];
+    while (amount<vertex.length) {
+      colour(amount, slot);
+      amount++;
+    }
+    while (primaries<0)
+      selectPrimarySet();
+    generateRelayList(connectivity);
+    for (amount=relayList.length; amount>=connectivity; amount=colour(slot, amount));
+    navigation.end=7;
+    box.pop("Mission acomplished!", "Information");
+  }
   void initialize() {
     if (method[methodIndex]==null)
       switch(methodIndex) {
@@ -129,18 +163,18 @@ class Graph {
         pushRelayList(relayList.length, node);
       }
   }
-  int colour(boolean[] slot, int index) {//relay coloring
-    if (relayList[index].isEmpty())
-      index--;
+  int colour(boolean[] slot, int connection) {//relay coloring //connection is the index+1
+    if (relayList[connection-1].isEmpty())
+      connection--;
     else {
-      Vertex nodeA=relayList[index].removeFirst();
+      Vertex nodeA=relayList[connection-1].removeFirst();
       for (int i=0; i<_PYColors.size(); i++)
         slot[i]=false;
       for (int i=_PYColors.size(); i<_SLColors.size(); i++)
         for (Vertex nodeB : nodeA.linksAt(_SLColors.get(i)))
           if (nodeB.relayColor!=null)
             slot[nodeB.relayColor.index-_SLColors.size()]=true;
-      for (Color colour : nodeA.colorList[index-1])
+      for (Color colour : nodeA.colorList[connection-2])
         if (!slot[colour.index]) {
           nodeA.relayColor=getColor(colour.index+_SLColors.size());
           if (nodeA.relayColor.vertices.isEmpty())
@@ -149,9 +183,9 @@ class Graph {
           break;
         }
       if (nodeA.relayColor==null)
-        pushRelayList(index, nodeA);
+        pushRelayList(connection-1, nodeA);
     }
-    return index;
+    return connection;
   }
   void initailizeBackbones() {
     if (backbone==null||backbone.length<_RLColors.size())

@@ -14,6 +14,7 @@ abstract class New implements Screen {
     inputLibrary.put("Provide threshold (r or avg): ", new Input("Provide threshold (r or avg): "));
     inputLibrary.put("r=", new Input("r="));
     inputLibrary.put("avg≈", new Input("avg≈"));
+    inputLibrary.put("Deploy algorithms now? (Yes or No): ", new Input("Deploy algorithms now? (Yes or No): "));
     inputs.add(inputLibrary.get("Press "+(System.getProperty("os.name").contains("Windows")?"Enter":"Return")+" to continue..."));
   }
   void display() {
@@ -24,12 +25,13 @@ abstract class New implements Screen {
     fill(gui.bodyColor[2].value);
     for (int i=0; i<inputs.size(); i++)
       if (i!=index)
-        inputs.get(i).display(-textWidth(inputs.get(i).prompt+inputs.get(i).word)/2, gui.thisFont.stepY(1+i));
-    inputs.get(index).cin(-textWidth(inputs.get(index).prompt+inputs.get(index).word)/2, gui.thisFont.stepY(1+index));
+        inputs.get(i).display(-textWidth(inputs.get(i).prompt+inputs.get(i).word)/2, gui.thisFont.stepY(i));
+    inputs.get(index).cin(-textWidth(inputs.get(index).prompt+inputs.get(index).word)/2, gui.thisFont.stepY(index));
     imageMode(CENTER);
     animation.display(GUI.HEIGHT, 0, height-logoSize-navigation.barHeight-height/10, height/5);
-    pop();
+    popMatrix();
     navigation.display();
+    popStyle();
   }
   void setting() {
     for (int i=inputs.size()-1; i>0; i--)
@@ -57,12 +59,12 @@ abstract class New implements Screen {
       else if (word.contains("ball"))
         topology=new Ball();
       else
-        throw new Exception('\"'+word+"\" - No such topology");
+        throw new Exception('\"'+word+"\": No such topology");
       commit("Enter vertex number: ");
     } else if (prompt.equals("Enter vertex number: ")) {
       _N=Integer.parseInt(word);
-      if (_N<0)
-        throw new NumberFormatException('\"'+inputs.get(index).word+"\" - Invalid 'N' value"); 
+      if (_N<=0)
+        throw new NumberFormatException('\"'+word+"\": Invalid 'N' value"); 
       commit("Provide threshold (r or avg): ");
     } else if (prompt.equals("Provide threshold (r or avg): "))
       if (word.contains("r"))
@@ -70,22 +72,22 @@ abstract class New implements Screen {
       else if (word.contains("avg"))
         commit("avg≈");
       else
-        throw new Exception('\"'+inputs.get(index).word+"\" - No such threshold");
+        throw new Exception('\"'+word+"\": No such threshold");
     else if (prompt.equals("r=")) {
       r=Double.parseDouble(word);
       if (r<0||r>topology.range)
-        throw new NumberFormatException('\"'+inputs.get(index).word+"\" - Invalid 'r' value");
+        throw new NumberFormatException('\"'+word+"\": Invalid 'r' value");
       inputs.get(index).word+=String.format(" (avg≈%.2f)", topology.getAvg(r, _N));
       commit(nextPrompt);
     } else if (prompt.equals("avg≈")) {
       double avgDegree=Double.parseDouble(word);
       if (avgDegree<0||avgDegree>_N-1)
-        throw new NumberFormatException('\"'+inputs.get(index).word+"\" - Invalid average degree"); 
+        throw new NumberFormatException('\"'+word+"\": Invalid average degree"); 
       r=topology.getR(avgDegree, _N);
       inputs.get(index).word+=String.format(" (r=%.2f)", r);
       commit(nextPrompt);
     } else
-      throw new Exception('\"'+inputs.get(index).word+"\" - Nonsense message");
+      throw new Exception('\"'+prompt+"\": System error");
   }
   void commit(String prompt) {
     for (int i=0; i<index; i++)
@@ -107,7 +109,7 @@ abstract class New implements Screen {
           enter();
         }
         catch (Exception e) {
-          error.logOut("Menu input "+e.getMessage());
+          error.logOut("Menu input - "+e.getMessage());
         }
         break;
       case CODED:
@@ -133,9 +135,9 @@ abstract class New implements Screen {
   }
   void mousePress() {
     navigation.mousePress();
-    for (Input input : inputs)
-      if (input.active())
-        input.mousePress();
+    if (!navigation.active())
+      for (Input input : inputs)
+        input.active();
   }
   void mouseRelease() {
     navigation.mouseRelease();

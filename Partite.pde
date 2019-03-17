@@ -83,11 +83,14 @@ abstract class Partite extends Procedure implements Screen {
       }
     }
   }
-  void moreMouseReleases() {
+  void moreMousePresses() {
     if (showRegion.value&&regionAmount.active())
       region.amount=round(regionAmount.value);
     if (partiteIndex.active())
       setPartite();
+  }
+  void moreMouseReleases() {
+    showEdge.active();
     if (showRegion.active())
       if (showRegion.value)
         tunes.addLast(regionAmount);
@@ -98,6 +101,8 @@ abstract class Partite extends Procedure implements Screen {
         switches.addLast(arrow);
       else
         switches.removeLast();
+    if (showMeasurement.value)
+      arrow.active();
   }
   void moreKeyReleases() {
     switch (Character.toLowerCase(key)) {

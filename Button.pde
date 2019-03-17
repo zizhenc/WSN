@@ -11,9 +11,6 @@ class Button {
     else
       return mouseX>x&&mouseX<x+buttonWidth&&mouseY>y&&mouseY<y+buttonHeight;
   }
-  void buttonMode(int mode) {
-    alignment=mode;
-  }
   void display(float x, float y) {
     display(x, y, textWidth(label)+gui.thisFont.stepX(2), gui.thisFont.stepY(2));
   }
@@ -36,7 +33,6 @@ class Button {
     noFill();
     rect(x, y, buttonWidth, buttonHeight, gui.unit(8), 0, gui.unit(8), 0);
     if (active()) {
-      gui.kind=HAND;
       fill(gui.highlightColor.value, 100);
       noStroke();
       rect((alignment==CENTER?0:gui.unit(3))+x, (alignment==CENTER?0:gui.unit(3))+y, buttonWidth-gui.unit(6), buttonHeight-gui.unit(6), gui.unit(8), 0, gui.unit(8), 0);

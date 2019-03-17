@@ -7,7 +7,11 @@ class Switcher {
     label[1]=labelII;
   }
   boolean active() {
-    return mouseX>x&&mouseX<x+2*switchHeight&&mouseY>y&&mouseY<y+switchHeight;
+    if (mouseX>x&&mouseX<x+2*switchHeight&&mouseY>y&&mouseY<y+switchHeight) {
+      value=!value;
+      return true;
+    } else
+      return false;
   }
   void display(float x, float y) {
     pushStyle();
@@ -23,8 +27,6 @@ class Switcher {
     fill(gui.bodyColor[2].value);
     text(label[value?1:0], x+2*switchHeight+gui.thisFont.stepX(), y+switchHeight/2);
     noStroke();
-    if (active())
-      gui.kind=HAND;
     if (value) {
       fill(gui.highlightColor.value, 100);
       rect(x, y, 2*switchHeight, switchHeight, switchHeight/2);

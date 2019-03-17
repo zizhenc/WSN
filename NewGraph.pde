@@ -1,6 +1,5 @@
 class NewGraph extends New {
   NewGraph() {
-    inputLibrary.put("Deploy algorithms now? (Yes or No): ", new Input("Deploy algorithms now? (Yes or No): "));
     animation=new GIF("Tesseract", 48);
   }
   void enter() throws Exception {
@@ -15,7 +14,7 @@ class NewGraph extends New {
         navigation.auto=false;
         navigation.go(410);
       } else
-        throw new Exception('\"'+inputs.get(index).word+"\" - Nonsense message");
+        throw new Exception('\"'+word+"\": Nonsense message");
     else
       defaultEnter(prompt, word, "Deploy algorithms now? (Yes or No): ");
   }

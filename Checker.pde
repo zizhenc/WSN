@@ -18,9 +18,8 @@ class Checker {
     square(x, y, checkerHeight);
     fill(gui.bodyColor[2].value);
     text(label, x+checkerHeight+gui.thisFont.stepX(), y+checkerHeight/2);
-    if (active()) {
+    if (inRange()) {
       noStroke();
-      gui.kind=HAND;
       fill(gui.highlightColor.value, 100);
       rect(x, y, checkerHeight, checkerHeight);
     }
@@ -32,7 +31,14 @@ class Checker {
     }
     popStyle();
   }
-  boolean active() {
+  boolean inRange() {
     return mouseX>x&&mouseX<x+checkerHeight&&mouseY>y&&mouseY<y+checkerHeight;
+  }
+  boolean active() {
+    if (inRange()) {
+      value=!value;
+      return true;
+    } else
+      return false;
   }
 }

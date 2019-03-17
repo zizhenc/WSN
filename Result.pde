@@ -2,7 +2,6 @@ abstract class Result {
   float centralX, centralY, centralZ, eyeX, eyeY, eyeZ, spinX, spinY, spinZ;
   String[] word;
   Slider nodeWeight=new Slider("Node weight"), edgeWeight=new Slider("Edge weight");
-  Capture capture=new Capture();
   Button[] button={new Button("Restore"), new Button("Screenshot")};
   Switcher spin=new Switcher("Spin", "Spin"), showNode=new Switcher("Node", "Node"), showEdge=new Switcher("Edge", "Edge"), projection=new Switcher("Orthographic", "Perspective");
   LinkedList<Slider> tunes=new LinkedList<Slider>();
@@ -37,10 +36,9 @@ abstract class Result {
     rotateY(spinY);
     rotateZ(spinZ);
     show();
-    pop();
+    popMatrix();
     navigation.display();
-    if (capture.active)
-      capture.display();
+    popStyle();
   }
   void controls() {
     fill(gui.headColor[1].value);
@@ -67,6 +65,8 @@ abstract class Result {
   }
   void moreKeyReleases() {
   }
+  void moreMousePresses() {
+  }
   void moreMouseReleases() {
   }
   void moreControls(float y) {
@@ -79,113 +79,98 @@ abstract class Result {
     point((float)node.x, (float)node.y, (float)node.z);
   }
   void keyPress() {
-    if (!capture.active) {
-      navigation.keyPress();
-      if (!navigation.active()) {
-        switch(Character.toLowerCase(key)) {
-        case 'a':
-          eyeX-=40;
+    navigation.keyPress();
+    if (!navigation.active()) {
+      switch(Character.toLowerCase(key)) {
+      case 'a':
+        eyeX-=40;
+        break;
+      case 'd':
+        eyeX+=40;
+        break;
+      case 's':
+        eyeZ+=10;
+        break;
+      case 'w':
+        eyeZ-=10;
+        break;
+      case CODED:
+        switch(keyCode) {
+        case DOWN:
+          eyeY-=10;
+          centralY-=10;
           break;
-        case 'd':
-          eyeX+=40;
+        case UP:
+          eyeY+=10;
+          centralY+=10;
           break;
-        case 's':
-          eyeZ+=10;
+        case RIGHT:
+          eyeX-=10;
+          centralX-=10;
           break;
-        case 'w':
-          eyeZ-=10;
-          break;
-        case CODED:
-          switch(keyCode) {
-          case DOWN:
-            eyeY-=10;
-            centralY-=10;
-            break;
-          case UP:
-            eyeY+=10;
-            centralY+=10;
-            break;
-          case RIGHT:
-            eyeX-=10;
-            centralX-=10;
-            break;
-          case LEFT:
-            eyeX+=10;
-            centralX+=10;
-          }
+        case LEFT:
+          eyeX+=10;
+          centralX+=10;
         }
-        moreKeyPresses();
       }
+      moreKeyPresses();
     }
   }
   void keyRelease() {
-    if (capture.active)
-      capture.keyRelease();
-    else {
-      navigation.keyRelease();
-      if (!navigation.active()) {
-        switch(Character.toLowerCase(key)) {
-        case 'e':
-          showEdge.value=!showEdge.value;
-          break;
-        case 'x':
-          capture.store();
-          break;
-        case 'g':
-          relocate();
-          break;
-        case 'q':
-          spin.value=!spin.value;
-          break;
-        case 'n':
-          showNode.value=!showNode.value;
-        }
-        int i=0;
-        for (Checker part : parts) {
-          if (key==char(i+48))
-            part.value=!part.value;
-          i++;
-        }
-        moreKeyReleases();
+    navigation.keyRelease();
+    if (!navigation.active()) {
+      switch(Character.toLowerCase(key)) {
+      case 'e':
+        showEdge.value=!showEdge.value;
+        break;
+      case 'x':
+        capture.store();
+        break;
+      case 'g':
+        relocate();
+        break;
+      case 'q':
+        spin.value=!spin.value;
+        break;
+      case 'n':
+        showNode.value=!showNode.value;
       }
+      for (ListIterator<Checker> i=parts.listIterator(); i.hasNext(); ) {
+        Checker part=i.next();
+        if (key==char(i.previousIndex()+48))
+          part.value=!part.value;
+      }
+      moreKeyReleases();
     }
   }
   void keyType() {
   }
   void mousePress() {
-    if (capture.active)
-      capture.mousePress();
-    else
-      navigation.mousePress();
+    navigation.mousePress();
+    if (!navigation.active()) {
+      for (Slider slider : tunes)
+        slider.active();
+      moreMousePresses();
+    }
   }
   void mouseRelease() {
-    if (!capture.active) {
-      navigation.mouseRelease();
-      if (!navigation.active()) {
-        for (Slider slider : tunes) {
-          if (slider.activeLeft())
-            slider.decreaseValue();
-          if (slider.activeRight())
-            slider.increaseValue();
-        }
-        for (Switcher switcher : switches)
-          if (switcher.active())
-            switcher.value=!switcher.value;
-        for (Checker checker : parts)
-          if (checker.active())
-            checker.value=!checker.value;
-        if (button[0].active())
-          relocate();
-        if (button[1].active())
-          capture.store();
-        moreMouseReleases();
-      }
+    navigation.mouseRelease();
+    if (!navigation.active()) {
+      projection.active();
+      spin.active();
+      showNode.active();
+      showEdge.active();
+      for (Checker checker : parts)
+        checker.active();
+      if (button[0].active())
+        relocate();
+      if (button[1].active())
+        capture.store();
+      moreMouseReleases();
     }
   }
   void mouseDrag() {
-    if (capture.active)
-      capture.mouseDrag();
-    else if (mouseButton==LEFT) {
+    if (mouseButton==LEFT) {
       spinY+=(mouseX - pmouseX)*0.002;
       spinX+=(pmouseY - mouseY)*0.002;
     } else if (mouseButton==RIGHT) {

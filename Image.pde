@@ -1,5 +1,6 @@
 class Image {
   PImage picture;
+  float imageWidth, imageHeight;
   Image(String imageFile) {
     picture=loadImage(imageFile);
   }
@@ -10,12 +11,18 @@ class Image {
     switch(mode) {
     case GUI.SCALE:
       image(picture, x, y, gui.unit(picture.width)*factor, gui.unit(picture.height)*factor);
+      imageWidth=gui.unit(picture.width)*factor;
+      imageHeight=gui.unit(picture.height)*factor;
       break;
     case GUI.WIDTH:
       image(picture, x, y, factor, picture.height*factor/picture.width);
+      imageWidth=factor;
+      imageHeight=picture.height*factor/picture.width;
       break;
     case GUI.HEIGHT:
       image(picture, x, y, picture.width*factor/picture.height, factor);
+      imageWidth=picture.width*factor/picture.height;
+      imageHeight=factor;
     }
   }
 }
