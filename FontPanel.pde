@@ -18,13 +18,16 @@ public class FontPanel extends Panel {
     textAlign(CENTER, BOTTOM);
     gui.head.initialize();
     text("Head", x+panelWidth/4, y+panelHeight/2-gui.body.gap(2)-font[0].buttonHeight);
+    float textLength=textWidth("Head");
     textAlign(CENTER, TOP);
     gui.body.initialize();
     text("Body", x+panelWidth/4, y+panelHeight/2+size[1].sliderHeight/2+gui.thisFont.gap());
-    size[0].display(x+panelWidth/2+gui.thisFont.stepX(), y+panelHeight/2-gui.thisFont.gap(2)-font[0].buttonHeight-size[0].sliderHeight, panelWidth/2-gui.thisFont.stepX(2));
-    font[0].display(x+panelWidth*3/4, y+panelHeight/2-gui.thisFont.gap()-font[0].buttonHeight/2);
-    size[1].display(x+panelWidth/2+gui.thisFont.stepX(), y+panelHeight/2+gui.thisFont.gap(), panelWidth/2-gui.thisFont.stepX(2));
-    font[1].display(x+panelWidth*3/4, y+panelHeight/2+gui.thisFont.gap(2)+size[1].sliderHeight+font[1].buttonHeight/2);
+    if (textWidth("Body")>textLength)
+      textLength=textWidth("Body");
+    size[0].display(x+panelWidth/2, y+panelHeight/2-gui.thisFont.gap(2)-font[0].buttonHeight-size[0].sliderHeight, panelWidth/4+textLength/2);
+    font[0].display(x+panelWidth*5/8+textLength/4, y+panelHeight/2-gui.thisFont.gap()-font[0].buttonHeight/2);
+    size[1].display(x+panelWidth/2, y+panelHeight/2+gui.thisFont.gap(), panelWidth/4+textLength/2);
+    font[1].display(x+panelWidth*5/8+textLength/4, y+panelHeight/2+gui.thisFont.gap(2)+size[1].sliderHeight+font[1].buttonHeight/2);
     reset.display(x+panelWidth/2, y+panelHeight*3/4);
   }
   void mousePress() {

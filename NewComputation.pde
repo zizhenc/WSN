@@ -13,7 +13,7 @@ class NewDeployment extends New {
   }
   void enter() throws Exception {
     String prompt=inputs.get(index).prompt;
-    String word=inputs.get(index).word.toLowerCase();
+    String word=inputs.get(index).word.toString().toLowerCase();
     if (prompt.equals("Select graph generating method (Exhaustive, Sweep or Cell): ")) {
       if (word.contains("exhaustive")) {
         method=0;

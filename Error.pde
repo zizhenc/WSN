@@ -1,5 +1,5 @@
 class Error {
-  String folder="Logs";
+  StringBuffer path=new StringBuffer("Logs");
   PrintWriter out;
   void clean() {
     if (out!=null)
@@ -8,7 +8,7 @@ class Error {
   void logOut(String message) {
     if (out==null) {
       String timeStamp=month()+"-"+day()+"-"+year()+"_"+hour()+"-"+minute()+"-"+second();
-      out=createWriter(folder+System.getProperty("file.separator")+"WSN-"+timeStamp+".log");
+      out=createWriter(path+System.getProperty("file.separator")+"WSN-"+timeStamp+".log");
     }
     String timeStamp=month()+"/"+day()+"/"+year()+" "+hour()+":"+minute()+":"+second()+":"+millis();
     println("["+timeStamp+"]: "+message+"!");

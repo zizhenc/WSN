@@ -1,5 +1,5 @@
 class Checker {
-  float x, y, checkerHeight;
+  float x, y, checkerWidth, checkerHeight;
   String label;
   boolean value=true;
   Checker(String label) {
@@ -7,11 +7,12 @@ class Checker {
   }
   void display(float x, float y) {
     pushStyle();
-    rectMode(CORNER);
-    textAlign(LEFT, CENTER);
-    checkerHeight=gui.thisFont.stepY();
     this.x=screenX(x, y);
     this.y=screenY(x, y);
+    checkerWidth=textWidth(label)+gui.thisFont.stepY()+gui.thisFont.stepX();
+    checkerHeight=gui.thisFont.stepY();
+    rectMode(CORNER);
+    textAlign(LEFT, CENTER);
     stroke(gui.frameColor.value);
     strokeWeight(gui.unit(2));
     noFill();

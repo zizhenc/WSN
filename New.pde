@@ -77,14 +77,14 @@ abstract class New implements Screen {
       r=Double.parseDouble(word);
       if (r<0||r>topology.range)
         throw new NumberFormatException('\"'+word+"\": Invalid 'r' value");
-      inputs.get(index).word+=String.format(" (avg≈%.2f)", topology.getAvg(r, _N));
+      inputs.get(index).word.append(String.format(" (avg≈%.2f)", topology.getAvg(r, _N)));
       commit(nextPrompt);
     } else if (prompt.equals("avg≈")) {
       double avgDegree=Double.parseDouble(word);
       if (avgDegree<0||avgDegree>_N-1)
         throw new NumberFormatException('\"'+word+"\": Invalid average degree"); 
       r=topology.getR(avgDegree, _N);
-      inputs.get(index).word+=String.format(" (r=%.2f)", r);
+      inputs.get(index).word.append(String.format(" (r=%.2f)", r));
       commit(nextPrompt);
     } else
       throw new Exception('\"'+prompt+"\": System error");

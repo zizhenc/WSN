@@ -91,7 +91,7 @@ class RelayColoring extends Procedure implements Screen {
           displayNode(nodeA, nodeA.relayColor);
         }
         if (uncoloredGraph.value&&nodeA.order[1]==-6&&nodeA.relayColor==null) {
-          stroke(gui.partColor[4].value);
+          stroke(gui.partColor[0].value);
           if (showEdge.value)
             displayEdge(nodeA);
           if (showNode.value) {

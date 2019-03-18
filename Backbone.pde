@@ -21,7 +21,7 @@ class Backbone extends Result implements Screen {
     switches.addLast(showRegion);
     tunes.addLast(backbone);
     table=new ExTable(8, "Degree", "Primary", "Relay", "Total");
-    plotColor[2]=gui.mainColor;
+    plotColor[2]=gui.partColor[0];
     barChart.setX(0, 7);
     barChart.setPoints();
     for (int i=0; i<8; i++)

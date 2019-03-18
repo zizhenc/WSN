@@ -1,14 +1,16 @@
 class Input {
   int position;
   float x, y, inputWidth, inputHeight, promptLength, wordLength;
-  String prompt, word="", value="";
+  String prompt, value="";
+  StringBuffer word;
   Input(String prompt) {
-    this.prompt=prompt;
+    this(prompt, new StringBuffer(""));
   }
-  Input(String prompt, String value) {
-    this(prompt);
-    this.value=word=value;
-    position=value.length();
+  Input(String prompt, StringBuffer word) {
+    this.prompt=prompt;
+    this.word=word;
+    value=word.toString();
+    position=word.length();
   }
   boolean active() {
     if (mouseX>x&&mouseX<x+inputWidth&&mouseY>y&&mouseY<y+inputHeight) {
@@ -17,6 +19,12 @@ class Input {
       return true;
     }
     return false;
+  }
+  void setValue(String value) {
+    this.value=value;
+    position=value.length();
+    word.delete(0, word.length());
+    word.append(value);
   }
   void cin(float x, float y) {
     pushStyle();
@@ -36,42 +44,44 @@ class Input {
     this.y=screenY(x, y);
     inputWidth=textWidth(prompt+value);
     inputHeight=gui.thisFont.stepY()+gui.thisFont.gap();
-    wordLength=textWidth(word);
+    wordLength=textWidth(word.toString());
     promptLength=textWidth(prompt);
   }
   void commit() {
-    value=word;
+    value=word.toString();
   }
   void abstain() {
-    word=value;
-  }
-  void back() {
-    if (position>0)
-      position--;
+    word.delete(0, word.length());
+    word.append(value);
   }
   void clean() {
-    value=word="";
+    value="";
+    word.delete(0, word.length());
     position=0;
   }
   void keyType() {
-    word=word.substring(0, position)+key+word.substring(position, word.length());
+    word.insert(position, key);
     position++;
   }
   void keyPress() {
     switch(key) {
     case BACKSPACE:
-      word=word.substring(0, max(0, position-1))+word.substring(position, word.length());
-      back();
+      if (position>0) {
+        position--;
+        word.deleteCharAt(max(0, position));
+      }
       break;
     case DELETE:
-      word=word.substring(0, position)+word.substring(min(position+1, word.length()), word.length());
+      if (position<word.length())
+        word.deleteCharAt(position);
       break;
     case CODED:
       if (keyCode==RIGHT)
         if (word.length()>position)
           position++;
       if (keyCode==LEFT)
-        back();
+        if (position>0)
+          position--;
     }
   }
 }

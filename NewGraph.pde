@@ -4,7 +4,7 @@ class NewGraph extends New {
   }
   void enter() throws Exception {
     String prompt=inputs.get(index).prompt;
-    String word=inputs.get(index).word.toLowerCase();
+    String word=inputs.get(index).word.toString().toLowerCase();
     if (prompt.equals("Deploy algorithms now? (Yes or No): "))
       if (word.contains("n"))
         setting();

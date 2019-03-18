@@ -30,26 +30,6 @@ void draw() {
   if (capture.active)
     capture.display();
 }
-void daemon() {
-  if (gui.load)
-    graph.compute();
-  else {
-    error=new Error();
-    navigation=new Navigation();
-    capture=new Capture();
-    box=new MessageBox();
-    screen=new Screen[]{
-      new NewGraph(), 
-      new NodeDistributing(), new GraphGenerating(), new SmallestLastOrdering(), new SmallestLastColoring(), new Partitioning(), new RelayColoring(), new SLPartite(), new RLPartite(), new SLBipartite(), new RLBipartite(), 
-      new Clique(), new PrimarySet(), new RelaySet(), new Backbone(), new Surplus(), 
-      new DegreeDistribution(), new VertexDegreePlot(), new ColorSizePlot(), 
-      new NewDeployment(), 
-      new Setting(), 
-      new Scene()
-    };
-    gui.load=true;
-  }
-}
 void keyPressed() {
   if (!capture.active)
     if (box.active)
@@ -98,4 +78,24 @@ void mouseMoved() {
 void exit() {
   error.clean();
   super.exit();
+}
+void daemon() {
+  if (gui.load)
+    graph.compute();
+  else {
+    error=new Error();
+    navigation=new Navigation();
+    capture=new Capture();
+    box=new MessageBox();
+    screen=new Screen[]{
+      new NewGraph(), 
+      new NodeDistributing(), new GraphGenerating(), new SmallestLastOrdering(), new SmallestLastColoring(), new Partitioning(), new RelayColoring(), new SLPartite(), new RLPartite(), new SLBipartite(), new RLBipartite(), 
+      new Clique(), new PrimarySet(), new RelaySet(), new Backbone(), new Surplus(), 
+      new DegreeDistribution(), new VertexDegreePlot(), new ColorSizePlot(), 
+      new NewDeployment(), 
+      new Setting(), 
+      new Scene()
+    };
+    gui.load=true;
+  }
 }

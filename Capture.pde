@@ -1,6 +1,6 @@
 class Capture {
   int x, y, captureWidth, captureHeight, time;
-  String path="Screenshots";
+  StringBuffer path=new StringBuffer("Screenshots");
   boolean active, finish, mode;
   void store() {
     active=true;

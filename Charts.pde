@@ -101,8 +101,10 @@ abstract class Charts {
       }
       for (ListIterator<Checker> i=parts.listIterator(); i.hasNext(); ) {
         Checker part=i.next();
-        if (key==char(i.previousIndex()+48))
+        if (key==char(i.previousIndex()+48)) {
           part.value=!part.value;
+          chart.setPlot(i.previousIndex(), part.value);
+        }
       }
       moreKeyReleases();
     }

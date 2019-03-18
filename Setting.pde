@@ -29,10 +29,8 @@ class Setting implements Screen {
     navigation.keyRelease();
   }
   void keyType() {
-    if (!navigation.active()) {
-      colors.keyType();
+    if (!navigation.active())
       system.keyType();
-    }
   }
   void mousePress() {
     navigation.mousePress();

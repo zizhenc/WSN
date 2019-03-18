@@ -3,6 +3,7 @@ class GUI {
   float angle;
   String _V="3.1415926";
   volatile boolean load;
+  boolean mode;
   String[] loadText={"Loading", "Loading.", "Loading..", "Loading..."};
   Font body, head, thisFont;
   Image title;
@@ -47,21 +48,38 @@ class GUI {
     background(backgroundColor.value);
   }
   void resetColor() {
-    mainColor.setValue(255, 255, 0);
-    backgroundColor.setValue(0);
-    frameColor.setValue(255, 165, 0);
-    baseColor.setValue(70, 70, 70);
-    highlightColor.setValue(255, 255, 255);
-    headColor[0].setValue(255, 255, 0);
-    headColor[1].setValue(255, 0, 0);
-    headColor[2].setValue(0, 255, 0);
-    bodyColor[0].setValue(0, 255, 255);
-    bodyColor[1].setValue(200, 200, 200);
-    bodyColor[2].setValue(255, 165, 0);
-    partColor[0].setValue(240, 247, 212);
-    partColor[1].setValue(255, 0, 255);
-    partColor[2].setValue(0, 255, 0);
-    partColor[3].setValue(138, 43, 226);
+    if (mode) {
+      mainColor.setValue(84, 84, 159);
+      backgroundColor.setValue(255, 247, 217 );
+      frameColor.setValue(51, 35, 5);
+      baseColor.setValue(199, 175, 189);
+      highlightColor.setValue(45, 196, 166);
+      headColor[0].setValue(249, 135, 0);
+      headColor[1].setValue(255, 0, 255);
+      headColor[2].setValue(123, 35, 246);
+      bodyColor[0].setValue(51, 35, 5);
+      bodyColor[1].setValue(107, 140, 106);
+      bodyColor[2].setValue(51, 35, 5);
+      partColor[0].setValue(0, 255, 255);//cyan
+      partColor[1].setValue(255, 0, 255);
+      partColor[2].setValue(249, 135, 0);
+    } else {
+      mainColor.setValue(255, 255, 0);
+      backgroundColor.setValue(0);
+      frameColor.setValue(255, 165, 0);
+      baseColor.setValue(70, 70, 70);
+      highlightColor.setValue(255, 255, 255);
+      headColor[0].setValue(255, 255, 0);
+      headColor[1].setValue(255, 0, 0);
+      headColor[2].setValue(0, 255, 0);
+      bodyColor[0].setValue(0, 255, 255);
+      bodyColor[1].setValue(200, 200, 200);
+      bodyColor[2].setValue(255, 165, 0);
+      partColor[0].setValue(240, 247, 212);
+      partColor[1].setValue(255, 0, 255);
+      partColor[2].setValue(0, 255, 0);
+      partColor[3].setValue(138, 43, 226);
+    }
   }
   void display() {
     push();
