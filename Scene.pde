@@ -8,7 +8,7 @@ class Scene implements Screen {
     "Degree Distribution Histogram...", 
     "Vertex Degree Plot...", "Color-size Plot...", 
     "New deployment...", 
-    "Settings...", 
+    "Color settings...", "System settings...", "Font settings...", 
     "About..."
   };
   void setting() {

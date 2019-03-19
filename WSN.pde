@@ -1,3 +1,4 @@
+import processing.video.Movie;
 import java.util.Stack;
 import java.util.Arrays;
 import java.util.Random;
@@ -8,6 +9,7 @@ import java.util.ListIterator;
 GUI gui=new GUI();
 Graph graph;
 Screen[] screen;
+IO io;
 Error error;
 Navigation navigation;
 Capture capture;
@@ -79,11 +81,16 @@ void exit() {
   error.clean();
   super.exit();
 }
+void movieEvent(Movie movie) {
+  if (navigation.page>19&&navigation.page<24)
+    movie.read();
+}
 void daemon() {
   if (gui.load)
     graph.compute();
   else {
     error=new Error();
+    io=new IO();
     navigation=new Navigation();
     capture=new Capture();
     box=new MessageBox();
@@ -93,7 +100,8 @@ void daemon() {
       new Clique(), new PrimarySet(), new RelaySet(), new Backbone(), new Surplus(), 
       new DegreeDistribution(), new VertexDegreePlot(), new ColorSizePlot(), 
       new NewDeployment(), 
-      new Setting(), 
+      new ColorSettings(this), new SystemSettings(this), new FontSettings(this), 
+      new About(this), 
       new Scene()
     };
     gui.load=true;

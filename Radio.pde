@@ -29,17 +29,15 @@ class Radio {
     radioWidth=textWidth(maxLabel)+diameter+gui.thisFont.stepX();
     radioHeight=gui.thisFont.stepY(label.length)+gui.thisFont.gap(label.length-1);
     gap=gui.thisFont.gap();
-    for (int i=0; i<label.length; i++)
-      if (inRange(i)) {
-        noStroke();
-        fill(gui.highlightColor.value, 100);
-        circle(x+diameter/2, y+i*(diameter+gap)+diameter/2, diameter);
-      }
     stroke(gui.frameColor.value);
     strokeWeight(gui.unit(2));
-    noFill();
-    for (int i=0; i<label.length; i++)
+    for (int i=0; i<label.length; i++) {
+      if (inRange(i))
+        fill(gui.highlightColor.value, 100);
+      else
+        noFill();
       circle(x+diameter/2, y+i*(diameter+gap)+diameter/2, diameter);
+    }
     fill(gui.bodyColor[2].value);
     for (int i=0; i<label.length; i++)
       text(label[i], x+diameter+gui.thisFont.stepX(), y+diameter*i+diameter/2+gap*i);

@@ -11,7 +11,7 @@ class MessageBox {
     gui.body.initialize();
     stroke(gui.frameColor.value);
     strokeWeight(gui.unit(2));
-    fill(gui.baseColor.value, 100);
+    fill(gui.baseColor.value, 150);
     rectMode(CENTER);
     boxHeight=gui.thisFont.stepY(10);
     boxWidth=boxHeight*1366/768;

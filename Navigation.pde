@@ -3,7 +3,7 @@ class Navigation {
   boolean auto, lock;//lock item controled by keyboard
   float itemLength, subItemLength, barWidth, barHeight;
   LinkedList<String>[] items=new LinkedList[7];
-  String[] itemTarget={"New deployment [2]", "Save primary set summary [4]", "Primary independent sets [2]", "Smallest-last coloring bipartites [7]", "Degree distribution histogram [1]", "", "Documentation [1]"};//itemTarget means the longest item (in text) among the whole menu list.
+  String[] itemTarget={"New deployment [2]", "Save primary set summary [4]", "Primary independent sets [2]", "Smallest-last coloring bipartites [7]", "Degree distribution histogram [1]", "System settings [2]", "Documentation [1]"};//itemTarget means the longest item (in text) among the whole menu list.
   Navigation() {
     for (int i=0; i<items.length; i++)
       items[i]=new LinkedList<String>();
@@ -39,6 +39,9 @@ class Navigation {
     items[4].addFirst("Vertex-degree plot [2]");//502
     items[4].addFirst("Color-size plot [3]");//501
     items[4].addFirst("Charts [C]");//500
+    items[5].addFirst("Font settings [3]");//603
+    items[5].addFirst("System settings [2]");//602
+    items[5].addFirst("Color settings [1]");//601
     items[5].addFirst("Settings [S]");//600
     items[6].addFirst("Documentation [1]");//702
     items[6].addFirst("About [2]");//701
@@ -135,10 +138,10 @@ class Navigation {
       break;
     case 206://Save graph
       if (end>=1)
-        //io.saveGraph();
-        //else
-        //error.logOut("File save error - No graph generated!");
-        break;
+        io.saveGraph();
+      else
+        error.logOut("File save error - No graph generated!");
+      break;
     case 205://Save graph summary
       if (end>=6)
         //io.saveGraphSummary();
@@ -241,10 +244,17 @@ class Navigation {
       if (end>=4)
         nextPage=18;
       break;
-    case 600://Settings
+    case 601://Color settings
       if (end>=0||end==-420)
         nextPage=20;
-      this.option=0;
+      break;
+    case 602://System settings
+      if (end>=0||end==-420)
+        nextPage=21;
+      break;
+    case 603://Font settings
+      if (end>=0||end==-420)
+        nextPage=22    ;
       break;
     case 702://Documentation
       //if (Desktop.isDesktopSupported())

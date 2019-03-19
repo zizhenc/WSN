@@ -1,52 +1,55 @@
-class Setting implements Screen {
+abstract class Setting {
   Image box=new Image("Box.png");
-  Panel colors=new ColorPanel(), system=new SystemPanel(), fonts=new FontPanel();
-  Capture capture=new Capture();
+  String label;
+  Animation video;
+  abstract void initialize();
+  abstract void moreMousePresses();
+  abstract void moreMouseReleases();
+  abstract void moreKeyReleases();
+  void moreKeyPresses() {
+  }
+  abstract void show(float x, float y, float panelWidth, float panelHeight);
   void setting() {
-    colors.setting();
-    system.setting();
-    fonts.setting();
+    video.repeat();
+    initialize();
   }
   void display() {
     pushStyle();
     box.display(GUI.WIDTH, width/2, height-box.imageHeight, width/2);
     gui.head.initialize();
     fill(gui.headColor[0].value);
-    text("Preference", gui.thisFont.stepX(), gui.thisFont.stepY());
-    colors.display(gui.unit(10), height/6);
-    system.display(gui.unit(20)+colors.panelWidth, height/6);
-    fonts.display(gui.unit(30)+colors.panelWidth+system.panelWidth, height/6);
+    text(label, gui.thisFont.stepX(), gui.thisFont.stepY());
     gui.body.initialize();
+    video.display(GUI.WIDTH, width/2, height/6, width/2-width/12);
+    stroke(gui.frameColor.value);
+    strokeWeight(gui.unit(2));
+    noFill();
+    rect(width/12, height/6, width/3, height*2/3, gui.unit(8));
+    show(width/12, height/6, width/3, height*2/3);
     navigation.display();
     popStyle();
   }
   void keyPress() {
     navigation.keyPress();
     if (!navigation.active())
-      system.keyPress();
+      moreKeyPresses();
   }
   void keyRelease() {
     navigation.keyRelease();
+    if (!navigation.active())
+      moreKeyReleases();
   }
   void keyType() {
-    if (!navigation.active())
-      system.keyType();
   }
   void mousePress() {
     navigation.mousePress();
-    if (!navigation.active()) {
-      colors.mousePress();
-      system.mousePress();
-      fonts.mousePress();
-    }
+    if (!navigation.active())
+      moreMousePresses();
   }
   void mouseRelease() {
     navigation.mouseRelease();
-    if (!navigation.active()) {
-      colors.mouseRelease();
-      system.mouseRelease();
-      fonts.mouseRelease();
-    }
+    if (!navigation.active())
+      moreMouseReleases();
   }
   void mouseDrag() {
   }

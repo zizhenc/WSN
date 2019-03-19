@@ -1,7 +1,15 @@
 abstract class Animation {
-  int animeWidth, animeHeight;
-  String filename;
+  float animeWidth, animeHeight;
+  boolean isPlaying;
+  abstract void play();
+  abstract void pause();
+  abstract void repeat();
+  abstract void end();
   abstract void display(int mode, float x, float y, float factor);
+  abstract int hours();
+  abstract int minutes();
+  abstract int seconds();
+  abstract float position();
   void display(float x, float y) {
     display(GUI.SCALE, x, y, 1);
   }
