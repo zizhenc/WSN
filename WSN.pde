@@ -23,7 +23,7 @@ void setup() {
 }
 void draw() {
   if (gui.load) {
-    background(gui.backgroundColor.value);
+    background(gui.colour[0].value);
     screen[navigation.page].display();
   } else
     gui.display();
@@ -33,56 +33,58 @@ void draw() {
     capture.display();
 }
 void keyPressed() {
-  if (!capture.active)
+  if (gui.load&&!capture.active)
     if (box.active)
       box.keyPress();
     else
       screen[navigation.page].keyPress();
 }
 void keyReleased() {
-  if (capture.active)
-    capture.keyRelease();
-  else if (!box.active)
-    screen[navigation.page].keyRelease();
+  if (gui.load)
+    if (capture.active)
+      capture.keyRelease();
+    else if (!box.active)
+      screen[navigation.page].keyRelease();
 }
 void keyTyped() {
-  if (!capture.active&&!box.active)
+  if (gui.load&&!capture.active&&!box.active)
     screen[navigation.page].keyType();
 }
 void mousePressed() {
-  if (capture.active)
-    capture.mousePress();
-  else if (box.active)
-    box.mousePress();
-  else
-    screen[navigation.page].mousePress();
+  if (gui.load)
+    if (capture.active)
+      capture.mousePress();
+    else if (box.active)
+      box.mousePress();
+    else
+      screen[navigation.page].mousePress();
 }
 void mouseReleased() {
-  if (!capture.active)
+  if (gui.load&&!capture.active)
     if (box.active)
       box.mouseRelease();
     else
       screen[navigation.page].mouseRelease();
 }
 void mouseDragged() {
-  if (capture.active)
-    capture.mouseDrag();
-  else if (!box.active)
-    screen[navigation.page].mouseDrag();
+  if (gui.load)
+    if (capture.active)
+      capture.mouseDrag();
+    else if (box.active)
+      box.mouseDrag();
+    else
+      screen[navigation.page].mouseDrag();
 }
 void mouseWheel(MouseEvent event) {
-  screen[navigation.page].mouseScroll(event);
-}
-void mouseMoved() {
-  if (!capture.active&&box.active)
-    box.mouseMove();
+  if (gui.load)
+    screen[navigation.page].mouseScroll(event);
 }
 void exit() {
   error.clean();
   super.exit();
 }
 void movieEvent(Movie movie) {
-  if (navigation.page>19&&navigation.page<24)
+  if (navigation.page>19&&navigation.page<23)
     movie.read();
 }
 void daemon() {
@@ -101,7 +103,7 @@ void daemon() {
       new DegreeDistribution(), new VertexDegreePlot(), new ColorSizePlot(), 
       new NewDeployment(), 
       new ColorSettings(this), new SystemSettings(this), new FontSettings(this), 
-      new About(this), 
+      new About(), 
       new Scene()
     };
     gui.load=true;

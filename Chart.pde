@@ -49,7 +49,7 @@ abstract class Chart {
     pushStyle();
     arrow(xStart, yStart-rangeY, xStart, y+gui.thisFont.stepY());
     arrow(xStart+rangeX, yStart, x+chartWidth-gui.thisFont.stepX()-textWidth(labelX), yStart);
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     line(xStart, yStart, xStart-gui.thisFont.gap(0.5), yStart);
     line(xStart, yStart, xStart, yStart+gui.thisFont.gap(0.5));
@@ -141,7 +141,7 @@ abstract class Chart {
   }
   void arrow(float x1, float y1, float x2, float y2) {
     push();
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     line(x1, y1, x2, y2);
     translate(x2, y2);
@@ -152,7 +152,7 @@ abstract class Chart {
   }
   void dottedLine(float x1, float y1, float x2, float y2) {
     pushStyle();
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     float steps=dist(x1, y1, x2, y2)/10;
     for (float i = 0; i <steps; i++)

@@ -43,7 +43,7 @@ class BarChart extends Chart {
   }
   void showScaleX(float x, float y, int beginIndex, int endIndex) {
     pushStyle();
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit());
     for (int i=beginIndex; i<=(endIndex-beginIndex)/stepX; i++)
       line(x+i*gapX+gapX/2, y+gui.thisFont.gap(), x+i*gapX+gapX/2, y);
@@ -57,7 +57,7 @@ class BarChart extends Chart {
   }
   void showScaleY(float x, float y, int beginIndex, int endIndex) {
     pushStyle();
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit());
     for (int i=1; i<=(endIndex-beginIndex)/stepY; i++)
       line(x, y-gapY*i, x-gui.thisFont.gap(), y-gapY*i);

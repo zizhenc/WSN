@@ -16,13 +16,13 @@ class Capture {
     gui.body.initialize();
     rectMode(CORNER);
     if (mode) {
-      stroke(gui.frameColor.value);
+      stroke(gui.colour[1].value);
       strokeWeight(gui.unit(2));
       dottedLine(0, mouseY, width, mouseY);
       dottedLine(mouseX, 0, mouseX, height);
-      fill(gui.frameColor.value);
-      String prompt="Press "+(System.getProperty("os.name").contains("Windows")?"Enter":"Return")+" to crop.";
       if (captureWidth!=0&&captureHeight!=0) {
+        fill(gui.bodyColor[2].value);
+        String prompt="Press "+(System.getProperty("os.name").contains("Windows")?"Enter":"Return")+" to crop.";
         textAlign(RIGHT);
         text(prompt, x-gui.thisFont.stepX()+(captureWidth>0?captureWidth:0), y+gui.thisFont.stepY()+(captureHeight>0?captureHeight:0));
       } 
@@ -30,7 +30,7 @@ class Capture {
       rect(x, y, captureWidth, captureHeight);
     }
     if (finish) {
-      fill(255);
+      fill(gui.colour[2].value);
       noStroke();
       if (millis()-time<200)
         rect(0, 0, width, height);

@@ -36,6 +36,9 @@ class Video extends Animation {
     isPlaying=false;
     movie.pause();
   }
+  void jump(float percent) {
+    movie.jump(percent*movie.duration());
+  }
   int hours() {
     return round(movie.time())/3600;
   }

@@ -1,5 +1,5 @@
 class MessageBox {
-  boolean active, lock;
+  boolean active;
   float boxWidth, boxHeight, moveX, moveY, x, y;
   String[] message=new String[2];
   Button confirm=new Button("Confirm");
@@ -9,9 +9,9 @@ class MessageBox {
   void display() {
     pushStyle();
     gui.body.initialize();
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
-    fill(gui.baseColor.value, 150);
+    fill(gui.colour[2].value, 50);
     rectMode(CENTER);
     boxHeight=gui.thisFont.stepY(10);
     boxWidth=boxHeight*1366/768;
@@ -50,18 +50,15 @@ class MessageBox {
       active=false;
   }
   void mousePress() {
-    if (mouseX>x-boxWidth/2&&mouseX<x+boxWidth/2&&mouseY>y-boxHeight/2&&mouseY<y+boxHeight/2)
-      lock=true;
     moveX=mouseX-x;
     moveY=mouseY-y;
   }
   void mouseRelease() {
-    lock=false;
     if (confirm.active())
       active=false;
   }
-  void mouseMove() {
-    if (lock) {
+  void mouseDrag() {
+    if (mouseX>x-boxWidth/2&&mouseX<x+boxWidth/2&&mouseY>y-boxHeight/2&&mouseY<y+boxHeight/2) {
       x=mouseX-moveX;
       y=mouseY-moveY;
     }

@@ -2,7 +2,8 @@ class Region {
   int amount;
   PVector upVector=new PVector(0, 1, 0);
   void display(int _N, Vertex vertex) {
-    if (_N<=amount)
+    if (_N<=amount) {
+      pushStyle();
       switch(graph.topology.value) {
       case 1:
       case 2:
@@ -20,10 +21,12 @@ class Region {
       case 8:
         space(vertex);
       }
+      popStyle();
+    }
   }
   void sphereTangency(Vertex vertex) {
-    stroke(gui.highlightColor.value);
-    fill(gui.highlightColor.value, 10);
+    stroke(gui.colour[2].value, 70);
+    fill(gui.colour[2].value, 70);
     PVector node=new PVector((float)vertex.x, (float)vertex.y, (float)vertex.z);
     PVector axis=upVector.cross(node);
     pushMatrix();
@@ -37,8 +40,8 @@ class Region {
     popMatrix();
   }
   void torusTangency(Vertex vertex) {
-    stroke(gui.highlightColor.value);
-    fill(gui.highlightColor.value, 10);
+    stroke(gui.colour[2].value, 70);
+    fill(gui.colour[2].value, 70);
     PVector origin=new PVector((float)vertex.x, (float)vertex.y, 0);
     origin.normalize();
     PVector node=new PVector((float)vertex.x, (float)vertex.y, (float)vertex.z);
@@ -55,13 +58,13 @@ class Region {
     popMatrix();
   }
   void parallel(Vertex vertex) {
-    stroke(gui.highlightColor.value);
-    fill(gui.highlightColor.value, 10);
+    stroke(gui.colour[2].value, 70);
+    fill(gui.colour[2].value, 70);
     circle((float)vertex.x, (float)vertex.y, (float)graph.r*2);
   }
   void space(Vertex vertex) {
-    stroke(gui.highlightColor.value);
-    sphereDetail(10);
+    stroke(gui.colour[2].value, 70);
+    sphereDetail(12);
     noFill();
     pushMatrix();
     translate((float)vertex.x, (float)vertex.y, (float)vertex.z);

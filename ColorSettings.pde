@@ -18,7 +18,7 @@ class ColorSettings extends Setting implements Screen {
     b.display(x+(panelWidth*3/4-colors.radioWidth/2)*0.1, y+panelHeight/2+r.sliderHeight+b.sliderHeight+gui.thisFont.gap(3), (panelWidth*3/4-colors.radioWidth/2)*0.8);
     colors.display(x+panelWidth*3/4-colors.radioWidth/2, y+panelHeight/2-colors.radioHeight/2);
     fill(r.value, g.value, b.value);
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     float diameter=panelWidth<panelHeight?panelWidth/3:panelHeight/3;
     circle(x+panelWidth*3/8-colors.radioWidth/4, y+panelHeight/2-diameter/2, diameter);
@@ -45,19 +45,11 @@ class ColorSettings extends Setting implements Screen {
       video.pause();
   }
   SysColor getColor() {
-    switch(colors.value) {
-    case 0:
+    if (colors.value==0)
       return gui.mainColor;
-    case 1:
-      return gui.backgroundColor;
-    case 2:
-      return gui.frameColor;
-    case 3:
-      return gui.baseColor;
-    case 4:
-      return gui.highlightColor;
-    }
-    if (colors.value<8)
+    else if (colors.value<5)
+      return gui.colour[colors.value-1];
+    else if (colors.value<8)
       return gui.headColor[colors.value-5];
     else if (colors.value<11)
       return gui.bodyColor[colors.value-8];

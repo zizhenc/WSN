@@ -3,8 +3,8 @@ public class SystemSettings extends Setting implements Screen {
   Switcher saveMode=new Switcher("Auto", "Manual"), colorMode=new Switcher("Demo", "Paper"), captureMode=new Switcher("Fullscreen", "Partial screen");
   Slider fps=new Slider("FPS", 1, 120, 1);
   Animation sonic=new GIF("Sonic", 8);
-  PathBar[] bar=new PathBar[]{new PathBar("Default save path", io.path), new PathBar("Screenshot path", capture.path), new PathBar("Error log path", error.path)};
-  Button[] button=new Button[]{new Button("Select"), new Button("Select"), new Button("Select")};
+  PathBar[] bar={new PathBar("Default save path", io.path), new PathBar("Screenshot path", capture.path), new PathBar("Error log path", error.path)};
+  Button[] button={new Button("Select"), new Button("Select"), new Button("Select")};
   SystemSettings(WSN wsn) {
     label="System";
     video=new Video(wsn, "System.mov");

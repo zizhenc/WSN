@@ -5,6 +5,7 @@ abstract class Animation {
   abstract void pause();
   abstract void repeat();
   abstract void end();
+  abstract void jump(float percent);
   abstract void display(int mode, float x, float y, float factor);
   abstract int hours();
   abstract int minutes();

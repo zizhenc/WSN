@@ -1,5 +1,5 @@
 class Button {
-  int alignment;
+  int alignment;//CORNER or CENTER
   float x, y, buttonHeight, buttonWidth;//x and y is real coordinates
   String label;
   Button(String label) {
@@ -21,21 +21,21 @@ class Button {
       display(x, y, textWidth(label)+gui.thisFont.stepX(2), factor);
   }
   void display(float x, float y, float buttonWidth, float buttonHeight) {
-    this.buttonWidth=buttonWidth;
-    this.buttonHeight=buttonHeight;
     this.x=screenX(x, y);
     this.y=screenY(x, y);
+    this.buttonWidth=buttonWidth;
+    this.buttonHeight=buttonHeight;
     pushStyle();
     rectMode(alignment);
     textAlign(CENTER, CENTER);
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit());
     noFill();
-    rect(x, y, buttonWidth, buttonHeight, gui.unit(8), 0, gui.unit(8), 0);
+    rect(x, y, buttonWidth, buttonHeight, gui.unit(10), 0, gui.unit(10), 0);
     if (active()) {
-      fill(gui.highlightColor.value, 100);
+      fill(gui.colour[2].value, 70);
       noStroke();
-      rect((alignment==CENTER?0:gui.unit(3))+x, (alignment==CENTER?0:gui.unit(3))+y, buttonWidth-gui.unit(6), buttonHeight-gui.unit(6), gui.unit(8), 0, gui.unit(8), 0);
+      rect((alignment==CENTER?0:gui.unit(3))+x, (alignment==CENTER?0:gui.unit(3))+y, buttonWidth-gui.unit(6), buttonHeight-gui.unit(6), gui.unit(10), 0, gui.unit(10), 0);
       fill(gui.bodyColor[mousePressed?0:2].value);
     } else
       fill(gui.bodyColor[2].value);

@@ -35,7 +35,7 @@ class Graph {
     initialize();
     while (method[methodIndex].connecting());
     generateDegreeList();
-    int[] degree=new int[]{_E, 2*_E};
+    int[] degree={_E, 2*_E};
     Vertex[] list=new Vertex[2];
     list[1]=degreeList.get(maxDegree);
     int amount=vertex.length;

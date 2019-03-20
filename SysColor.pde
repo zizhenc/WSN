@@ -14,7 +14,7 @@ class SysColor {
     r=v/65536%256;
     g=v/256%256;
     b=v%256;
-    value=color(r, g, b);
+    setValue(r, g, b);
   }
   void setValue(int r, int g, int b) {
     this.r=r;

@@ -21,10 +21,10 @@ abstract class Setting {
     text(label, gui.thisFont.stepX(), gui.thisFont.stepY());
     gui.body.initialize();
     video.display(GUI.WIDTH, width/2, height/6, width/2-width/12);
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     noFill();
-    rect(width/12, height/6, width/3, height*2/3, gui.unit(8));
+    rect(width/12, height/6, width/3, height*2/3, gui.unit(10));
     show(width/12, height/6, width/3, height*2/3);
     navigation.display();
     popStyle();

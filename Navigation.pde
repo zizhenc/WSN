@@ -2,11 +2,9 @@ class Navigation {
   int page, nextPage, option, end=-420;
   boolean auto, lock;//lock item controled by keyboard
   float itemLength, subItemLength, barWidth, barHeight;
-  LinkedList<String>[] items=new LinkedList[7];
+  LinkedList<String>[] items=new LinkedList[]{new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>()};
   String[] itemTarget={"New deployment [2]", "Save primary set summary [4]", "Primary independent sets [2]", "Smallest-last coloring bipartites [7]", "Degree distribution histogram [1]", "System settings [2]", "Documentation [1]"};//itemTarget means the longest item (in text) among the whole menu list.
   Navigation() {
-    for (int i=0; i<items.length; i++)
-      items[i]=new LinkedList<String>();
     items[0].addFirst("New graph [1]");//102
     items[0].addFirst("New deployment [2]");//101
     items[0].addFirst("New [N]");//100
@@ -67,43 +65,35 @@ class Navigation {
     barHeight=gui.thisFont.stepY(2.5);
     itemLength=getLength("Procedures [P]");//longest main menu item
     barWidth=itemLength*items.length;
-    fill(gui.baseColor.value, 150);
+    fill(gui.colour[2].value, 50);
     noStroke();
     rect(0, -barHeight/2, barWidth, barHeight, gui.unit(10), gui.unit(10), 0, 0);
     strokeWeight(gui.unit());
     for (int i=0; i<items.length; i++) {
       noStroke();
-      if (itemRange(i)) {
-        fill(gui.highlightColor.value, 50);
+      fill(gui.colour[2].value, 50);
+      if (itemRange(i))
         rect(itemLength*(i-items.length/2.0+0.5), -barHeight/2, itemLength-gui.unit(6), barHeight-gui.unit(6), gui.unit(10), gui.unit(10), 0, 0);
-      }
       if (option>=100*(i+1)&&option<(i+2)*100) {
-        fill(gui.baseColor.value, 150);
         ListIterator<String> itemIterator=items[i].listIterator(1);
         subItemLength=getLength(itemTarget[i]);
         quad((i-items.length/2.0+0.5)*itemLength-subItemLength/2, -1.5*barHeight, (i-items.length/2.0+0.5)*itemLength+subItemLength/2, -1.5*barHeight, (i-items.length/2.0+1)*itemLength-gui.thisFont.stepX(), -barHeight, (i-items.length/2.0)*itemLength+gui.thisFont.stepX(), -barHeight);
         rect((i-items.length/2.0+0.5)*itemLength, -(items[i].size()-1)*barHeight/2-1.5*barHeight, subItemLength, (items[i].size()-1)*barHeight, gui.unit(10), gui.unit(10), 0, 0);
         for (int j=1; j<items[i].size(); j++) {
-          fill(gui.highlightColor.value, 50);
+          fill(gui.colour[2].value, 50);
           if (subItemRange(i, j))
             rect(itemLength*(i-items.length/2.0+0.5), -barHeight*(1+j), subItemLength-gui.unit(6), barHeight-gui.unit(6), gui.unit(10), gui.unit(10), 0, 0);
-          if (option==100*(i+1)+j)
-            fill(gui.bodyColor[0].value);
-          else
-            fill(gui.bodyColor[2].value);
+          fill(gui.bodyColor[option==100*(i+1)+j?0:2].value);
           text(itemIterator.next(), (i-items.length/2.0+0.5)*itemLength, -barHeight*(j+1));
         }
-        stroke(gui.frameColor.value);
+        stroke(gui.colour[1].value);
         for (int j=2; j<items[i].size(); j++)
           line(itemLength*(i-items.length/2.0+0.5)-subItemLength/2+gui.unit(3), -barHeight*j-barHeight/2, itemLength*(i-items.length/2.0+0.5)+subItemLength/2-gui.unit(3), -barHeight*j-barHeight/2);
       }
-      if (option==-100*(i+1))
-        fill(gui.bodyColor[0].value);
-      else
-        fill(gui.bodyColor[2].value);
+      fill(gui.bodyColor[option==-100*(i+1)?0:2].value);
       text(items[i].getFirst(), (i-items.length/2.0+0.5)*itemLength, -barHeight/2);
     }
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     for (int i=1; i<items.length; i++)
       dottedLine(itemLength*(i-items.length/2.0), 0, itemLength*(i-items.length/2.0), -barHeight);

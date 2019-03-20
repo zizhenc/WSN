@@ -17,7 +17,7 @@ class PathBar {
     fill(gui.headColor[2].value);
     textAlign(LEFT);
     text(label+": ", x, y+gui.thisFont.stepY());
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     noFill();
     rect(x, y+gui.thisFont.stepY()+gui.thisFont.gap(), barWidth, gui.thisFont.stepY()+gui.thisFont.gap());

@@ -9,12 +9,12 @@ class Radio {
       if (maxLabel.length()<str.length())
         maxLabel=str;
   }
-  boolean inRange(int index) {
+  boolean inCircle(int index) {
     return mouseX>x&&mouseY>y+(gap+diameter)*index&&mouseX<x+diameter&&mouseY<y+(gap+diameter)*(index+1);
   }
   boolean active() {
     for (int i=0; i<label.length; i++)
-      if (inRange(i)) {
+      if (inCircle(i)) {
         value=i;
         return true;
       }
@@ -29,11 +29,11 @@ class Radio {
     radioWidth=textWidth(maxLabel)+diameter+gui.thisFont.stepX();
     radioHeight=gui.thisFont.stepY(label.length)+gui.thisFont.gap(label.length-1);
     gap=gui.thisFont.gap();
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     for (int i=0; i<label.length; i++) {
-      if (inRange(i))
-        fill(gui.highlightColor.value, 100);
+      if (inCircle(i))
+        fill(gui.colour[2].value, 70);
       else
         noFill();
       circle(x+diameter/2, y+i*(diameter+gap)+diameter/2, diameter);

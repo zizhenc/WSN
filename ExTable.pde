@@ -19,7 +19,7 @@ class ExTable extends Table {
   }
   void display(float x, float y) {
     pushStyle();
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     gapX=textWidth(maxString)+gui.thisFont.stepX();
     gapY=gui.thisFont.stepY()+gui.thisFont.gap();

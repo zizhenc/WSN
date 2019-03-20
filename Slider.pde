@@ -104,23 +104,23 @@ class Slider {
         if (mousePressed)
           fill(gui.mainColor.value);
         else
-          fill(gui.highlightColor.value, 100);
-        triangle(x, y+sliderHeight-gui.thisFont.stepY(0.5), x+gui.thisFont.stepY(), y+sliderHeight-gui.thisFont.stepY(), x+gui.thisFont.stepY(), y+sliderHeight);
+          fill(gui.colour[2].value, 70);
+        triangle(x, y+sliderHeight-gui.thisFont.stepY(0.5), x+gui.thisFont.stepY(), y+sliderHeight-gui.thisFont.stepY()+gui.unit(4), x+gui.thisFont.stepY(), y+sliderHeight-gui.unit(4));
       }
       if (mouseX>buttonLeft) {
         noStroke();
         if (mousePressed)
           fill(gui.mainColor.value);
         else
-          fill(gui.highlightColor.value, 100);
-        triangle(x+sliderWidth, y+sliderHeight-gui.thisFont.stepY(0.5), x+sliderWidth-gui.thisFont.stepY(), y+sliderHeight-gui.thisFont.stepY(), x+sliderWidth-gui.thisFont.stepY(), y+sliderHeight);
+          fill(gui.colour[2].value, 70);
+        triangle(x+sliderWidth, y+sliderHeight-gui.thisFont.stepY(0.5), x+sliderWidth-gui.thisFont.stepY(), y+sliderHeight-gui.thisFont.stepY()+gui.unit(4), x+sliderWidth-gui.thisFont.stepY(), y+sliderHeight-gui.unit(4));
       }
     }
     stroke(gui.mainColor.value);
     strokeWeight(gui.unit(2));
     float position=(value-min)*(sliderRight-sliderLeft)/(max-min);
     line(x+gui.thisFont.stepX()+gui.thisFont.stepY(), y+gui.thisFont.stepY(1.5)+gui.thisFont.gap(), x+gui.thisFont.stepX()+gui.thisFont.stepY()+position, y+gui.thisFont.stepY(1.5)+gui.thisFont.gap());
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     line(x+gui.thisFont.stepX()+gui.thisFont.stepY()+position, y+sliderHeight-gui.thisFont.stepY()+gui.unit(), x+gui.thisFont.stepX()+gui.thisFont.stepY()+position, y+sliderHeight-gui.unit());
     noFill();

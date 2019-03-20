@@ -20,22 +20,21 @@ class Switcher {
     switchHeight=gui.thisFont.stepY();
     this.x=screenX(x, y);
     this.y=screenY(x, y);
-    stroke(gui.frameColor.value);
+    stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
-    noFill();
+    if (value)
+      fill(gui.colour[2].value, 70);
+    else
+      noFill();
     rect(x, y, 2*switchHeight, switchHeight, switchHeight/2);
     fill(gui.bodyColor[2].value);
     text(label[value?1:0], x+2*switchHeight+gui.thisFont.stepX(), y+switchHeight/2);
     noStroke();
-    if (value) {
-      fill(gui.highlightColor.value, 100);
-      rect(x, y, 2*switchHeight, switchHeight, switchHeight/2);
-      fill(gui.mainColor.value);
+    fill(gui.mainColor.value);
+    if (value)
       circle(x+1.5*switchHeight, y+switchHeight/2, switchHeight-gui.unit(4));
-    } else {
-      fill(gui.mainColor.value);
+    else
       circle(x+switchHeight/2, y+switchHeight/2, switchHeight-gui.unit(4));
-    }
     popStyle();
   }
 }

@@ -1,6 +1,6 @@
 public class FontSettings extends Setting implements Screen {
-  Slider[] size=new Slider[]{new Slider("Size", 2, 72, 1), new Slider("Size", 1, 36, 1)};
-  Button[] font=new Button[]{new Button("Choose font..."), new Button("Choose font...")};
+  Slider[] size={new Slider("Size", 2, 72, 1), new Slider("Size", 1, 36, 1)};
+  Button[] font={new Button("Choose font..."), new Button("Choose font...")};
   Button reset=new Button("Reset");
   int index;
   FontSettings (WSN wsn) {

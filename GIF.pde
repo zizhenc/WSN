@@ -49,6 +49,9 @@ class GIF extends Animation {
     index=0;
     isPlaying=false;
   }
+  void jump(float percent) {
+    index=round(count*percent);
+  }
   int hours() {
     return round(slowDown*(index)/frameRate)/3600;
   }
