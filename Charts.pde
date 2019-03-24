@@ -140,6 +140,6 @@ abstract class Charts {
     }
   }
   void mouseScroll(MouseEvent event) {
-    eyeZ+=event.getCount();
+    eyeZ+=event.getCount()*10;
   }
 }

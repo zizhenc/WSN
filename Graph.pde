@@ -53,7 +53,7 @@ class Graph {
     generateRelayList(connectivity);
     for (amount=relayList.length; amount>=connectivity; amount=colour(slot, amount));
     navigation.end=7;
-    box.pop("Mission acomplished!", "Information");
+    box.pop("Mission acomplished!", "Information", "Gotcha");
   }
   void initialize() {
     if (method[methodIndex]==null)

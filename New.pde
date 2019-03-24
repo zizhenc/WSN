@@ -37,6 +37,24 @@ abstract class New implements Screen {
     for (int i=inputs.size()-1; i>0; i--)
       inputs.remove(i).clean();
     index=0;
+    if (io.load) {
+      try {
+        enter();
+        inputs.get(index).word.append(io.graphInfo[0]);
+        enter();
+        inputs.get(index).word.append(io.graphInfo[1]);
+        enter();
+        if (io.graphInfo.length>2) {
+          inputs.get(index).word.append("r");
+          enter();
+          inputs.get(index).word.append(io.graphInfo[2]);
+          enter();
+        }
+      }
+      catch(Exception e) {
+        setting();
+      }
+    }
   }
   void defaultEnter(String prompt, String word, String nextPrompt) throws Exception {
     if (prompt.equals("Press "+(System.getProperty("os.name").contains("Windows")?"Enter":"Return")+" to continue..."))

@@ -1,4 +1,4 @@
-class Capture {
+ class Capture {
   int x, y, captureWidth, captureHeight, time;
   StringBuffer path=new StringBuffer("Screenshots");
   boolean active, finish, mode;

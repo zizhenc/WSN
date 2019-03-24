@@ -9,7 +9,7 @@ class NewDeployment extends New {
     inputLibrary.put("Choose a coordinate system (Cartesian or Cylindrical): ", new Input("Choose a coordinate system (Cartesian or Cylindrical): "));
     inputLibrary.put("Select primary sets: ", new Input("Select primary sets: "));
     inputLibrary.put("Enter connectivity: ", new Input("Enter connectivity: "));
-    inputLibrary.put("Deploy with demonstration? (Yes or No): ", new Input("Deploy with demonstration? (Yes or No): "));
+    inputLibrary.put("Demonstration or computation?: (Demo or Comp)", new Input("Demonstration or computation?: (Demo or Comp)"));
   }
   void enter() throws Exception {
     String prompt=inputs.get(index).prompt;
@@ -61,11 +61,11 @@ class NewDeployment extends New {
       connectivity=Integer.parseInt(word);
       if (connectivity<0||connectivity>topology.connectivity())
         throw new NumberFormatException('\"'+word+"\": Invalid connectivity");
-      commit("Deploy with demonstration? (Yes or No): ");
-    } else if (prompt.equals("Deploy with demonstration? (Yes or No): ")) {
-      if (word.contains("y"))
+      commit("Demonstration or computation?: (Demo or Comp)");
+    } else if (prompt.equals("Demonstration or computation?: (Demo or Comp)")) {
+      if (word.contains("demo"))
         navigation.auto=true;
-      else if (word.contains("n"))
+      else if (word.contains("comp"))
         navigation.auto=false;
       else
         throw new Exception('\"'+word+"\": Nonsense message");
@@ -80,6 +80,7 @@ class NewDeployment extends New {
           navigation.go(410);
         } else {
           thread("daemon");
+          io.load=false;
           setting();
         }
       } else

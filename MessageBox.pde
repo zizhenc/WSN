@@ -1,10 +1,12 @@
 class MessageBox {
+  int status;
   boolean active;
   float boxWidth, boxHeight, moveX, moveY, x, y;
   String[] message=new String[2];
-  Button confirm=new Button("Confirm");
+  Button[] choice={new Button(), new Button(), new Button()};
   MessageBox() {
-    confirm.alignment=CENTER;
+    for (int i=0; i<choice.length; i++)
+      choice[i].alignment=CENTER;
   }
   void display() {
     pushStyle();
@@ -32,17 +34,32 @@ class MessageBox {
     textAlign(LEFT, CENTER);
     fill(gui.bodyColor[0].value);
     text(message[0], x-boxWidth/2+gui.thisFont.stepX(), y);
-    confirm.display(x, y+gui.thisFont.stepY(4)-gui.unit(4));
+    switch(status) {
+    case 1:
+      choice[0].display(x, y+gui.thisFont.stepY(4)-gui.unit(4));
+      break;
+    case 2:
+      choice[0].display(x-boxWidth/6, y+gui.thisFont.stepY(4)-gui.unit(4));
+      choice[1].display(x+boxWidth/6, y+gui.thisFont.stepY(4)-gui.unit(4));
+      break;
+    case 3:
+      choice[0].display(x-boxWidth/4, y+gui.thisFont.stepY(4)-gui.unit(4));
+      choice[1].display(x, y+gui.thisFont.stepY(4)-gui.unit(4));
+      choice[2].display(x+boxWidth/4, y+gui.thisFont.stepY(4)-gui.unit(4));
+    }
     textAlign(CENTER);
     fill(gui.headColor[2].value);
     text(message[1], x, y-boxHeight/2+gui.thisFont.stepY());
     popStyle();
   }
-  void pop(String mainMessage, String metaMessage) {
+  void pop(String mainMessage, String metaMessage, String...label) {
     x=width/2;
     y=height/2;
     message[0]=mainMessage;
     message[1]=metaMessage;
+    status=label.length;
+    for (int i=0; i<label.length; i++)
+      choice[i].label=label[i];
     active=true;
   }
   void keyPress() {
@@ -54,8 +71,11 @@ class MessageBox {
     moveY=mouseY-y;
   }
   void mouseRelease() {
-    if (confirm.active())
-      active=false;
+    for (int i=0; active&&i<status; i++)
+      if (choice[i].active()) {
+        status=i;
+        active=false;
+      }
   }
   void mouseDrag() {
     if (mouseX>x-boxWidth/2&&mouseX<x+boxWidth/2&&mouseY>y-boxHeight/2&&mouseY<y+boxHeight/2) {

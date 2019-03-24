@@ -2,6 +2,8 @@ class Button {
   int alignment;//CORNER or CENTER
   float x, y, buttonHeight, buttonWidth;//x and y is real coordinates
   String label;
+  Button() {
+  }
   Button(String label) {
     this.label=label;
   }

@@ -187,6 +187,6 @@ abstract class Procedure {
     }
   }
   void mouseScroll(MouseEvent event) {
-    eyeZ+=event.getCount();
+    eyeZ+=event.getCount()*10;
   }
 }

@@ -2,8 +2,7 @@ class GUI {
   static final int SCALE=0, WIDTH=1, HEIGHT=2;
   float angle;
   String _V="3.1415926";
-  volatile boolean load;
-  boolean mode;
+  boolean mode, load;
   String[] loadText={"Loading", "Loading.", "Loading..", "Loading..."};
   Font body, head, thisFont;
   Image title;
@@ -53,15 +52,14 @@ class GUI {
       colour[1].setValue(51, 35, 5);
       colour[2].setValue(199, 175, 189);
       colour[3].setValue(45, 196, 166);
-      headColor[0].setValue(249, 135, 0);
-      headColor[1].setValue(255, 0, 255);
-      headColor[2].setValue(123, 35, 246);
+      headColor[0].setValue(111, 39, 45);
+      headColor[2].setValue(26, 135, 0);
       bodyColor[0].setValue(51, 35, 5);
       bodyColor[1].setValue(107, 140, 106);
       bodyColor[2].setValue(51, 35, 5);
-      partColor[0].setValue(0, 255, 255);//cyan
+      partColor[0].setValue(0, 126, 255);
       partColor[1].setValue(255, 0, 255);
-      partColor[2].setValue(249, 135, 0);
+      partColor[2].setValue(252, 79, 115);
     } else {
       mainColor.setValue(255, 255, 0);
       colour[0].setValue(0);

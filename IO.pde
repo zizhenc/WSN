@@ -1,6 +1,8 @@
-class IO {
+public class IO {
   StringBuffer path=new StringBuffer("Results");
-  boolean mode;
+  boolean mode, load;
+  String[] graphInfo;
+  String nodes;
   void saveGraph() {
     if (mode)
       selectOutput("Save graph to:", "graphFile", new File(path.toString()), this);
@@ -8,7 +10,7 @@ class IO {
       recordGraph(path+System.getProperty("file.separator")+"Graph ("+month()+"-"+day()+"-"+year()+"_"+hour()+"-"+minute()+"-"+second()+").wsn");
   }
   void graphFile(File selection) {
-    if (selection !=null)
+    if (selection!=null)
       recordGraph(selection.getAbsolutePath());
   }
   void recordGraph(String path) {
@@ -18,6 +20,21 @@ class IO {
     PrintWriter out=createWriter(path);
     out.println(records);
     out.close();
-    box.pop("Graph saved!", "Information");
+    box.pop("Graph saved!", "Information", "Great");
+  }
+  void loadGraph(File selection) {
+    if (selection!=null) {
+      BufferedReader reader = createReader(selection.getAbsolutePath());
+      try {
+        graphInfo=splitTokens( reader.readLine(), "G(,)");
+        nodes=reader.readLine();
+        reader.close();
+      } 
+      catch (IOException e) {
+        error.logOut("File read error - "+e.getMessage());
+      }
+      load=true;
+      screen[navigation.page].setting();
+    }
   }
 }

@@ -11,7 +11,7 @@ class NewGraph extends New {
       else if (word.contains("y")) {
         graph=new Graph(topology, _N, r);
         navigation.end=0;
-        navigation.auto=false;
+        io.load=navigation.auto=false;
         navigation.go(410);
       } else
         throw new Exception('\"'+word+"\": Nonsense message");

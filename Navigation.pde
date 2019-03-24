@@ -115,15 +115,15 @@ class Navigation {
   }
   void go(int option) {//end from Node distribtuting to Relay coloring is 1 to 6, New graph is 0
     switch(option) {
-    case 102://New Graph
+    case 102://New graph
       nextPage=0;
       break;
-    case 101://New Computation
+    case 101://New deployment
       nextPage=19;
       break;
     case 207://Load graph
-      //selectInput("Select WSN file:", "loadGraph", new File("Results"+System.getProperty("file.separator")+"."), io);
-      if (page!=0&&page!=20&&page!=21)
+      selectInput("Select WSN file:", "loadGraph", new File("Results"+System.getProperty("file.separator")+"."), io);
+      if (page!=19)
         nextPage=0;
       break;
     case 206://Save graph
