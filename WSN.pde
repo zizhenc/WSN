@@ -84,7 +84,7 @@ void exit() {
   super.exit();
 }
 void movieEvent(Movie movie) {
-  if (navigation.page>19&&navigation.page<23)
+  if (navigation.page>20&&navigation.page<24)
     movie.read();
 }
 void daemon() {
