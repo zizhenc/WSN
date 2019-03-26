@@ -39,6 +39,11 @@ abstract class Procedure {
     rotateZ(spinZ);
     show();
     popMatrix();
+    if (navigation.auto) {
+      textAlign(CENTER);
+      fill(gui.bodyColor[1].value);
+      text("<<- Presentation mode: Ver. "+gui._V+" ->>", width/2, gui.thisFont.stepY());
+    }
     navigation.display();
     popStyle();
     deploying();

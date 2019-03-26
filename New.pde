@@ -4,6 +4,7 @@ abstract class New implements Screen {
   double r;
   ArrayList<Input> inputs=new ArrayList<Input>();
   HashMap<String, Input> inputLibrary=new HashMap<String, Input>();
+  String theme;
   Topology topology;
   Animation animation;
   abstract void enter()throws Exception;
@@ -29,6 +30,9 @@ abstract class New implements Screen {
     inputs.get(index).cin(-textWidth(inputs.get(index).prompt+inputs.get(index).word)/2, gui.thisFont.stepY(index));
     imageMode(CENTER);
     animation.display(GUI.HEIGHT, 0, height-logoSize-navigation.barHeight-height/10, height/5);
+    textAlign(CENTER);
+    fill(gui.bodyColor[1].value);
+    text("<<- "+theme+": Ver. "+gui._V+" ->>", 0, height-navigation.barHeight-gui.thisFont.gap()-logoSize);
     popMatrix();
     navigation.display();
     popStyle();

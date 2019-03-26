@@ -2,6 +2,7 @@ class NewComputation extends NewDeployment {
   int index;
   NewComputation() {
     animation=new GIF("Rasengan", 58);
+    theme="New computation";
   }
   void finish()throws Exception {
     graph=new Graph(index, topology, _N, r, method, coordinate, mode, breakpoint, connectivity);

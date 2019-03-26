@@ -1,6 +1,7 @@
 class NewGraph extends New {
   NewGraph() {
     animation=new GIF("Tesseract", 48);
+    theme="New graph";
   }
   void enter() throws Exception {
     String prompt=inputs.get(index).prompt;

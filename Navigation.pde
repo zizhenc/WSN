@@ -100,11 +100,6 @@ class Navigation {
     strokeWeight(gui.unit(2));
     for (int i=1; i<items.length; i++)
       dottedLine(itemLength*(i-items.length/2.0), 0, itemLength*(i-items.length/2.0), -barHeight);
-    if (auto) {
-      textAlign(CENTER);
-      fill(gui.bodyColor[1].value);
-      text("<<- Presentation mode: Ver. "+gui._V+" ->>", 0, -barHeight-gui.thisFont.gap());
-    }
     pop();
   }
   void releaseOption() {
