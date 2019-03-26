@@ -10,10 +10,10 @@ GUI gui=new GUI();
 Graph graph;
 Screen[] screen;
 IO io;
+DialogBox box;
 Error error;
 Navigation navigation;
 Capture capture;
-MessageBox box;
 void settings() {
   size(gui.getWidth(), gui.getHeight(), P3D);
 }
@@ -22,7 +22,7 @@ void setup() {
   thread("daemon");
 }
 void draw() {
-  if (gui.load) {
+  if (gui.thread>0) {
     background(gui.colour[0].value);
     screen[navigation.page].display();
   } else
@@ -33,25 +33,25 @@ void draw() {
     capture.display();
 }
 void keyPressed() {
-  if (gui.load&&!capture.active)
+  if (gui.thread>0&&!capture.active)
     if (box.active)
       box.keyPress();
     else
       screen[navigation.page].keyPress();
 }
 void keyReleased() {
-  if (gui.load)
+  if (gui.thread>0)
     if (capture.active)
       capture.keyRelease();
     else if (!box.active)
       screen[navigation.page].keyRelease();
 }
 void keyTyped() {
-  if (gui.load&&!capture.active&&!box.active)
+  if (gui.thread>0&&!capture.active&&!box.active)
     screen[navigation.page].keyType();
 }
 void mousePressed() {
-  if (gui.load)
+  if (gui.thread>0)
     if (capture.active)
       capture.mousePress();
     else if (box.active)
@@ -60,14 +60,14 @@ void mousePressed() {
       screen[navigation.page].mousePress();
 }
 void mouseReleased() {
-  if (gui.load&&!capture.active)
+  if (gui.thread>0&&!capture.active)
     if (box.active)
       box.mouseRelease();
     else
       screen[navigation.page].mouseRelease();
 }
 void mouseDragged() {
-  if (gui.load)
+  if (gui.thread>0)
     if (capture.active)
       capture.mouseDrag();
     else if (box.active)
@@ -76,7 +76,7 @@ void mouseDragged() {
       screen[navigation.page].mouseDrag();
 }
 void mouseWheel(MouseEvent event) {
-  if (gui.load)
+  if (gui.thread>0)
     screen[navigation.page].mouseScroll(event);
 }
 void exit() {
@@ -88,24 +88,35 @@ void movieEvent(Movie movie) {
     movie.read();
 }
 void daemon() {
-  if (gui.load)
-    graph.compute();
-  else {
+  if (gui.thread>0) {
+    switch(gui.thread) {
+    case 2:
+      graph.compute();
+      io.record();
+      break;
+    case 3:
+      io.graphInfo();
+      break;
+    case 4:
+      io.graphSummary();
+      break;
+    }
+  } else {
     error=new Error();
     io=new IO();
     navigation=new Navigation();
     capture=new Capture();
-    box=new MessageBox();
+    box=new DialogBox();
     screen=new Screen[]{
       new NewGraph(), 
       new NodeDistributing(), new GraphGenerating(), new SmallestLastOrdering(), new SmallestLastColoring(), new Partitioning(), new RelayColoring(), new SLPartite(), new RLPartite(), new SLBipartite(), new RLBipartite(), 
       new Clique(), new PrimarySet(), new RelaySet(), new Backbone(), new Surplus(), 
       new DegreeDistribution(), new VertexDegreePlot(), new ColorSizePlot(), 
-      new NewDeployment(), 
+      new NewComputation(), new NewDemonstration(), 
       new ColorSettings(this), new SystemSettings(this), new FontSettings(this), 
       new About(), 
       new Scene()
     };
-    gui.load=true;
+    gui.thread=1;
   }
 }

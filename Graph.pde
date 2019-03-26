@@ -1,5 +1,5 @@
 class Graph {
-  int _E, maxDegree, minDegree, maxMinDegree, methodIndex, connectivity=2, coordinateIndex, primaries=-1;//primaries is order of selected graph adjusted back 1 for mark when the algorithm stopped or continue.
+  int index, _E, maxDegree, minDegree, maxMinDegree, methodIndex, connectivity=2, coordinateIndex, primaries=-1;//primaries is order of selected graph adjusted back 1 for mark when the algorithm stopped or continue.
   int[] degreeDistribution;
   float breakpoint;
   double r;
@@ -29,6 +29,10 @@ class Graph {
     this.breakpoint=breakpoint;
     this.connectivity=connectivity;
   }
+  Graph(int index, Topology topology, int _N, double r, int methodIndex, int coordinateIndex, boolean mode, float breakpoint, int connectivity) {
+    this(topology, _N, r, methodIndex, coordinateIndex, mode, breakpoint, connectivity);
+    this.index=index;
+  }
   void compute() {
     for (int i=0; i<vertex.length; i++)
       vertex[i]=topology.generateVertex(i);
@@ -53,7 +57,7 @@ class Graph {
     generateRelayList(connectivity);
     for (amount=relayList.length; amount>=connectivity; amount=colour(slot, amount));
     navigation.end=7;
-    box.pop("Mission acomplished!", "Information", "Gotcha");
+    box.pop("Graph "+index+" computation acomplished!", "Information", "Gotcha");
   }
   void initialize() {
     if (method[methodIndex]==null)

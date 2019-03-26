@@ -33,7 +33,7 @@ class Button {
     stroke(gui.colour[1].value);
     strokeWeight(gui.unit());
     noFill();
-    rect(x, y, buttonWidth, buttonHeight, gui.unit(10), 0, gui.unit(10), 0);
+    rect(x, y, buttonWidth, buttonHeight, gui.unit(8), 0, gui.unit(8), 0);
     if (active()) {
       fill(gui.colour[2].value, 70);
       noStroke();

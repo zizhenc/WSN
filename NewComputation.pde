@@ -1,91 +1,15 @@
-class NewDeployment extends New {
-  int method, coordinate, connectivity;
-  boolean mode;
-  float breakpoint;
-  NewDeployment() {
+class NewComputation extends NewDeployment {
+  int index;
+  NewComputation() {
     animation=new GIF("Rasengan", 58);
-    inputLibrary.put("Select graph generating method (Exhaustive, Sweep or Cell): ", new Input("Select graph generating method (Exhaustive, Sweep or Cell): "));
-    inputLibrary.put("Choose a coordinate system (Cartesian, Cylindrical or Spherical): ", new Input("Choose a coordinate system (Cartesian, Cylindrical or Spherical): "));
-    inputLibrary.put("Choose a coordinate system (Cartesian or Cylindrical): ", new Input("Choose a coordinate system (Cartesian or Cylindrical): "));
-    inputLibrary.put("Select primary sets: ", new Input("Select primary sets: "));
-    inputLibrary.put("Enter connectivity: ", new Input("Enter connectivity: "));
-    inputLibrary.put("Demonstration or computation?: (Demo or Comp)", new Input("Demonstration or computation?: (Demo or Comp)"));
   }
-  void enter() throws Exception {
-    String prompt=inputs.get(index).prompt;
-    String word=inputs.get(index).word.toString().toLowerCase();
-    if (prompt.equals("Select graph generating method (Exhaustive, Sweep or Cell): ")) {
-      if (word.contains("exhaustive")) {
-        method=0;
-        commit("Select primary sets: ");
-      } else if (word.contains("sweep")) {
-        method=1;
-        commit("Choose a coordinate system (Cartesian, Cylindrical or Spherical): ");
-      } else if (word.contains("cell")) {
-        method=2;
-        commit(topology.value==4?"Choose a coordinate system (Cartesian, Cylindrical or Spherical): ":"Choose a coordinate system (Cartesian or Cylindrical): ");
-      } else
-        throw new Exception('\"'+word+"\": No such method");
-    } else if (prompt.equals("Choose a coordinate system (Cartesian or Cylindrical): ")) {
-      if (word.contains("cartesian"))
-        coordinate=0;
-      else if (word.contains("cylindrical"))
-        coordinate=1;
-      else
-        throw new Exception('\"'+word+"\": No such coordinate system");
-      commit("Select primary sets: ");
-    } else if (prompt.equals("Choose a coordinate system (Cartesian, Cylindrical or Spherical): ")) {
-      if (word.contains("cartesian"))
-        coordinate=0;
-      else if (word.contains("cylindrical"))
-        coordinate=1;
-      else if (word.contains("spherical"))
-        coordinate=2;
-      else
-        throw new Exception('\"'+word+"\": No such coordinate system");
-      commit("Select primary sets: ");
-    } else if (prompt.equals("Select primary sets: ")) {
-      if (word.contains("%")) {
-        breakpoint=Float.parseFloat(word.substring(0, word.indexOf("%")));
-        if (breakpoint<=0||breakpoint>100)
-          throw new NumberFormatException('\"'+word+"\": Invalid breakpoint");
-        mode=true;
-      } else {
-        breakpoint=Integer.parseInt(word);
-        if (breakpoint<=0)
-          throw new NumberFormatException('\"'+word+"\": Invalid amount");
-        mode=false;
-      }
-      commit("Enter connectivity: ");
-    } else if (prompt.equals("Enter connectivity: ")) {
-      connectivity=Integer.parseInt(word);
-      if (connectivity<0||connectivity>topology.connectivity())
-        throw new NumberFormatException('\"'+word+"\": Invalid connectivity");
-      commit("Demonstration or computation?: (Demo or Comp)");
-    } else if (prompt.equals("Demonstration or computation?: (Demo or Comp)")) {
-      if (word.contains("demo"))
-        navigation.auto=true;
-      else if (word.contains("comp"))
-        navigation.auto=false;
-      else
-        throw new Exception('\"'+word+"\": Nonsense message");
-      commit("Deploy algorithms now? (Yes or No): ");
-    } else if (prompt.equals("Deploy algorithms now? (Yes or No): "))
-      if (word.contains("n"))
-        setting();
-      else if (word.contains("y")) {
-        graph=new Graph(topology, _N, r, method, coordinate, mode, breakpoint, connectivity);
-        if (navigation.auto) {
-          navigation.end=0;
-          navigation.go(410);
-        } else {
-          thread("daemon");
-          io.load=false;
-          setting();
-        }
-      } else
-        throw new Exception('\"'+word+"\": Nonsense message");
-    else
-      defaultEnter(prompt, word, "Select graph generating method (Exhaustive, Sweep or Cell): ");
+  void finish()throws Exception {
+    graph=new Graph(index, topology, _N, r, method, coordinate, mode, breakpoint, connectivity);
+    if (io.load)
+      io.loadVertices();
+    gui.thread=2;
+    thread("daemon");
+    setting();
+    index++;
   }
 }

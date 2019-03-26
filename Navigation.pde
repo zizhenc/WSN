@@ -1,12 +1,14 @@
 class Navigation {
   int page, nextPage, option, end=-420;
-  boolean auto, lock;//lock item controled by keyboard
+  int[] readyPage={-1, -1, -1};
+  boolean ready, auto, lock;//lock item controled by keyboard
   float itemLength, subItemLength, barWidth, barHeight;
   LinkedList<String>[] items=new LinkedList[]{new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>()};
-  String[] itemTarget={"New deployment [2]", "Save primary set summary [4]", "Primary independent sets [2]", "Smallest-last coloring bipartites [7]", "Degree distribution histogram [1]", "System settings [2]", "Documentation [1]"};//itemTarget means the longest item (in text) among the whole menu list.
+  String[] itemTarget={"New demonstration [3]", "Save primary set summary [4]", "Primary independent sets [3]", "Smallest-last coloring bipartites [7]", "Degree distribution histogram [1]", "System settings [2]", "Documentation [1]"};//itemTarget means the longest item (in text) among the whole menu list.
   Navigation() {
-    items[0].addFirst("New graph [1]");//102
-    items[0].addFirst("New deployment [2]");//101
+    items[0].addFirst("New graph [1]");//103
+    items[0].addFirst("New computation [2]");//102
+    items[0].addFirst("New demonstration [3]");//101
     items[0].addFirst("New [N]");//100
     items[1].addFirst("Load graph [1]");//207
     items[1].addFirst("Save graph [2]");//206
@@ -16,11 +18,12 @@ class Navigation {
     items[1].addFirst("Save backbone summary [6]");//202
     items[1].addFirst("Save domination degree [7]");//201
     items[1].addFirst("Files [F]");//200
-    items[2].addFirst("Terminal clique [1]");//305
-    items[2].addFirst("Primary independent sets [2]");//304
-    items[2].addFirst("Relay independent sets [3]");//303
-    items[2].addFirst("Backbones [4]");//302
-    items[2].addFirst("Surplus [5]");//301
+    items[2].addFirst("Select graph [1]");//306
+    items[2].addFirst("Terminal clique [2]");//305
+    items[2].addFirst("Primary independent sets [3]");//304
+    items[2].addFirst("Relay independent sets [4]");//303
+    items[2].addFirst("Backbones [5]");//302
+    items[2].addFirst("Surplus [6]");//301
     items[2].addFirst("Results [R]");//300
     items[3].addFirst("Node distribution [1]");//410
     items[3].addFirst("Graph generation [2]");//409
@@ -37,9 +40,9 @@ class Navigation {
     items[4].addFirst("Vertex-degree plot [2]");//502
     items[4].addFirst("Color-size plot [3]");//501
     items[4].addFirst("Charts [C]");//500
-    items[5].addFirst("Font settings [3]");//603
+    items[5].addFirst("Font settings [1]");//603
     items[5].addFirst("System settings [2]");//602
-    items[5].addFirst("Color settings [1]");//601
+    items[5].addFirst("Color settings [3]");//601
     items[5].addFirst("Settings [S]");//600
     items[6].addFirst("Documentation [1]");//702
     items[6].addFirst("About [2]");//701
@@ -115,29 +118,30 @@ class Navigation {
   }
   void go(int option) {//end from Node distribtuting to Relay coloring is 1 to 6, New graph is 0
     switch(option) {
-    case 102://New graph
+    case 103://New graph
       nextPage=0;
       break;
-    case 101://New deployment
+    case 102://New computation
       nextPage=19;
+      break;
+    case 101://New demonstration
+      nextPage=20;
       break;
     case 207://Load graph
       selectInput("Select WSN file:", "loadGraph", new File("Results"+System.getProperty("file.separator")+"."), io);
-      if (page!=19)
-        nextPage=0;
       break;
     case 206://Save graph
       if (end>=1)
-        io.saveGraph();
+        io.saveAs("graph");
       else
         error.logOut("File save error - No graph generated!");
       break;
     case 205://Save graph summary
       if (end>=6)
-        //io.saveGraphSummary();
-        //else
-        //error.logOut("File save error - Computation not finished!");
-        break;
+        io.saveAs("graph summary");
+      else
+        error.logOut("File save error - Computation not finished!");
+      break;
     case 204://Save primary set summary
       if (end>=5)
         //io.savePrimarySetSummary();
@@ -162,6 +166,9 @@ class Navigation {
         //else
         //error.logOut("File save error - Computation not finished!");
         break;
+    case 306://Select graph
+      io.selectGraph();
+      break;
     case 305://Terminal clique
       if (end>=3)
         nextPage=11;
@@ -236,15 +243,15 @@ class Navigation {
       break;
     case 601://Color settings
       if (end>=0||end==-420)
-        nextPage=20;
+        nextPage=21;
       break;
     case 602://System settings
       if (end>=0||end==-420)
-        nextPage=21;
+        nextPage=22;
       break;
     case 603://Font settings
       if (end>=0||end==-420)
-        nextPage=22    ;
+        nextPage=23    ;
       break;
     case 702://Documentation
       //if (Desktop.isDesktopSupported())
@@ -257,7 +264,7 @@ class Navigation {
       break;
     case 701://About
       if (end>=0||end==-420)
-        nextPage=23;
+        nextPage=24;
     }
     if (page!=nextPage) {
       page=screen.length-1;

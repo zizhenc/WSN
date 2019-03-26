@@ -7,7 +7,7 @@ class Scene implements Screen {
     "Terminal Clique...", "Primary Independent Sets...", "Relay Independent Sets...", "Backbones...", "Surplus...", 
     "Degree Distribution Histogram...", 
     "Vertex Degree Plot...", "Color-size Plot...", 
-    "New deployment...", 
+    "New computation...", "New demonstration...", 
     "Color settings...", "System settings...", "Font settings...", 
     "About..."
   };

@@ -40,18 +40,19 @@ abstract class New implements Screen {
     if (io.load) {
       try {
         enter();
-        inputs.get(index).word.append(io.graphInfo[0]);
+        inputs.get(index).word.append(io.info[0]);
         enter();
-        inputs.get(index).word.append(io.graphInfo[1]);
+        inputs.get(index).word.append(io.info[1]);
         enter();
-        if (io.graphInfo.length>2) {
+        if (io.info.length>2) {
           inputs.get(index).word.append("r");
           enter();
-          inputs.get(index).word.append(io.graphInfo[2]);
+          inputs.get(index).word.append(io.info[2]);
           enter();
         }
       }
       catch(Exception e) {
+        io.load=false;
         setting();
       }
     }

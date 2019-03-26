@@ -1,7 +1,6 @@
 class GraphGenerating extends Procedure implements Screen {
   int _N;
-  String[][] coordinateLabels={{"Cartesian system", "Cylindrical system", "Spherical system"}, {"Cartesian system", "Cylindrical system"}};
-  Radio methods=new Radio("Exhaustive method", "Sweep method", "Cell method"), coordinates=new Radio();
+  Radio methods=new Radio("Exhaustive method", "Sweep method", "Cell method"), coordinates=new Radio("Cartesian system", "Cylindrical system", "Spherical system");
   Slider edgeWeight=new Slider("Edge weight");
   Checker remainingVertices=new Checker("Remaining vertices"), generatedGraph=new Checker("Generated graph");
   Switcher showEdge=new Switcher("Edge", "Edge");
@@ -43,10 +42,10 @@ class GraphGenerating extends Procedure implements Screen {
     graph._E=0;
   }
   void updateCoordinates() {//update coodinates when methods changed
-    if (methods.value==2&&graph.topology.value!=4)
-      coordinates.label=coordinateLabels[1];
-    else
-      coordinates.label=coordinateLabels[0];
+    if (methods.value==2&&graph.topology.value!=4&&coordinates.labels.size()==3)
+      coordinates.labels.removeLast();
+    else if (coordinates.labels.size()==2)
+      coordinates.labels.addLast("Spherical system");
     graph.initialize();
   }
   void deploying() {
