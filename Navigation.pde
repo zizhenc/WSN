@@ -129,19 +129,19 @@ class Navigation {
       if (end>=1)
         io.saveAs("graph");
       else
-        error.logOut("File save error - No graph generated!");
+        error.logOut("File save error - No graph generated");
       break;
     case 205://Save graph summary
       if (end>=6)
         io.saveAs("graph summary");
       else
-        error.logOut("File save error - Computation not finished!");
+        error.logOut("File save error - Computation not finished");
       break;
     case 204://Save primary set summary
       if (end>=5)
         //io.savePrimarySetSummary();
         //else
-        error.logOut("File save error - Computation not finished!");
+        error.logOut("File save error - Computation not finished");
       break;
     case 203://Save relay set summary
       if (end>=6)
@@ -258,8 +258,7 @@ class Navigation {
       //}
       break;
     case 701://About
-      if (end>=0||end==-420)
-        nextPage=24;
+      nextPage=24;
     }
     if (page!=nextPage) {
       page=screen.length-1;
@@ -269,11 +268,8 @@ class Navigation {
   }
   void dottedLine(float x1, float y1, float x2, float y2) {
     float steps=dist(x1, y1, x2, y2)/10;
-    for (float i = 0; i <steps; i++) {
-      float x = lerp(x1, x2, i/steps);
-      float y = lerp(y1, y2, i/steps);
-      point(x, y);
-    }
+    for (float i = 0; i <steps; i++)
+      point(lerp(x1, x2, i/steps), lerp(y1, y2, i/steps));
   }
   void keyPress() {
     if (key==CODED&&keyCode==ALT)

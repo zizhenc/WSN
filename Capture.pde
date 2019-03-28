@@ -1,4 +1,4 @@
- class Capture {
+class Capture {
   int x, y, captureWidth, captureHeight, time;
   StringBuffer path=new StringBuffer("Screenshots");
   boolean active, finish, mode;
@@ -54,9 +54,12 @@
   }
   void mousePress() {
     if (mode) {
-      x=mouseX;
-      y=mouseY;
-      captureWidth=captureHeight=0;
+      if (mouseButton==LEFT) {
+        x=mouseX;
+        y=mouseY;
+        captureWidth=captureHeight=0;
+      } else
+        active=false;
     }
   }
   void mouseDrag() {

@@ -1,6 +1,6 @@
 class Partitioning extends Procedure implements Screen {
   int _E, frame, pivot;
-  Slider edgeWeight=new Slider("Edge weight"), breakpoint=new Slider("Selected percentile", 55, 1, 100, 1), selectColorSets=new Slider("Selected color sets", 1, 1);
+  Slider edgeWeight=new Slider("Edge weight"), breakpoint=new Slider("Selected percentile", 50, 1, 100, 1), selectColorSets=new Slider("Selected color sets", 1, 1);
   Switcher showEdge=new Switcher("Edge", "Edge");
   Checker remainingGraph=new Checker("Remaining graph"), selectedGraph=new Checker("Selected graph");
   LinkedList<String> modalLabels=new LinkedList<String>();
@@ -21,6 +21,7 @@ class Partitioning extends Procedure implements Screen {
       interval.setPreference(1, frameRate, 1);
       navigation.end=-5;
       if (graph.primaries==-1) {
+        pivot=0;
         selectColorSets.setValue(graph._SLColors.size()/2);
         if (navigation.auto) {
           modes.value=graph.mode?0:1;

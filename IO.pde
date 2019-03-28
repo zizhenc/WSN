@@ -87,7 +87,8 @@ public class IO {
     text+="Primary colors,"+graph._PYColors.size()+separator;
     text+="Relay colors,"+graph._RLColors.size()+separator;
     text+=String.format("Partition percentile,%.2f%%", graph.primaries*100.0/graph.vertex.length)+separator;
-    text+="Surplus,"+graph.surplus();
+    int surplus=graph.surplus();
+    text+=String.format("Surplus,%d(%.2f%%)", surplus, surplus*100.0/graph.vertex.length);
     output(text);
     box.pop("Graph summary saved.", "Information", "Well done!");
   }
