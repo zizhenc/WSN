@@ -23,7 +23,7 @@ class SLBipartite extends Bipartite {
     if (component==null)
       component=new Component(primary, relay);
     else
-      component.reset(primary, relay);
+      component.reset(primary, relay, 0);
     reset();
   }
   void data() {

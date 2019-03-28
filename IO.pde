@@ -72,7 +72,7 @@ public class IO {
     box.pop("Graph saved!", "Information", "Great!");
   }
   void graphSummary() {
-    graph.initailizeBackbones();
+    graph.calculateBackbones();
     String separator=System.getProperty("line.separator");
     String text="Topology,"+graph.topology+separator;
     text+="N,"+graph.vertex.length+separator;
@@ -108,7 +108,7 @@ public class IO {
         error.logOut("File read error - "+e.getMessage());
       }
       load=true;
-      box.pop("Load success! New graph, computation or demonstraction?", "Option", loadAction, "Graph", "Deploy", "Demo");
+      box.pop("Load success! New graph, computation or demonstraction?", "Option", loadAction, "Graph", "Comp", "Demo");
     }
   }
   void loadVertices() {

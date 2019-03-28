@@ -21,7 +21,8 @@ class Component {
       degreeList[i]=new Vertex(i);
     setPartites(primary, relay);
   }
-  void reset(Color primary, Color relay) {
+  void reset(Color primary, Color relay, int archive) {
+    this.archive=archive;
     tails[4]=order=0;
     stack.clear();
     blocks.clear();

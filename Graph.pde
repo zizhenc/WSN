@@ -203,9 +203,9 @@ class Graph {
         backbone[index]=new Component(_PYColors.get(_RLColors.get(index).index-_SLColors.size()), _RLColors.get(index), topology.connectivity());
     else if (backbone[index].archive==-1)
       if (_RLColors.isEmpty())
-        backbone[index].reset(gui.mainColor, gui.mainColor);
+        backbone[index].reset(gui.mainColor, gui.mainColor, 1);
       else
-        backbone[index].reset(_PYColors.get(_RLColors.get(index).index-_SLColors.size()), _RLColors.get(index));
+        backbone[index].reset(_PYColors.get(_RLColors.get(index).index-_SLColors.size()), _RLColors.get(index), 1);
     return backbone[index];
   }
   void calculateBackbones() {

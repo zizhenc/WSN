@@ -42,9 +42,10 @@ class GraphGenerating extends Procedure implements Screen {
     graph._E=0;
   }
   void updateCoordinates() {//update coodinates when methods changed
-    if (methods.value==2&&graph.topology.value!=4&&coordinates.labels.size()==3)
-      coordinates.labels.removeLast();
-    else if (coordinates.labels.size()==2)
+    if (methods.value==2&&graph.topology.value!=4) {
+      if (coordinates.labels.size()==3)
+        coordinates.labels.removeLast();
+    } else if (coordinates.labels.size()==2)
       coordinates.labels.addLast("Spherical system");
     graph.initialize();
   }
