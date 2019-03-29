@@ -5,7 +5,7 @@ public class IO {
   boolean mode, load;
   String[] info;
   String nodes, file;
-  int[] size=new int[8];//0->bipartite, 1->giant component, 2->two-core, 3->giant block, 4->surplus I, 5->surplus II, 6->surplus III, 7->surplus IV
+  Table tableI=new Table(), tableII=new Table();
   Action loadAction=new Action() {
     void go() {
       switch(box.option) {
@@ -51,12 +51,11 @@ public class IO {
       gui.thread=3;
     else if (name.equals("graph summary"))
       gui.thread=4;
+    file=path+System.getProperty("file.separator")+name+" ("+month()+"-"+day()+"-"+year()+"_"+hour()+"-"+minute()+"-"+second()+(gui.thread==3?").wsn":").csv");
     if (mode)
-      selectOutput("Save "+name+" to:", "graphFile", new File(path.toString()), this);
-    else {
-      file=path+System.getProperty("file.separator")+name+" ("+month()+"-"+day()+"-"+year()+"_"+hour()+"-"+minute()+"-"+second()+").wsn";
+      selectOutput("Save "+name+" to:", "graphFile", new File(file), this);
+    else
       thread("daemon");
-    }
   }
   void graphFile(File selection) {
     if (selection!=null) {
@@ -88,9 +87,20 @@ public class IO {
     text+="Relay colors,"+graph._RLColors.size()+separator;
     text+=String.format("Partition percentile,%.2f%%", graph.primaries*100.0/graph.vertex.length)+separator;
     int surplus=graph.surplus();
-    text+=String.format("Surplus,%d(%.2f%%)", surplus, surplus*100.0/graph.vertex.length);
+    text+=String.format("Surplus I,%d (%.2f%%)", surplus, surplus*100.0/graph.vertex.length)+separator;
+    for (Component component : graph.backbone)
+      surplus+=component.primary.vertices.size()+component.relay.vertices.size()-component.giant[1].size();
+    text+=String.format("Surplus II,%d (%.2f%%)", surplus, surplus*100.0/graph.vertex.length)+separator;
+    for (Component component : graph.backbone)
+      surplus+=component.degreeList[0].value;
+    text+=String.format("Surplus III,%d (%.2f%%)", surplus, surplus*100.0/graph.vertex.length)+separator;
+    for (Component component : graph.backbone)
+      surplus+=component.primary.vertices.size()+component.relay.vertices.size()-component.giant[0].size();
+    text+=String.format("Surplus IV,%d (%.2f%%)", surplus, surplus*100.0/graph.vertex.length);
     output(text);
     box.pop("Graph summary saved.", "Information", "Well done!");
+  }
+  void primarySetSummary() {
   }
   void output(String text) {
     PrintWriter out=createWriter(file);

@@ -3,7 +3,6 @@ class Graph {
   int[] degreeDistribution;
   float breakpoint;
   double r;
-  String timeStamp;
   boolean mode;//partitioning mode, true means auto mode, false means manual mode
   ArrayList<Color> colorLibrary=new ArrayList<Color>(), _SLColors=new ArrayList<Color>(), _RLColors=new ArrayList<Color>(), _PYColors=new ArrayList<Color>();
   ArrayList<Vertex> degreeList=new ArrayList<Vertex>();
