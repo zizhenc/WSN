@@ -233,13 +233,13 @@ class Navigation {
         nextPage=23    ;
       break;
     case 702://Documentation
-      //if (Desktop.isDesktopSupported())
-      //try {
-      //Desktop.getDesktop().open(new File(dataPath("Documentation.pdf")));
-      //}
-      //catch (IOException e) {
-      //error.logOut("File open error - "+e.getMessage());
-      //}
+      if (Desktop.isDesktopSupported())
+      try {
+        Desktop.getDesktop().open(new File(dataPath("Documentation.pdf")));
+      }
+      catch (IOException e) {
+        error.logOut("File open error - "+e.getMessage());
+      }
       break;
     case 701://About
       nextPage=24;

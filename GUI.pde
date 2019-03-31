@@ -2,7 +2,7 @@ class GUI {
   static final int SCALE=0, WIDTH=1, HEIGHT=2;
   volatile int thread;
   float angle;
-  String _V="3.1415926";
+  String _V="3.14159265";
   boolean mode;
   String[] loadText={"Loading", "Loading.", "Loading..", "Loading..."};
   Font body, head, thisFont;
