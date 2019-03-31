@@ -1,6 +1,6 @@
 class Color extends SysColor {//Color set has 3 status:0. no change, 1. reset, 2. restart
   int index, domination, deploy;//0: nochange, -1 algorithm stop ready to restart, 1 deploy
-  int[] cycles={-1, -1};//cycles[0]==-1 means caculating cycles, cycles[1]==-1 means reset status
+  int[] cycles={-1, -1};//cycles[0]==-1 means calculating cycles, cycles[1]==-1 means reset status
   double distance, maxDistance, minDistance;
   LinkedList<Vertex> vertices=new LinkedList<Vertex>();
   ListIterator<Vertex> nodeIterator;

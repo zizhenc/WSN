@@ -1,7 +1,7 @@
 public class SystemSettings extends Setting implements Screen {
   int index;
   Switcher saveMode=new Switcher("Auto", "Manual"), colorMode=new Switcher("Demo", "Paper"), captureMode=new Switcher("Fullscreen", "Partial screen");
-  Slider fps=new Slider("FPS", 1, 120, 1);
+  Slider fps=new Slider("FPS", 1, 144, 1);
   Animation sonic=new GIF("Sonic", 8);
   PathBar[] bar={new PathBar("Default save path", io.path), new PathBar("Screenshot path", capture.path), new PathBar("Error log path", error.path)};
   Button[] button={new Button("Select"), new Button("Select"), new Button("Select")};
@@ -48,6 +48,8 @@ public class SystemSettings extends Setting implements Screen {
         captureMode.value=!captureMode.value;
         capture.mode=captureMode.value;
       }
+    if (navigation.nextPage!=22)
+      video.pause();
   }
   void moreKeyPresses() {
     for (PathBar path : bar)
@@ -77,7 +79,7 @@ public class SystemSettings extends Setting implements Screen {
         index=i;
         selectFolder("Select a folder", "setPath", new File(System.getProperty("user.dir")), this);
       }
-    if (navigation.nextPage!=21)
+    if (navigation.nextPage!=22)
       video.pause();
   }
   void setPath(File selection) {

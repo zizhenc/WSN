@@ -100,6 +100,14 @@ void daemon() {
     case 4:
       io.graphSummary();
       break;
+    case 5:
+      io.primarySetSummary();
+      break;
+    case 6:
+      io.relaySetSummary();
+      break;
+    case 7:
+      io.backboneSummary();
     }
   } else {
     error=new Error();

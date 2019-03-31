@@ -29,6 +29,8 @@ class ColorSettings extends Setting implements Screen {
       gui.resetColor();
       initialize();
     }
+    if (navigation.nextPage!=21)
+      video.pause();
   }
   void moreMousePresses() {
     if (r.active()||g.active()||b.active())
@@ -41,7 +43,7 @@ class ColorSettings extends Setting implements Screen {
       gui.resetColor();
       initialize();
     }
-    if (navigation.nextPage!=20)
+    if (navigation.nextPage!=21)
       video.pause();
   }
   SysColor getColor() {

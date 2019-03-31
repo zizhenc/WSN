@@ -185,7 +185,7 @@ abstract class IndependentSet extends Result implements Screen {
     word[5]=String.format("Minimum distance: %.3f", (_E==0)?0:colour.minDistance);
     word[6]=String.format("Average distance: %.3f", (_E==0)?0:colour.distance/_E);
     int len=7;
-    if (colour.cycles[0]>-1&&graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
+    if (graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
       len=11;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
       int faces=showEdge.value?_E-colour.vertices.size()+graph.topology.characteristic():0;
       word[7]="Faces: "+faces;

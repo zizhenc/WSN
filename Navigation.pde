@@ -10,13 +10,12 @@ class Navigation {
     items[0].addFirst("New computation [2]");//102
     items[0].addFirst("New demonstration [3]");//101
     items[0].addFirst("New [N]");//100
-    items[1].addFirst("Load graph [1]");//207
-    items[1].addFirst("Save graph [2]");//206
-    items[1].addFirst("Save graph summary [3]");//205
-    items[1].addFirst("Save primary set summary [4]");//204
-    items[1].addFirst("Save relay set summary [5]");//203
-    items[1].addFirst("Save backbone summary [6]");//202
-    items[1].addFirst("Save domination degree [7]");//201
+    items[1].addFirst("Load graph [1]");//206
+    items[1].addFirst("Save graph [2]");//205
+    items[1].addFirst("Save graph summary [3]");//204
+    items[1].addFirst("Save primary set summary [4]");//203
+    items[1].addFirst("Save relay set summary [5]");//202
+    items[1].addFirst("Save backbone summary [6]");//201
     items[1].addFirst("Files [F]");//200
     items[2].addFirst("Select graph [1]");//306
     items[2].addFirst("Terminal clique [2]");//305
@@ -102,15 +101,6 @@ class Navigation {
       dottedLine(itemLength*(i-items.length/2.0), 0, itemLength*(i-items.length/2.0), -barHeight);
     pop();
   }
-  void releaseOption() {
-    if (option<0) {
-      option=-option;
-      go(option);
-    } else {
-      go(option);
-      option=0;
-    }
-  }
   void go(int option) {//end from Node distribtuting to Relay coloring is 1 to 6, New graph is 0
     switch(option) {
     case 103://New graph
@@ -122,45 +112,39 @@ class Navigation {
     case 101://New demonstration
       nextPage=20;
       break;
-    case 207://Load graph
+    case 206://Load graph
       selectInput("Select WSN file:", "loadGraph", new File("Results"+System.getProperty("file.separator")+"."), io);
       break;
-    case 206://Save graph
+    case 205://Save graph
       if (end>=1)
         io.saveAs("graph");
       else
         error.logOut("File save error - No graph generated");
       break;
-    case 205://Save graph summary
+    case 204://Save graph summary
       if (end>=6)
         io.saveAs("graph summary");
       else
         error.logOut("File save error - Computation not finished");
       break;
-    case 204://Save primary set summary
+    case 203://Save primary set summary
       if (end>=5)
-        //io.savePrimarySetSummary();
-        //else
+        io.saveAs("primary set summary");
+      else
         error.logOut("File save error - Computation not finished");
       break;
-    case 203://Save relay set summary
+    case 202://Save relay set summary
       if (end>=6)
-        //io.saveRelaySetSummary();
-        //else
-        //error.logOut("File save error - Computation not finished!");
-        break;
-    case 202://Save backbone summary
+        io.saveAs("relay set summary");
+      else
+        error.logOut("File save error - Computation not finished");
+      break;
+    case 201://Save backbone summary
       if (end>=6)
-        //io.saveBackboneSummary();
-        //else
-        //error.logOut("File save error - Computation not finished!");
-        break;
-    case 201://Save domination degree
-      if (end>=6)
-        //io.saveDominationDegree();
-        //else
-        //error.logOut("File save error - Computation not finished!");
-        break;
+        io.saveAs("bacbone summary");
+      else
+        error.logOut("File save error - Computation not finished");
+      break;
     case 306://Select graph
       io.selectGraph();
       break;
@@ -314,13 +298,9 @@ class Navigation {
     }
   }
   void keyRelease() {
-    if (lock) {
-      releaseOption();
+    if (lock&&keyCode!=ALT||key==ENTER||key==RETURN) {
+      mouseRelease();
       lock=false;
-    }
-    if (option>0&&(key==ENTER||key==RETURN)) {
-      go(option);
-      option=0;
     }
   }
   void mousePress() {
@@ -343,6 +323,11 @@ class Navigation {
     }
   }
   void mouseRelease() {
-    releaseOption();
+    if (option<0)
+      option=-option;
+    else {
+      go(option);
+      option=0;
+    }
   }
 }

@@ -39,6 +39,8 @@ public class FontSettings extends Setting implements Screen {
       gui.body.font=loadFont("AmericanTypewriter-Bold-24.vlw");
       initialize();
     }
+    if (navigation.nextPage!=23)
+      video.pause();
   }
   void moreMousePresses() {
     if (size[0].active())
@@ -59,7 +61,7 @@ public class FontSettings extends Setting implements Screen {
       gui.body.font=loadFont("AmericanTypewriter-Bold-24.vlw");
       initialize();
     }
-    if (navigation.nextPage!=22)
+    if (navigation.nextPage!=23)
       video.pause();
   }
   void setFont(File selection) {
