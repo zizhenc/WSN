@@ -102,6 +102,9 @@ abstract class Charts {
       case 'm':
         showMeasurement.value=!showMeasurement.value;
         break;
+      case 'r':
+        chart.reset();
+        break;
       case 'p':
         play.value=!play.value;
         chart.play=play.value;
