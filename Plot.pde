@@ -1,6 +1,9 @@
 class Plot extends Chart {
+  int[][] size;
+  int interval=1;
   Plot(String labelX, String labelY, SysColor[] colors, String...bar) {
     super(labelX, labelY, colors, bar);
+    size=new int[2][plots];
     drawPlot=new DrawPlot[] {
       new DrawPlot() {
         void display() {
@@ -8,8 +11,13 @@ class Plot extends Chart {
           for (int i=0; i<plot.length; i++)
             if (active[i]){
               stroke(colour[i].value);
-              for (int j=0; j<=maxX-minX; j++)
+              for (int j=0; j<=size[0][i]; j++)
                 point(xStart+j*intervalX, yStart-intervalY*points[i].get(j));
+              if(play) {
+                size[0][i]+=interval;
+                if(size[0][i]>maxX-minX)
+                  size[0][i]=maxX-minX;
+              }
             }
           popStyle();
         }
@@ -20,8 +28,13 @@ class Plot extends Chart {
           if(active[index]) {
             pushStyle();
             stroke(colour[index].value);
-            for (int i=0; i<points[index].size(); i++)
+            for (int i=0; i<size[0][index]; i++)
                 point(xStart+(i+beginIndex-minX)*intervalX, yStart-intervalY*points[index].get(i));
+            if(play) {
+              size[0][index]+=interval;
+              if(size[0][index]>points[index].size())
+                size[0][index]=points[index].size();
+            }
             popStyle();
           }
         }
@@ -32,8 +45,13 @@ class Plot extends Chart {
           for (int i=0; i<plot.length; i++)
             if (active[i]) {
               stroke(colour[i].value);
-              for (int j=0; j<maxX-minX; j++)
+              for (int j=0; j<size[1][i]; j++)
                 line(xStart+j*intervalX, yStart-intervalY*points[i].get(j), xStart+(j+1)*intervalX, yStart-intervalY*points[i].get(j+1));
+              if(play) {
+                size[1][i]+=interval;
+                if(size[1][i]>maxX-minX)
+                  size[1][i]=maxX-minX;
+              }
             }
           popStyle();
         }
@@ -44,13 +62,30 @@ class Plot extends Chart {
           if(active[index]) {
             pushStyle();
             stroke(colour[index].value);
-            for (int i=0; i<points[index].size()-1; i++)
+            for (int i=0; i<size[1][index]; i++)
               line(xStart+(i+beginIndex-minX)*intervalX, yStart-intervalY*points[index].get(i), xStart+(i+beginIndex-minX+1)*intervalX, yStart-intervalY*points[index].get(i+1));
+            if(play) {
+              size[1][index]+=interval;
+              if(size[1][index]>points[index].size()-1)
+                size[1][index]=points[index].size()-1;
+            }
             popStyle();
           }
         }
       }
     };
+  }
+  void setInterval(float interval) {
+    int max=maxX-minX;
+    for(int i=0;i<plot.length;i++)
+      if(max>points[i].size())
+        max=points[i].size();
+    this.interval=constrain(round(interval), 0, max);
+  }
+  void reset(){
+    for(int i=0;i<2;i++)
+      for(int j=0;j<size[i].length;j++)
+        size[i][j]=0;
   }
   void showScaleX(float x, float y, int beginIndex, int endIndex) {
     pushStyle();

@@ -17,6 +17,8 @@ class VertexDegreePlot extends Plots implements Screen {
       chart.points[2].set(i, graph.vertex[i].avgDegree);
       chart.points[3].set(i, graph.vertex[i].degree+0f);
     }
+    interval.setPreference(graph.vertex.length/100, graph.vertex.length/50, 1);
+    chart.setInterval(interval.value);
   }
   void show() {
     if (showEdge.value) {

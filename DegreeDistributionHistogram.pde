@@ -27,6 +27,8 @@ class DegreeDistribution extends Charts implements Screen {
         maxSize=value;
     }
     chart.setY(0, round(maxSize));
+    interval.setPreference(0.01, 0.1, 0.001);
+    chart.setInterval(interval.value);
     edgeWeight.setPreference(7, 0, 10, 1);
   }
   void show() {
@@ -38,5 +40,8 @@ class DegreeDistribution extends Charts implements Screen {
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='b')
       showBar.value=!showBar.value;
+  }
+  void moreMouseReleases() {
+    showBar.active();
   }
 }

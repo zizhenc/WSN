@@ -72,6 +72,8 @@ class ColorSizePlot extends Plots implements Screen {
         }
       }
     }
+    interval.setPreference(1, graph._SLColors.size()/25, 1);
+    chart.setInterval(interval.value);
   }
   void show() {
     if (_SLColors.value) {
@@ -102,7 +104,7 @@ class ColorSizePlot extends Plots implements Screen {
       chart.arrow(chart.getX(graph._PYColors.size()+graph._RLColors.size())-1, chart.yStart-gui.thisFont.stepY(2), chart.getX(graph._PYColors.size()+graph._RLColors.size()), chart.yStart-gui.thisFont.stepY(2));
     }
     if (showMeasurement.value) {
-      chart.showMeasurements();
+      chart.showMeasurement();
       if (chart.active()) {
         int amount=0, index=round(chart.getX());
         switch(navigation.end) {

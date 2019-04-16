@@ -2,6 +2,7 @@ abstract class Chart {
   int stepX, stepY, minX, maxX, minY, maxY, plots;
   float intervalX, intervalY, gapX, gapY, rangeX, rangeY, x, y, chartWidth, chartHeight, xStart, yStart;
   boolean[] active;
+  boolean play=true;
   String labelX, labelY;
   String[] plot;
   ArrayList<Float>[] points;
@@ -13,6 +14,8 @@ abstract class Chart {
   abstract float getY(float index);//return y position of index
   abstract void showScaleX(float x, float y, int beginIndex, int endIndex);
   abstract void showScaleY(float x, float y, int beginIndex, int endIndex);
+  abstract void reset();
+  abstract void setInterval(float value);
   Chart(String labelX, String labelY, SysColor[] colour, String...plot) {
     this.labelX=labelX;
     this.labelY=labelY;
@@ -78,7 +81,7 @@ abstract class Chart {
   boolean active() {
     return mouseX>x+textWidth(maxY+"")&&mouseX<x+chartWidth-textWidth(labelX)&&mouseY>=y&&mouseY<=y+chartHeight-gui.thisFont.stepY();
   }
-  void showMeasurements() {
+  void showMeasurement() {
     if (active()) {
       pushStyle();
       dottedLine(x, mouseY, x+chartWidth, mouseY);
@@ -105,6 +108,14 @@ abstract class Chart {
       popStyle();
     }
   }
+  void setX(int minX, int maxX) {
+    this.minX=minX;
+    this.maxX=maxX;
+  }
+  void setY(int minY, int maxY) {
+    this.minY=minY;
+    this.maxY=maxY;
+  }
   void setPlot(int index, boolean onOff) {
     if (active[index]!=onOff) {
       if (onOff)
@@ -130,14 +141,6 @@ abstract class Chart {
       points[index].add(0f);
     while (points[index].size()>maxX-minX+1)
       points[index].remove(points[index].size()-1);
-  }
-  void setX(int minX, int maxX) {
-    this.minX=minX;
-    this.maxX=maxX;
-  }
-  void setY(int minY, int maxY) {
-    this.minY=minY;
-    this.maxY=maxY;
   }
   void arrow(float x1, float y1, float x2, float y2) {
     push();

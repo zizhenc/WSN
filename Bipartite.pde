@@ -50,6 +50,8 @@ abstract class Bipartite extends Procedure implements Screen {
     plotColor[0]=primary;
     plotColor[1]=relay;
     barChart.setY(0, primary.vertices.size()+relay.vertices.size());
+    barChart.reset();
+    barChart.play=true;
     regionAmount.setPreference(1, primary.vertices.size()+relay.vertices.size());
     region.amount=round(regionAmount.value);
     interval.setPreference(1, ceil((primary.vertices.size()+relay.vertices.size())/3.0), 1);
@@ -220,7 +222,7 @@ abstract class Bipartite extends Procedure implements Screen {
       barChart.showLabels(gui.thisFont.stepX(2)+gui.margin()-textWidth("Degree"), gui.thisFont.stepY(startHeight+len+2));
       strokeWeight(7.5);
       barChart.drawPlot[0].display();
-      barChart.showMeasurements();
+      barChart.showMeasurement();
     } else
       table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap());
   }

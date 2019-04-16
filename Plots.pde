@@ -21,4 +21,11 @@ abstract class Plots extends Charts {
       showEdge.value=!showEdge.value;
     }
   }
+  void moreMousePresses() {
+    nodeWeight.active();
+  }
+  void moreMouseReleases() {
+    showNode.active();
+    showEdge.active();
+  }
 }
