@@ -77,9 +77,6 @@ class Plot extends Chart {
   }
   void setInterval(float interval) {
     int max=maxX-minX;
-    for(int i=0;i<plot.length;i++)
-      if(max>points[i].size())
-        max=points[i].size();
     this.interval=constrain(round(interval), 0, max);
   }
   void reset(){
