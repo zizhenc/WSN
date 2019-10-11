@@ -172,7 +172,8 @@ abstract class Procedure {
       spin.active();
       showNode.active();
       for (Checker checker : parts)
-        checker.active();
+        if (checker.active())
+          checker.value=!checker.value;
       if (button[0].active())
         restart();
       if (button[1].active())

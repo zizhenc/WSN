@@ -258,8 +258,10 @@ abstract class Bipartite extends Procedure implements Screen {
         tunes.removeLast();
     if (modes.value==1)
       for (int i=0; i<plot.length; i++)
-        if (plot[i].active())
+        if (plot[i].active()) {
+          plot[i].value=!plot[i].value;
           barChart.setPlot(i, plot[i].value);
+        }
     if (backbone.active())
       setComponent(round(backbone.value));
   }

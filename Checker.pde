@@ -15,7 +15,7 @@ class Checker {
     textAlign(LEFT, CENTER);
     stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
-    if (inBox())
+    if (active())
       fill(gui.colour[2].value, 70);
     else
       noFill();
@@ -24,7 +24,7 @@ class Checker {
     text(label, x+checkerHeight+gui.thisFont.stepX(), y+checkerHeight/2);
     if (value) {
       strokeWeight(gui.unit(2));
-      if (mousePressed&&inBox())
+      if (mousePressed&&active())
         stroke(gui.colour[3].value);
       else
         stroke(gui.mainColor.value);
@@ -33,14 +33,7 @@ class Checker {
     }
     popStyle();
   }
-  boolean inBox() {
-    return mouseX>x&&mouseX<x+checkerHeight&&mouseY>y&&mouseY<y+checkerHeight;
-  }
   boolean active() {
-    if (inBox()) {
-      value=!value;
-      return true;
-    } else
-      return false;
+    return mouseX>x&&mouseX<x+checkerHeight&&mouseY>y&&mouseY<y+checkerHeight;
   }
 }

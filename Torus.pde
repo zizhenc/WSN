@@ -21,7 +21,6 @@ class Torus extends Topology {
     else
       return avg;
   }
-
   String toString() {
     return "Torus";
   }

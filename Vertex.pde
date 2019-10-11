@@ -9,6 +9,7 @@ class Vertex {
   Vertex previous, next;
   LinkedList<Vertex> neighbors, arcs, links;//arcs used in independent set for gabriel graph, links used in bipartite subgraph
   LinkedList<Color>[] colorList;//used in relay coloring color list according to relay degree
+  int[] k=new int[5];//k coverage for all backbones 0: tails, 1 is for giant block without separating nodes, 2 is for minor blocks without separating nodes, 3 is for separating nodes, 4 is for minor components
   ListIterator<Vertex> edgeIndicator;
   Vertex () {
   }

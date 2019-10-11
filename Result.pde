@@ -161,7 +161,8 @@ abstract class Result {
       showNode.active();
       showEdge.active();
       for (Checker checker : parts)
-        checker.active();
+        if (checker.active())
+          checker.value=!checker.value;
       if (button[0].active())
         relocate();
       if (button[1].active())
