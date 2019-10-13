@@ -115,7 +115,8 @@ class Component {
   }
   void generateDegreeList() {
     for (Vertex node : giant[1]) {
-      node.mark=true;
+      node.k[0]=-1;
+      node.k[1]=0;//k0!=k1 is true
       node.lowpoint=node.links.size();
       degreeList[node.lowpoint].push(node);
     }
@@ -131,10 +132,12 @@ class Component {
   }
   void countTails() {
     tails[0]=tails[1]=tails[2]=tails[3]=0;
+    for (Vertex node=degreeList[0].next; node!=null; node=node.next) {
+      node.k[0]=-1;
+      node.k[1]=0;
+    }
     for (Vertex node=degreeList[0].next; node!=null; node=node.next)
-      node.mark=true;
-    for (Vertex node=degreeList[0].next; node!=null; node=node.next)
-      if (node.mark) {
+      if (node.k[0]!=node.k[1]) {
         tails[0]++;
         tailTraverse(node);
       }
@@ -142,9 +145,9 @@ class Component {
   void tailTraverse(Vertex nodeA) {//determine # of tail components
     switch(nodeA.order[archive]) {
     case -2://tail
-      nodeA.mark=false;
+      nodeA.k[0]=0;//k0==k1 is false
       for (Vertex nodeB : nodeA.links)
-        if (nodeB.mark)
+        if (nodeB.k[0]!=nodeB.k[1])
           tailTraverse(nodeB);
       break;
     case -3://touch separating vertices in the giant block (it touches both blocks)

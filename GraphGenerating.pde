@@ -113,18 +113,16 @@ class GraphGenerating extends Procedure implements Screen {
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(7+i));
   }
-  void moreMousePresses() {
-    edgeWeight.active();
-  }
   void moreMouseReleases() {
-    showEdge.active();
     if (methods.active()) {
+      methods.commit();
       reset();
       graph.methodIndex=methods.value;
       graph.coordinateIndex=coordinates.value=0;
       updateCoordinates();
     }
     if (coordinates.active()) {
+      coordinates.commit();
       reset();
       graph.coordinateIndex=coordinates.value;
       graph.initialize();
@@ -132,6 +130,6 @@ class GraphGenerating extends Procedure implements Screen {
   }
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='e')
-      showEdge.value=!showEdge.value;
+      showEdge.commit();
   }
 }

@@ -7,11 +7,10 @@ class Switcher {
     label[1]=labelII;
   }
   boolean active() {
-    if (mouseX>x&&mouseX<x+2*switchHeight&&mouseY>y&&mouseY<y+switchHeight) {
-      value=!value;
-      return true;
-    } else
-      return false;
+    return mouseX>x&&mouseX<x+2*switchHeight&&mouseY>y&&mouseY<y+switchHeight;
+  }
+  void commit() {
+    value=!value;
   }
   void display(float x, float y) {
     pushStyle();

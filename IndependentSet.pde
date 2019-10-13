@@ -84,14 +84,14 @@ abstract class IndependentSet extends Result implements Screen {
   void moreKeyReleases() {
     switch (Character.toLowerCase(key)) {
     case 't':
-      showRegion.value=!showRegion.value;
+      showRegion.commit();
       if (showRegion.value)
         tunes.addLast(regionAmount);
       else
         tunes.removeLast();
       break;
     case 'm':
-      showMeasurement.value=!showMeasurement.value;
+      showMeasurement.commit();
       if (showMeasurement.value)
         switches.addLast(arrow);
       else

@@ -135,13 +135,12 @@ class Partitioning extends Procedure implements Screen {
     modes.display(width-gui.margin()+gui.thisFont.stepX(2), y+gui.thisFont.stepY()+gui.thisFont.gap());
   }
   void moreMousePresses() {
-    edgeWeight.active();
     if (tunes.getLast().active())
       reset();
   }
   void moreMouseReleases() {
-    showEdge.active();
     if (modes.active()) {
+      modes.commit();
       graph.mode=modes.value==0?true:false;
       updateSelection();
       reset();
@@ -149,7 +148,7 @@ class Partitioning extends Procedure implements Screen {
   }
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='e')
-      showEdge.value=!showEdge.value;
+      showEdge.commit();
   }
   void reset() {
     if (graph.breakpoint<tunes.getLast().value) {

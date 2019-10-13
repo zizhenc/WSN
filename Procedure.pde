@@ -129,7 +129,7 @@ abstract class Procedure {
     if (!navigation.active()) {
       switch(Character.toLowerCase(key)) {
       case 'p':
-        play.value=!play.value;
+        play.commit();
         break;
       case 'r':
         restart();
@@ -141,15 +141,15 @@ abstract class Procedure {
         relocate();
         break;
       case 'q':
-        spin.value=!spin.value;
+        spin.commit();
         break;
       case 'n':
-        showNode.value=!showNode.value;
+        showNode.commit();
       }
       for (ListIterator<Checker> i=parts.listIterator(); i.hasNext(); ) {
         Checker part=i.next();
         if (key==char(i.previousIndex()+48))
-          part.value=!part.value;
+          part.commit();
       }
       moreKeyReleases();
     }
@@ -159,21 +159,21 @@ abstract class Procedure {
   void mousePress() {
     navigation.mousePress();
     if (!navigation.active()) {
-      nodeWeight.active();
-      interval.active();
+      for (Slider tune : tunes)
+        if (tune.active())
+          tune.commit();
       moreMousePresses();
     }
   }
   void mouseRelease() {
     navigation.mouseRelease();
     if (!navigation.active()) {
-      projection.active();
-      play.active();
-      spin.active();
-      showNode.active();
+      for (Switcher toggle : switches)
+        if (toggle.active())
+          toggle.commit();
       for (Checker checker : parts)
         if (checker.active())
-          checker.value=!checker.value;
+          checker.commit();
       if (button[0].active())
         restart();
       if (button[1].active())

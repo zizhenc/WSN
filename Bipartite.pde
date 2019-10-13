@@ -244,13 +244,12 @@ abstract class Bipartite extends Procedure implements Screen {
     }
   }
   void moreMousePresses() {
-    edgeWeight.active();
     if (showRegion.value&&regionAmount.active())
       region.amount=round(regionAmount.value);
   }
   void moreMouseReleases() {
-    showEdge.active();
-    modes.active();
+    if (modes.active())
+      modes.commit();
     if (showRegion.active())
       if (showRegion.value)
         tunes.addLast(regionAmount);
@@ -259,7 +258,7 @@ abstract class Bipartite extends Procedure implements Screen {
     if (modes.value==1)
       for (int i=0; i<plot.length; i++)
         if (plot[i].active()) {
-          plot[i].value=!plot[i].value;
+          plot[i].commit();
           barChart.setPlot(i, plot[i].value);
         }
     if (backbone.active())
@@ -307,10 +306,10 @@ abstract class Bipartite extends Procedure implements Screen {
   void moreKeyReleases() {
     switch (Character.toLowerCase(key)) {
     case 'e':
-      showEdge.value=!showEdge.value;
+      showEdge.commit();
       break;
     case 't':
-      showRegion.value=!showRegion.value;
+      showRegion.commit();
       if (showRegion.value)
         tunes.addLast(regionAmount);
       else

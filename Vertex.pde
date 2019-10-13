@@ -1,15 +1,13 @@
 class Vertex {
-  int value, degree, lowpoint=-1;//value: vertex ID or list size; degree: degreeList index or degree when deleted; order: DFS order; lowpoint: DFS lowpoint or degree when deleted and isGraph mark;
-  int[] order={-5, -6};//order[0] for random combined bipartite, order[1] for archived backbones; 0->minor components, >0->minor blocks, -1->MB separates, -2->tails, -3->GB separates -4->giant block -5->surplus
+  int value, degree, lowpoint=-1;//value: vertex ID or list size; degree: degreeList index or degree when deleted; lowpoint: DFS lowpoint or degree when deleted and isGraph mark
+  int[] order={-5, -6}, k={0, 0};//order[0] for random combined bipartite, order[1] for archived backbones; 0->minor components, >0->minor blocks, -1->MB separates, -2->tails, -3->GB separates -4->giant block -5->surplus
   float avgDegree, avgOrgDegree;
   double x, y, z, rho, pho, theta, phi;
-  boolean mark;//mark for tail counting
   HashMap<Color, LinkedList<Vertex>> coloredNeighbors;
   Color primeColor, relayColor;
   Vertex previous, next;
   LinkedList<Vertex> neighbors, arcs, links;//arcs used in independent set for gabriel graph, links used in bipartite subgraph
   LinkedList<Color>[] colorList;//used in relay coloring color list according to relay degree
-  int[] k=new int[5];//k coverage for all backbones 0: tails, 1 is for giant block without separating nodes, 2 is for minor blocks without separating nodes, 3 is for separating nodes, 4 is for minor components
   ListIterator<Vertex> edgeIndicator;
   Vertex () {
   }

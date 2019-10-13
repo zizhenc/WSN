@@ -93,11 +93,12 @@ class DialogBox {
       }
   }
   void mousePress() {
-    entry.active();
     moveX=mouseX-x;
     moveY=mouseY-y;
   }
   void mouseRelease() {
+    if (entry.active())
+      entry.commit();
     for (int i=0; active&&i<option; i++)
       if (choice[i].active()) {
         option=i;

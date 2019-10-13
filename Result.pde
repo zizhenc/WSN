@@ -121,7 +121,7 @@ abstract class Result {
     if (!navigation.active()) {
       switch(Character.toLowerCase(key)) {
       case 'e':
-        showEdge.value=!showEdge.value;
+        showEdge.commit();
         break;
       case 'x':
         capture.store();
@@ -130,15 +130,15 @@ abstract class Result {
         relocate();
         break;
       case 'q':
-        spin.value=!spin.value;
+        spin.commit();
         break;
       case 'n':
-        showNode.value=!showNode.value;
+        showNode.commit();
       }
       for (ListIterator<Checker> i=parts.listIterator(); i.hasNext(); ) {
         Checker part=i.next();
         if (key==char(i.previousIndex()+48))
-          part.value=!part.value;
+          part.commit();
       }
       moreKeyReleases();
     }
@@ -148,21 +148,21 @@ abstract class Result {
   void mousePress() {
     navigation.mousePress();
     if (!navigation.active()) {
-      nodeWeight.active();
-      edgeWeight.active();
+      for (Slider tune : tunes)
+        if (tune.active())
+          tune.commit();
       moreMousePresses();
     }
   }
   void mouseRelease() {
     navigation.mouseRelease();
     if (!navigation.active()) {
-      projection.active();
-      spin.active();
-      showNode.active();
-      showEdge.active();
+      for (Switcher toggle : switches)
+        if (toggle.active())
+          toggle.commit();
       for (Checker checker : parts)
         if (checker.active())
-          checker.value=!checker.value;
+          checker.commit();
       if (button[0].active())
         relocate();
       if (button[1].active())

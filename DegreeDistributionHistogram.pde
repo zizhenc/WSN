@@ -39,9 +39,6 @@ class DegreeDistribution extends Charts implements Screen {
   }
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='b')
-      showBar.value=!showBar.value;
-  }
-  void moreMouseReleases() {
-    showBar.active();
+      showBar.commit();
   }
 }

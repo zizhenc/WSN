@@ -216,7 +216,7 @@ public class IO {
               if (nodeB.order[1]>-2)
                 degrees[3]++;
         }
-        component.countTails();
+        //component.countTails();
         degrees[3]=degrees[2]-degrees[3]+component.tailsXGiant();
       }
       for (int i=0; i<part.length; i++) {

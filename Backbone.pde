@@ -12,6 +12,7 @@ class Backbone extends Result implements Screen {
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
   HashSet<Vertex> domain=new HashSet<Vertex>();
+  Analyze domination,network,coverage;
   Backbone () {
     word=new String[13];
     parts.addLast(minorComponents);
@@ -20,16 +21,36 @@ class Backbone extends Result implements Screen {
     parts.addLast(giantBlock);
     switches.addLast(showRegion);
     tunes.addLast(backbone);
-    table=new ExTable(8, "Coverage", "Primary", "Relay", "Total");
+    table=new ExTable(12, "Coverage", "Primary", "Relay", "Total");
     plotColor[2]=gui.partColor[0];
-    barChart.setX(0, 7);
+    barChart.setX(0, 11);
     barChart.setPoints();
-    for (int i=0; i<8; i++)
-      table.setInt(7-i, 0, i);
+    for (int i=0; i<12; i++)
+      table.setInt(11-i, 0, i);
     tails.value=showRegion.value=false;
+    domination=new Analyze(){
+      void go(Vertex nodeA){
+        domain.add(nodeA);
+        for (Vertex nodeB : nodeA.neighbors)
+          domain.add(nodeB);
+      }
+    };
+    coverage=new Analyze(){
+      void go(Vertex nodeA){
+        for (Vertex nodeB : nodeA.neighbors)
+          if(nodeB.k[0]>=0)
+            nodeB.k[nodeA.primeColor==primary?0:1]++;
+      }
+    };
+    network=new Analyze(){
+      void go(Vertex node){
+        node.k[0]=-1;
+      }
+    };
   }
   void setting() {
     initialize();
+    barChart.setY(0, graph.vertex.length);
     graph.initailizeBackbones();
     setComponent(1);
     backbone.setPreference(1, graph.backbone.length);
@@ -40,48 +61,74 @@ class Backbone extends Result implements Screen {
     relay=component.relay;
     plotColor[0]=primary;
     plotColor[1]=relay;
-    barChart.setY(0, primary.vertices.size()+relay.vertices.size());
     barChart.reset();
     barChart.play=true;
     regionAmount.setPreference(1, primary.vertices.size()+relay.vertices.size());
     region.amount=round(regionAmount.value);
     while (component.deleting());
-    calculateDomain();
+    statistics();
   }
-  void calculateDomain() {
-    domain.clear();
+  void traverse(Analyze analyze) {
     if (giantBlock.value)
       for (Vertex nodeA : component.giant[0])
         if (nodeA.order[component.archive]!=-3)
-          cover(nodeA);
+          analyze.go(nodeA);
     if (minorBlocks.value)
       for (LinkedList<Vertex> list : component.blocks)
         if (component.giant[0]!=list)
           for (Vertex nodeA : list)
             if (nodeA.order[component.archive]!=-1&&nodeA.order[component.archive]!=-3)
-              cover(nodeA);
+              analyze.go(nodeA);
     if (!component.blocks.isEmpty())
       for (ListIterator<LinkedList<Vertex>> i=component.blocks.listIterator(component.blocks.size()-1); i.hasPrevious(); ) {
         Vertex nodeA=i.previous().getLast();
         if (minorBlocks.value||giantBlock.value&&nodeA.order[component.archive]==-3)
-          cover(nodeA);
+          analyze.go(nodeA);
       }
     if (tails.value)
       for (Vertex nodeA=component.degreeList[0].next; nodeA!=null; nodeA=nodeA.next)
-        cover(nodeA);
+        analyze.go(nodeA);
     if (minorComponents.value)
       for (LinkedList<Vertex> list : component.components)
         if (list!=component.giant[1])
           for (Vertex nodeA : list)
-            cover(nodeA);
+            analyze.go(nodeA);
   }
-  void cover(Vertex nodeA) {
-    domain.add(nodeA);
-    for (Vertex nodeB : nodeA.neighbors)
-      domain.add(nodeB);
+  void statistics(){
+    domain.clear();
+    traverse(domination);
+    switch(modes.value) {
+    case 0:
+      for (int i=0; i<12; i++)
+        for (int j=0; j<plot.length; j++)
+          table.setInt(i, j+1, 0);
+      break;
+    case 1:
+      for (ArrayList<Float> point : barChart.points)
+        for (int i=0; i<12; i++)
+          point.set(i, 0f);
+    }
+    for(Vertex node:graph.vertex)
+      node.k[0]=node.k[1]=0;
+    traverse(network);
+    traverse(coverage);
+    for(Vertex node:graph.vertex)
+      if(node.k[0]>=0){
+        switch(modes.value) {
+        case 0:
+          table.setInt(11-node.k[0], 1, table.getInt(11-node.k[0], 1)+1);
+          table.setInt(11-node.k[1], 2, table.getInt(11-node.k[1], 2)+1);
+          table.setInt(11-node.k[0]-node.k[1], 3, table.getInt(11-node.k[0]-node.k[1], 3)+1);
+        break;
+        case 1:
+          barChart.points[0].set(node.k[0], barChart.points[0].get(node.k[0])+1);
+          barChart.points[1].set(node.k[1], barChart.points[1].get(node.k[1])+1);
+          barChart.points[2].set(node.k[0]+node.k[1], barChart.points[2].get(node.k[0]+node.k[1])+1);
+        }
+      }
   }
   void show() {
-    clearStatistics();
+    _N=_E=0;
     if (giantBlock.value)
       for (Vertex nodeA : component.giant[0])
         if (nodeA.order[component.archive]!=-3)
@@ -97,12 +144,9 @@ class Backbone extends Result implements Screen {
         Vertex nodeA=i.previous().getLast();
         if (minorBlocks.value||giantBlock.value&&nodeA.order[component.archive]==-3) {
           if (showEdge.value) {
-            int count=0;
             strokeWeight(edgeWeight.value);
             for (Vertex nodeB : nodeA.links) {
-              if (nodeB.order[component.archive]==-2&&!tails.value||nodeB.order[component.archive]>-2&&!minorBlocks.value||nodeB.order[component.archive]<-3&&!giantBlock.value||nodeB.order[component.archive]==-3&&!giantBlock.value&&!minorBlocks.value)
-                count++;
-              else {
+              if (nodeB.order[component.archive]==-2&&tails.value||nodeB.order[component.archive]>-2&&minorBlocks.value||nodeB.order[component.archive]<-3&&giantBlock.value||nodeB.order[component.archive]==-3&&(giantBlock.value||minorBlocks.value)){
                 if (nodeB.order[component.archive]==-2)
                   stroke(gui.partColor[1].value);
                 else if (nodeB.order[component.archive]>-2)
@@ -116,7 +160,6 @@ class Backbone extends Result implements Screen {
                 displayEdge(nodeA, nodeB);
               }
             }
-            analyze(nodeA, nodeA.links.size()-count);
           }
           showSensor(nodeA);
         }
@@ -124,15 +167,11 @@ class Backbone extends Result implements Screen {
     if (tails.value)
       for (Vertex nodeA=component.degreeList[0].next; nodeA!=null; nodeA=nodeA.next) {
         if (showEdge.value) {
-          int count=0;
           stroke(gui.partColor[1].value);
           strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.links)
-            if (nodeB.order[component.archive]<-3&&!giantBlock.value||nodeB.order[component.archive]>-2&&!minorBlocks.value||nodeB.order[component.archive]==-3&&!giantBlock.value&&!minorBlocks.value)
-              count++;
-            else
+            if (nodeB.order[component.archive]==-2||nodeB.order[component.archive]<-3&&giantBlock.value||nodeB.order[component.archive]>-2&&minorBlocks.value||nodeB.order[component.archive]==-3&&(giantBlock.value||minorBlocks.value))
               displayEdge(nodeA, nodeB);
-          analyze(nodeA, nodeA.links.size()-count);
         }
         showSensor(nodeA);
       }
@@ -141,7 +180,6 @@ class Backbone extends Result implements Screen {
         if (list!=component.giant[1])
           for (Vertex nodeA : list) {
             if (showEdge.value) {
-              analyze(nodeA, nodeA.links.size());
               stroke(gui.partColor[2].value);
               strokeWeight(edgeWeight.value);
               for (Vertex nodeB : nodeA.links)
@@ -152,16 +190,12 @@ class Backbone extends Result implements Screen {
   }
   void showNetwork(Vertex nodeA, SysColor colour) {
     if (showEdge.value) {
-      int count=0;
       strokeWeight(edgeWeight.value);
       for (Vertex nodeB : nodeA.links)
-        if (nodeB.order[component.archive]==-2&&!tails.value)
-          count++;
-        else {
+        if (nodeB.order[component.archive]!=-2||nodeB.order[component.archive]==-2&&tails.value){
           stroke(nodeB.order[component.archive]==-2?gui.partColor[1].value:colour.value);
           displayEdge(nodeA, nodeB);
         }
-      analyze(nodeA, nodeA.links.size()-count);
     }
     showSensor(nodeA);
   }
@@ -256,16 +290,19 @@ class Backbone extends Result implements Screen {
         tunes.addLast(regionAmount);
       else
         tunes.removeLast();
-    modes.active();
+    if(modes.active()){
+      modes.commit();
+      statistics();
+    }
     if (modes.value==1)
       for (int i=0; i<plot.length; i++)
         if (plot[i].active()) {
-          plot[i].value=!plot[i].value;
+          plot[i].commit();
           barChart.setPlot(i, plot[i].value);
         }
     for (Checker part : parts)
       if (part.active())
-        calculateDomain();
+        statistics();
   }
   void moreKeyPresses() {
     switch(key) {
@@ -308,7 +345,7 @@ class Backbone extends Result implements Screen {
   }
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='t') {
-      showRegion.value=!showRegion.value;
+      showRegion.commit();
       if (showRegion.value)
         tunes.addLast(regionAmount);
       else
@@ -336,31 +373,5 @@ class Backbone extends Result implements Screen {
     if (minorComponents.value)
       amount+=component.components.size()-2+component.components.getFirst().size();
     return amount;
-  }
-  void clearStatistics() {
-    _N=_E=0;//mainColor->giantBlock partsColor[0]->minorBlocks partsColor[1]->tails partsColor[2]->minorComponents
-    switch(modes.value) {
-    case 0:
-      for (int i=0; i<8; i++)
-        for (int j=0; j<plot.length; j++)
-          table.setInt(i, j+1, 0);
-      break;
-    case 1:
-      for (ArrayList<Float> point : barChart.points)
-        for (int i=0; i<8; i++)
-          point.set(i, 0f);
-    }
-  }
-  void analyze(Vertex node) {
-    int category=node.primeColor==primary?0:1;
-    switch(modes.value) {
-    case 0:
-      table.setInt(7-degree, category+1, table.getInt(7-degree, category+1)+1);
-      table.setInt(7-degree, 3, table.getInt(7-degree, 3)+1);
-      break;
-    case 1:
-      barChart.points[category].set(degree, barChart.points[category].get(degree)+1);
-      barChart.points[2].set(degree, barChart.points[2].get(degree)+1);
-    }
   }
 }

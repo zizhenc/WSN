@@ -2,6 +2,7 @@ abstract class Setting {
   Image box=new Image("Box.png");
   String label;
   Animation video;
+  LinkedList<Slider> tunes=new LinkedList<Slider>();
   abstract void initialize();
   abstract void moreMousePresses();
   abstract void moreMouseReleases();
@@ -43,8 +44,12 @@ abstract class Setting {
   }
   void mousePress() {
     navigation.mousePress();
-    if (!navigation.active())
+    if (!navigation.active()) {
+      for (Slider tune : tunes)
+        if (tune.active())
+          tune.commit();
       moreMousePresses();
+    }
   }
   void mouseRelease() {
     navigation.mouseRelease();

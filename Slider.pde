@@ -26,24 +26,18 @@ class Slider {
     this.step=step;
     this.label=label;
   }
-  boolean active() {
-    if (inRange()) {
-      if (mouseX<buttonRight) {
+  void commit() {
+    if (active()) {
+      if (mouseX<buttonRight)
         decreaseValue();
-        return true;
-      }
-      if (mouseX>buttonLeft) {
+      if (mouseX>buttonLeft)
         increaseValue();
-        return true;
-      }
       if (mouseX>sliderLeft&&mouseX<sliderRight) {
         value=min+(mouseX-sliderLeft)*(max-min)/(sliderRight-sliderLeft);
         if (step%1==0)
           value=round(value);
-        return true;
       }
     }
-    return false;
   }
   void increaseValue() {
     value=constrain(value+step, min, max);
@@ -51,7 +45,7 @@ class Slider {
   void decreaseValue() {
     value=constrain(value-step, min, max);
   }
-  boolean inRange() {
+  boolean active() {
     return mouseX>x&&mouseX<x+sliderWidth&&mouseY>sliderTop&&mouseY<sliderBottom;
   }
   void setValue(float value) {
@@ -98,7 +92,7 @@ class Slider {
     sliderBottom=this.y+sliderHeight;
     fill(gui.bodyColor[0].value);
     text(String.format("%s: %.3f", label, value*scale), x, y+gui.thisFont.stepY());
-    if (inRange()) {
+    if (active()) {
       if (mouseX<buttonRight) {
         noStroke();
         if (mousePressed)

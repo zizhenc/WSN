@@ -6,6 +6,9 @@ class ColorSettings extends Setting implements Screen {
     label="Colors";
     reset.alignment=CENTER;
     video=new Video(wsn, "Colors.mov");
+    tunes.addLast(r);
+    tunes.addLast(g);
+    tunes.addLast(b);
   }
   void initialize() {
     r.setValue(getColor().r);
@@ -37,8 +40,10 @@ class ColorSettings extends Setting implements Screen {
       getColor().setValue(round(r.value), round(g.value), round(b.value));
   }
   void moreMouseReleases() {
-    if (colors.active())
+    if (colors.active()) {
+      colors.commit();
       initialize();
+    }
     if (reset.active()) {
       gui.resetColor();
       initialize();

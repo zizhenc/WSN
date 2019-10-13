@@ -15,7 +15,6 @@ abstract class Charts {
   }
   abstract void show();
   abstract void moreKeyReleases();
-  abstract void moreMouseReleases();
   void display() {
     pushStyle();
     gui.body.initialize();
@@ -100,19 +99,19 @@ abstract class Charts {
         relocate();
         break;
       case 'm':
-        showMeasurement.value=!showMeasurement.value;
+        showMeasurement.commit();
         break;
       case 'r':
         chart.reset();
         break;
       case 'p':
-        play.value=!play.value;
+        play.commit();
         chart.play=play.value;
       }
       for (ListIterator<Checker> i=parts.listIterator(); i.hasNext(); ) {
         Checker part=i.next();
         if (key==char(i.previousIndex()+48)) {
-          part.value=!part.value;
+          part.commit();
           chart.setPlot(i.previousIndex(), part.value);
         }
       }
@@ -124,16 +123,19 @@ abstract class Charts {
   void mousePress() {
     navigation.mousePress();
     if (!navigation.active()) {
-      edgeWeight.active();
+      for (Slider tune : tunes)
+        if (tune.active())
+          tune.commit();
       if (interval.active())
         chart.setInterval(interval.value);
-      moreMousePresses();
     }
   }
   void mouseRelease() {
     navigation.mouseRelease();
     if (!navigation.active()) {
-      showMeasurement.active();
+      for (Switcher toggle : switches)
+        if (toggle.active())
+          toggle.commit();
       if (play.active())
         chart.play=play.value;
       if (button[0].active())
@@ -144,10 +146,11 @@ abstract class Charts {
         capture.store();
       for (ListIterator<Checker> i=parts.listIterator(); i.hasNext(); ) {
         Checker checker=i.next();
-        if (checker.active())
+        if (checker.active()) {
+          checker.commit();
           chart.setPlot(i.previousIndex(), checker.value);
+        }
       }
-      moreMouseReleases();
     }
   }
   void mouseDrag() {
@@ -158,7 +161,5 @@ abstract class Charts {
   }
   void mouseScroll(MouseEvent event) {
     eyeZ+=event.getCount()*10;
-  }
-  void moreMousePresses() {
   }
 }

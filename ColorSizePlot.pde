@@ -77,28 +77,44 @@ class ColorSizePlot extends Plots implements Screen {
   }
   void show() {
     if (_SLColors.value) {
-      strokeWeight(edgeWeight.value);
-      chart.drawPlot[1].display(0);
-      strokeWeight(nodeWeight.value);
-      chart.drawPlot[0].display(0);
+      if (showEdge.value) {
+        strokeWeight(edgeWeight.value);
+        chart.drawPlot[1].display(0);
+      }
+      if (showNode.value) {
+        strokeWeight(nodeWeight.value);
+        chart.drawPlot[0].display(0);
+      }
     }
     if (primarySets.value) {
-      strokeWeight(edgeWeight.value);
-      chart.drawPlot[1].display(1);
-      strokeWeight(nodeWeight.value);
-      chart.drawPlot[0].display(1);
+      if (showEdge.value) {
+        strokeWeight(edgeWeight.value);
+        chart.drawPlot[1].display(1);
+      }
+      if (showNode.value) {
+        strokeWeight(nodeWeight.value);
+        chart.drawPlot[0].display(1);
+      }
     }
     if (relayCandidates.value) {
-      strokeWeight(edgeWeight.value);
-      chart.drawPlot[1].display(2, graph._PYColors.size());
-      strokeWeight(nodeWeight.value);
-      chart.drawPlot[0].display(2, graph._PYColors.size());
+      if (showEdge.value) {
+        strokeWeight(edgeWeight.value);
+        chart.drawPlot[1].display(2, graph._PYColors.size());
+      }
+      if (showNode.value) {
+        strokeWeight(nodeWeight.value);
+        chart.drawPlot[0].display(2, graph._PYColors.size());
+      }
     }
     if (relaySets.value) {
-      strokeWeight(edgeWeight.value);
-      chart.drawPlot[1].display(3, graph._PYColors.size());
-      strokeWeight(nodeWeight.value);
-      chart.drawPlot[0].display(3, graph._PYColors.size());
+      if (showEdge.value) {
+        strokeWeight(edgeWeight.value);
+        chart.drawPlot[1].display(3, graph._PYColors.size());
+      }
+      if (showNode.value) {
+        strokeWeight(nodeWeight.value);
+        chart.drawPlot[0].display(3, graph._PYColors.size());
+      }
       chart.showScaleX(chart.getX(graph._PYColors.size()), chart.yStart-gui.thisFont.stepY(2), graph._SLColors.size(), graph._SLColors.size()+graph._RLColors.size()-1);
       chart.arrow(chart.getX(graph._PYColors.size()), chart.yStart-gui.thisFont.stepY(2), chart.getX(graph._PYColors.size())-1, chart.yStart-gui.thisFont.stepY(2));
       chart.arrow(chart.getX(graph._PYColors.size()+graph._RLColors.size())-1, chart.yStart-gui.thisFont.stepY(2), chart.getX(graph._PYColors.size()+graph._RLColors.size()), chart.yStart-gui.thisFont.stepY(2));

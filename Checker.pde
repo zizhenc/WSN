@@ -36,4 +36,7 @@ class Checker {
   boolean active() {
     return mouseX>x&&mouseX<x+checkerHeight&&mouseY>y&&mouseY<y+checkerHeight;
   }
+  void commit() {
+    value=!value;
+  }
 }

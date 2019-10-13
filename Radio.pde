@@ -1,5 +1,5 @@
 class Radio {
-  int value;
+  int value, expect;
   float x, y, radioWidth, radioHeight, diameter, gap;
   LinkedList<String> labels=new LinkedList<String>();
   String maxLabel="";
@@ -19,16 +19,19 @@ class Radio {
         maxLabel=label;
     }
   }
-  boolean inCircle(int index) {
+  boolean inRadio(int index) {
     return mouseX>x&&mouseY>y+(gap+diameter)*index&&mouseX<x+diameter&&mouseY<y+(gap+diameter)*(index+1);
   }
   boolean active() {
     for (int i=0; i<labels.size(); i++)
-      if (inCircle(i)) {
-        value=i;
+      if (inRadio(i)) {
+        expect=i;
         return true;
       }
     return false;
+  }
+  void commit() {
+    value=expect;
   }
   void display(float x, float y) {
     pushStyle();
@@ -42,7 +45,7 @@ class Radio {
     stroke(gui.colour[1].value);
     strokeWeight(gui.unit(2));
     for (int i=0; i<labels.size(); i++) {
-      if (inCircle(i))
+      if (inRadio(i))
         fill(gui.colour[2].value, 70);
       else
         noFill();

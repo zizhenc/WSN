@@ -31,8 +31,9 @@ class RelayColoring extends Procedure implements Screen {
     }
   }
   void restart() {
-    for (Component component : graph.backbone)
-      component.archive=-1;
+    if (graph.backbone!=null)
+      for (Component component : graph.backbone)
+        component.archive=-1;
     for (Color colour : graph._RLColors)
       colour.clean();
     graph._RLColors.clear();
@@ -154,7 +155,6 @@ class RelayColoring extends Procedure implements Screen {
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(15+i));
   }
   void moreMousePresses() {
-    edgeWeight.active();
     if (connectivity.active()&&round(connectivity.value)!=graph.connectivity) {
       if (connection<connectivity.value) {
         graph.connectivity=round(connectivity.value);
@@ -171,11 +171,8 @@ class RelayColoring extends Procedure implements Screen {
       }
     }
   }
-  void moreMouseReleases() {
-    showEdge.active();
-  }
   void moreKeyReleases() {
     if (Character.toLowerCase(key)=='e')
-      showEdge.value=!showEdge.value;
+      showEdge.commit();
   }
 }

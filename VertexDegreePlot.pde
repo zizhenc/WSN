@@ -30,11 +30,4 @@ class VertexDegreePlot extends Plots implements Screen {
       chart.drawPlot[0].display();
     }
   }
-  void moreMouseReleases() {
-    for (ListIterator<Checker> i=parts.listIterator(); i.hasNext(); ) {
-      Checker checker=i.next();
-      if (checker.active())
-        chart.setPlot(i.previousIndex(), checker.value);
-    }
-  }
 }

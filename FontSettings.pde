@@ -9,6 +9,8 @@ public class FontSettings extends Setting implements Screen {
     font[0].alignment=CENTER;
     font[1].alignment=CENTER  ;
     reset.alignment=CENTER;
+    tunes.addLast(size[0]);
+    tunes.addLast(size[1]);
   }
   void initialize() {
     size[0].setValue(gui.head.size);

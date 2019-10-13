@@ -15,17 +15,10 @@ abstract class Plots extends Charts {
   void moreKeyReleases() {
     switch(Character.toLowerCase(key)) {
     case 'n':
-      showNode.value=!showNode.value;
+      showNode.commit();
       break;
     case 'e':
-      showEdge.value=!showEdge.value;
+      showEdge.commit();
     }
-  }
-  void moreMousePresses() {
-    nodeWeight.active();
-  }
-  void moreMouseReleases() {
-    showNode.active();
-    showEdge.active();
   }
 }
