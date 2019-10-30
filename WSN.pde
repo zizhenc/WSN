@@ -109,6 +109,9 @@ void daemon() {
       break;
     case 7:
       io.backboneSummary();
+      break;
+    case 8:
+      io.kCoverage();
     }
   } else {
     error=new Error();

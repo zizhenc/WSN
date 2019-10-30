@@ -8,7 +8,7 @@ public class IO {
   boolean mode, load;
   String[] info;
   String nodes, file;
-  Table tableI=new Table(), tableII=new Table();
+  Table tableI=new Table(), tableII=new Table(), tableIII=new Table();
   int[] vertices=new int[part.length];
   int[] degrees=new int[part.length];
   int[] dominants=new int[part.length];
@@ -42,6 +42,13 @@ public class IO {
           screen[navigation.page].setting();
       }
     }
+  }
+  , coverageAction=new Action() {
+    void go() {
+      while(graph.getBackbone(box.entry.value).deleting());
+      tableIII.clearRows();
+      TableRow row=tableIII.addRow();
+    }
   };
   IO() {
     for (String p : part)
@@ -49,6 +56,9 @@ public class IO {
         tableII.addColumn(p+f);
     for (String h : header)
       tableI.addColumn(h);
+    tableIII.addColumn("k");
+    for(int i=1;i<part.length;i++)
+      tableIII.addColumn(part[i]);
   }
   void record() {
     results.add(graph);
@@ -216,7 +226,6 @@ public class IO {
               if (nodeB.order[1]>-2)
                 degrees[3]++;
         }
-        //component.countTails();
         degrees[3]=degrees[2]-degrees[3]+component.tailsXGiant();
       }
       for (int i=0; i<part.length; i++) {
@@ -241,6 +250,17 @@ public class IO {
     }
     saveTable(tableII, file);
     box.pop("Backbone summary have been saved!", "Information", "Excellent");
+  }
+  void kCoverage(){
+     graph.initailizeBackbones();
+     if(graph.backbone.length==0)
+       error.logOut("Graph selection error - No backbone computed");
+     else{
+       LinkedList<String> labels=new LinkedList<String>();
+       for(int i=0;i<graph.backbone.length;i++)
+       labels.addLast("Backbone #"+(i+1));
+       box.pop(labels, "Backbones", coverageAction, "Confirm", "Cancel");
+     }
   }
   void output(String text) {
     PrintWriter out=createWriter(file);

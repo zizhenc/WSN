@@ -1,5 +1,6 @@
 class Backbone extends Result implements Screen {
   int _N, _E;
+  float kCoverage;
   Color primary, relay;
   SysColor[] plotColor=new SysColor[3];
   Radio modes=new Radio("Table", "Bar chart");
@@ -12,9 +13,9 @@ class Backbone extends Result implements Screen {
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
   HashSet<Vertex> domain=new HashSet<Vertex>();
-  Analyze domination,network,coverage;
+  Analyze domination, network, coverage;
   Backbone () {
-    word=new String[13];
+    word=new String[14];
     parts.addLast(minorComponents);
     parts.addLast(tails);
     parts.addLast(minorBlocks);
@@ -27,23 +28,23 @@ class Backbone extends Result implements Screen {
     barChart.setPoints();
     for (int i=0; i<12; i++)
       table.setInt(11-i, 0, i);
-    tails.value=showRegion.value=false;
-    domination=new Analyze(){
-      void go(Vertex nodeA){
+    minorComponents.value=showRegion.value=false;
+    domination=new Analyze() {
+      void go(Vertex nodeA) {
         domain.add(nodeA);
         for (Vertex nodeB : nodeA.neighbors)
           domain.add(nodeB);
       }
     };
-    coverage=new Analyze(){
-      void go(Vertex nodeA){
+    coverage=new Analyze() {
+      void go(Vertex nodeA) {
         for (Vertex nodeB : nodeA.neighbors)
-          if(nodeB.k[0]>=0)
+          if (nodeB.k[0]>=0)
             nodeB.k[nodeA.primeColor==primary?0:1]++;
       }
     };
-    network=new Analyze(){
-      void go(Vertex node){
+    network=new Analyze() {
+      void go(Vertex node) {
         node.k[0]=-1;
       }
     };
@@ -94,7 +95,7 @@ class Backbone extends Result implements Screen {
           for (Vertex nodeA : list)
             analyze.go(nodeA);
   }
-  void statistics(){
+  void  s() {
     domain.clear();
     traverse(domination);
     switch(modes.value) {
@@ -108,24 +109,35 @@ class Backbone extends Result implements Screen {
         for (int i=0; i<12; i++)
           point.set(i, 0f);
     }
-    for(Vertex node:graph.vertex)
+    for (Vertex node : graph.vertex)
       node.k[0]=node.k[1]=0;
     traverse(network);
     traverse(coverage);
-    for(Vertex node:graph.vertex)
-      if(node.k[0]>=0){
+    int nodes=0;
+    for (Vertex node : graph.vertex)
+      if (node.k[0]<0)
+        nodes++;
+      else {
         switch(modes.value) {
         case 0:
           table.setInt(11-node.k[0], 1, table.getInt(11-node.k[0], 1)+1);
           table.setInt(11-node.k[1], 2, table.getInt(11-node.k[1], 2)+1);
           table.setInt(11-node.k[0]-node.k[1], 3, table.getInt(11-node.k[0]-node.k[1], 3)+1);
-        break;
+          break;
         case 1:
           barChart.points[0].set(node.k[0], barChart.points[0].get(node.k[0])+1);
           barChart.points[1].set(node.k[1], barChart.points[1].get(node.k[1])+1);
           barChart.points[2].set(node.k[0]+node.k[1], barChart.points[2].get(node.k[0]+node.k[1])+1);
         }
       }
+    nodes=graph.vertex.length-nodes;
+    kCoverage=0;
+    for (int i=3; i<12; i++)
+      if(modes.value==0)
+        kCoverage+=table.getInt(11-i, 3);
+      else
+        kCoverage+=barChart.points[2].get(i);
+    kCoverage/=nodes;
   }
   void show() {
     _N=_E=0;
@@ -146,7 +158,7 @@ class Backbone extends Result implements Screen {
           if (showEdge.value) {
             strokeWeight(edgeWeight.value);
             for (Vertex nodeB : nodeA.links) {
-              if (nodeB.order[component.archive]==-2&&tails.value||nodeB.order[component.archive]>-2&&minorBlocks.value||nodeB.order[component.archive]<-3&&giantBlock.value||nodeB.order[component.archive]==-3&&(giantBlock.value||minorBlocks.value)){
+              if (nodeB.order[component.archive]==-2&&tails.value||nodeB.order[component.archive]>-2&&minorBlocks.value||nodeB.order[component.archive]<-3&&giantBlock.value||nodeB.order[component.archive]==-3&&(giantBlock.value||minorBlocks.value)) {
                 if (nodeB.order[component.archive]==-2)
                   stroke(gui.partColor[1].value);
                 else if (nodeB.order[component.archive]>-2)
@@ -192,7 +204,7 @@ class Backbone extends Result implements Screen {
     if (showEdge.value) {
       strokeWeight(edgeWeight.value);
       for (Vertex nodeB : nodeA.links)
-        if (nodeB.order[component.archive]!=-2||nodeB.order[component.archive]==-2&&tails.value){
+        if (nodeB.order[component.archive]!=-2||nodeB.order[component.archive]==-2&&tails.value) {
           stroke(nodeB.order[component.archive]==-2?gui.partColor[1].value:colour.value);
           displayEdge(nodeA, nodeB);
         }
@@ -231,7 +243,7 @@ class Backbone extends Result implements Screen {
     word[11]=String.format("Relay colors: %d (%.2f%%)", graph._RLColors.size(), (graph.vertex.length-graph.primaries-surplusOrder)*100.0/graph.vertex.length);
     word[12]=String.format("Surplus cardinality: %d (%.2f%%)", surplusOrder, surplusOrder*100.0/graph.vertex.length);
     fill(gui.bodyColor[0].value);
-    for (int i=0; i<word.length; i++)
+    for (int i=0; i<13; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
     fill(gui.headColor[2].value);
     text("Runtime data:", gui.thisFont.stepX(2), gui.thisFont.stepY(16));
@@ -242,14 +254,15 @@ class Backbone extends Result implements Screen {
     word[3]=String.format("Dominates: %d (%.2f%%)", domain.size(), domain.size()*100.0/graph.vertex.length);
     word[4]="Components: "+components();
     word[5]="Giant component blocks: "+component.blocks.size();
-    int len=7;
+    int len=8;
     if (graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
       len+=2;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
       int faces=_E-_N+components()+graph.topology.characteristic()-1;
-      word[len-3]="Faces: "+faces;
-      word[len-2]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
+      word[len-4]="Faces: "+faces;
+      word[len-3]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
     }
-    word[len-1]="Primary partite #"+(primary.index+1)+" & relay partite #"+(relay.index+1);
+    word[len-2]="Primary partite #"+(primary.index+1)+" & relay partite #"+(relay.index+1);
+    word[len-1]=String.format("3+-Coverage: %.2f%%",kCoverage*100);
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(16+i+1));
     if (modes.value==1) {
@@ -290,7 +303,7 @@ class Backbone extends Result implements Screen {
         tunes.addLast(regionAmount);
       else
         tunes.removeLast();
-    if(modes.active()){
+    if (modes.active()) {
       modes.commit();
       statistics();
     }
