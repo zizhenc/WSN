@@ -1,9 +1,10 @@
 public class IO {
   String[] header={"Index", "Size", "Edges", "Average degree", "Maximum distance", "Minimum distance", "Average distance", "Faces", "Average face size", "3-cycle faces", "4-cycle faces", "Dominates"};
   String[] part={"Bipartite", "Giant component", "Two-core", "Giant block"};
+  String[] region={" (Primary)"," (Relay)"," (Total)"};
   String[] factor={" size", " edge", " average degree", " faces", " average face size", " dominates"};
   ArrayList<Graph> results=new ArrayList<Graph>();
-  LinkedList<String> resultLabels=new LinkedList<String>();
+  LinkedList<String> resultLabels=new LinkedList<String>(), coverageLabels=new LinkedList<String>();
   StringBuffer path=new StringBuffer("Results");
   boolean mode, load;
   String[] info;
@@ -45,9 +46,22 @@ public class IO {
   }
   , coverageAction=new Action() {
     void go() {
-      while(graph.getBackbone(box.entry.value).deleting());
-      tableIII.clearRows();
-      TableRow row=tableIII.addRow();
+      Component backbone=graph.getBackbone(box.entry.value);
+      while(backbone.deleting());
+      for (Vertex node : graph.vertex)
+        node.k[0]=node.k[1]=0;
+      for(Vertex node:backbone.giant[0])//giant block
+        node.k[0]=-1;
+      for(Vertex nodeA:backbone.giant[0])
+        for(Vertex nodeB:nodeA.neighbors)
+          if(nodeB.k[0]>=0)
+            nodeB.k[nodeA.primeColor==backbone.primary?0:1]++;
+      for(Vertex node:graph.vertex)
+        if(node.k[0]>=0){
+          tableIII.setInt(11-node.k[0],part[3]+region[0],tableIII.getInt(11-node.k[0],part[3]+region[0])+1);
+          tableIII.setInt(11-node.k[1],part[3]+region[1],tableIII.getInt(11-node.k[1],part[3]+region[1])+1);
+          tableIII.setInt(11-node.k[0]-node.k[1],part[3]+region[2],tableIII.getInt(11-node.k[0]-node.k[1],part[3]+region[2])+1);
+        }
     }
   };
   IO() {
@@ -58,7 +72,27 @@ public class IO {
       tableI.addColumn(h);
     tableIII.addColumn("k");
     for(int i=1;i<part.length;i++)
-      tableIII.addColumn(part[i]);
+      for(String r:region)
+        tableIII.addColumn(part[i]+r);
+    for(int i=11;i>=0;i--)
+      tableIII.addRow().setInt(i,0);
+  }
+  void traverse(Analyze analyze) {
+    if (minorBlocks.value)
+      for (LinkedList<Vertex> list : component.blocks)
+        if (component.giant[0]!=list)
+          for (Vertex nodeA : list)
+            if (nodeA.order[component.archive]!=-1&&nodeA.order[component.archive]!=-3)
+              analyze.go(nodeA);
+    if (!component.blocks.isEmpty())
+      for (ListIterator<LinkedList<Vertex>> i=component.blocks.listIterator(component.blocks.size()-1); i.hasPrevious(); ) {
+        Vertex nodeA=i.previous().getLast();
+        if (minorBlocks.value||giantBlock.value&&nodeA.order[component.archive]==-3)
+          analyze.go(nodeA);
+      }
+    if (tails.value)
+      for (Vertex nodeA=component.degreeList[0].next; nodeA!=null; nodeA=nodeA.next)
+        analyze.go(nodeA);
   }
   void record() {
     results.add(graph);
@@ -256,10 +290,11 @@ public class IO {
      if(graph.backbone.length==0)
        error.logOut("Graph selection error - No backbone computed");
      else{
-       LinkedList<String> labels=new LinkedList<String>();
-       for(int i=0;i<graph.backbone.length;i++)
-       labels.addLast("Backbone #"+(i+1));
-       box.pop(labels, "Backbones", coverageAction, "Confirm", "Cancel");
+       while(coverageLabels.size()<graph.backbone.length)
+         coverageLabels.addLast("Backbone #"+(coverageLabels.size()+1));
+       while(coverageLabels.size()>graph.backbone.length)
+         coverageLabels.removeLast();
+       box.pop(coverageLabels, "Backbones", coverageAction, "Confirm", "Cancel");
      }
   }
   void output(String text) {

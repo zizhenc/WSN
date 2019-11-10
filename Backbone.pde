@@ -95,7 +95,7 @@ class Backbone extends Result implements Screen {
           for (Vertex nodeA : list)
             analyze.go(nodeA);
   }
-  void  s() {
+  void statistics() {
     domain.clear();
     traverse(domination);
     switch(modes.value) {
