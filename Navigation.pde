@@ -4,18 +4,19 @@ class Navigation {
   boolean ready, auto, lock;//lock item controled by keyboard
   float itemLength, subItemLength, barWidth, barHeight;
   LinkedList<String>[] items=new LinkedList[]{new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>()};
-  String[] itemTarget={"New demonstration [3]", "Save primary set summary [4]", "Primary independent sets [3]", "Smallest-last coloring bipartites [7]", "Degree distribution histogram [1]", "System settings [2]", "Documentation [1]"};//itemTarget means the longest item (in text) among the whole menu list.
+  String[] itemTarget={"New demonstration [3]", "Save k-coverage of backbone [7]", "Primary independent sets [3]", "Smallest-last coloring bipartites [7]", "Degree distribution histogram [1]", "System settings [2]", "Documentation [1]"};//itemTarget means the longest item (in text) among the whole menu list.
   Navigation() {
     items[0].addFirst("New graph [1]");//103
     items[0].addFirst("New computation [2]");//102
     items[0].addFirst("New demonstration [3]");//101
     items[0].addFirst("New [N]");//100
-    items[1].addFirst("Load graph [1]");//206
-    items[1].addFirst("Save graph [2]");//205
-    items[1].addFirst("Save graph summary [3]");//204
-    items[1].addFirst("Save primary set summary [4]");//203
-    items[1].addFirst("Save relay set summary [5]");//202
-    items[1].addFirst("Save backbone summary [6]");//201
+    items[1].addFirst("Load graph [1]");//207
+    items[1].addFirst("Save graph [2]");//206
+    items[1].addFirst("Save graph summary [3]");//205
+    items[1].addFirst("Save primary set summary [4]");//204
+    items[1].addFirst("Save relay set summary [5]");//203
+    items[1].addFirst("Save backbone summary [6]");//202
+    items[1].addFirst("Save k-coverage of backbone [7]");//201
     items[1].addFirst("Files [F]");//200
     items[2].addFirst("Select graph [1]");//306
     items[2].addFirst("Terminal clique [2]");//305
@@ -112,36 +113,42 @@ class Navigation {
     case 101://New demonstration
       nextPage=20;
       break;
-    case 206://Load graph
+    case 207://Load graph
       selectInput("Select WSN file:", "loadGraph", new File("Results"+System.getProperty("file.separator")+"."), io);
       break;
-    case 205://Save graph
+    case 206://Save graph
       if (end>=1)
-        io.saveAs("graph");
+        io.saveAs("Graph");
       else
         error.logOut("File save error - No graph generated");
       break;
-    case 204://Save graph summary
+    case 205://Save graph summary
       if (end>=6)
-        io.saveAs("graph summary");
+        io.saveAs("Graph summary");
       else
         error.logOut("File save error - Computation not finished");
       break;
-    case 203://Save primary set summary
+    case 204://Save primary set summary
       if (end>=5)
-        io.saveAs("primary set summary");
+        io.saveAs("Primary set summary");
       else
         error.logOut("File save error - Computation not finished");
       break;
-    case 202://Save relay set summary
+    case 203://Save relay set summary
       if (end>=6)
-        io.saveAs("relay set summary");
+        io.saveAs("Relay set summary");
       else
         error.logOut("File save error - Computation not finished");
       break;
-    case 201://Save backbone summary
+    case 202://Save backbone summary
       if (end>=6)
-        io.saveAs("bacbone summary");
+        io.saveAs("Backbone summary");
+      else
+        error.logOut("File save error - Computation not finished");
+      break;
+    case 201://Save k-coverage of backbone summary
+      if (end>=6)
+        io.saveAs("K-coverage summary");
       else
         error.logOut("File save error - Computation not finished");
       break;

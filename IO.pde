@@ -1,18 +1,13 @@
 public class IO {
-  String[] header={"Index", "Size", "Edges", "Average degree", "Maximum distance", "Minimum distance", "Average distance", "Faces", "Average face size", "3-cycle faces", "4-cycle faces", "Dominates"};
-  String[] part={"Bipartite", "Giant component", "Two-core", "Giant block"};
-  String[] region={" (Primary)"," (Relay)"," (Total)"};
-  String[] factor={" size", " edge", " average degree", " faces", " average face size", " dominates"};
+  String[] header={"Index", "Size", "Edges", "Average degree", "Maximum distance", "Minimum distance", "Average distance", "Faces", "Average face size", "3-cycle faces", "4-cycle faces", "Dominates"}, part={"Bipartite", "Giant component", "Two-core", "Giant block"}, factor={" size", " edge", " average degree", " faces", " average face size", " dominates"};
   ArrayList<Graph> results=new ArrayList<Graph>();
-  LinkedList<String> resultLabels=new LinkedList<String>(), coverageLabels=new LinkedList<String>();
+  LinkedList<String> resultLabels=new LinkedList<String>();
   StringBuffer path=new StringBuffer("Results");
   boolean mode, load;
   String[] info;
   String nodes, file;
-  Table tableI=new Table(), tableII=new Table(), tableIII=new Table();
-  int[] vertices=new int[part.length];
-  int[] degrees=new int[part.length];
-  int[] dominants=new int[part.length];
+  Table tableI=new Table(), tableII=new Table();
+  int[] vertices=new int[part.length], degrees=new int[part.length], dominants=new int[part.length], coverage=new int[3];
   HashSet<Vertex> domain=new HashSet<Vertex>();
   Action loadAction=new Action() {
     void go() {
@@ -43,26 +38,6 @@ public class IO {
           screen[navigation.page].setting();
       }
     }
-  }
-  , coverageAction=new Action() {
-    void go() {
-      Component backbone=graph.getBackbone(box.entry.value);
-      while(backbone.deleting());
-      for (Vertex node : graph.vertex)
-        node.k[0]=node.k[1]=0;
-      for(Vertex node:backbone.giant[0])//giant block
-        node.k[0]=-1;
-      for(Vertex nodeA:backbone.giant[0])
-        for(Vertex nodeB:nodeA.neighbors)
-          if(nodeB.k[0]>=0)
-            nodeB.k[nodeA.primeColor==backbone.primary?0:1]++;
-      for(Vertex node:graph.vertex)
-        if(node.k[0]>=0){
-          tableIII.setInt(11-node.k[0],part[3]+region[0],tableIII.getInt(11-node.k[0],part[3]+region[0])+1);
-          tableIII.setInt(11-node.k[1],part[3]+region[1],tableIII.getInt(11-node.k[1],part[3]+region[1])+1);
-          tableIII.setInt(11-node.k[0]-node.k[1],part[3]+region[2],tableIII.getInt(11-node.k[0]-node.k[1],part[3]+region[2])+1);
-        }
-    }
   };
   IO() {
     for (String p : part)
@@ -70,29 +45,6 @@ public class IO {
         tableII.addColumn(p+f);
     for (String h : header)
       tableI.addColumn(h);
-    tableIII.addColumn("k");
-    for(int i=1;i<part.length;i++)
-      for(String r:region)
-        tableIII.addColumn(part[i]+r);
-    for(int i=11;i>=0;i--)
-      tableIII.addRow().setInt(i,0);
-  }
-  void traverse(Analyze analyze) {
-    if (minorBlocks.value)
-      for (LinkedList<Vertex> list : component.blocks)
-        if (component.giant[0]!=list)
-          for (Vertex nodeA : list)
-            if (nodeA.order[component.archive]!=-1&&nodeA.order[component.archive]!=-3)
-              analyze.go(nodeA);
-    if (!component.blocks.isEmpty())
-      for (ListIterator<LinkedList<Vertex>> i=component.blocks.listIterator(component.blocks.size()-1); i.hasPrevious(); ) {
-        Vertex nodeA=i.previous().getLast();
-        if (minorBlocks.value||giantBlock.value&&nodeA.order[component.archive]==-3)
-          analyze.go(nodeA);
-      }
-    if (tails.value)
-      for (Vertex nodeA=component.degreeList[0].next; nodeA!=null; nodeA=nodeA.next)
-        analyze.go(nodeA);
   }
   void record() {
     results.add(graph);
@@ -105,16 +57,18 @@ public class IO {
       box.pop(resultLabels, "Records", recordAction, "Confirm", "Cancel");
   }
   void saveAs(String name) {
-    if (name.equals("graph"))
+    if (name.equals("Graph"))
       gui.thread=3;
-    else if (name.equals("graph summary"))
+    else if (name.equals("Graph summary"))
       gui.thread=4;
-    else if (name.equals("primary set summary"))
+    else if (name.equals("Primary set summary"))
       gui.thread=5;
-    else if (name.equals("relay set summary"))
+    else if (name.equals("Relay set summary"))
       gui.thread=6;
-    else
+    else if (name.equals("Backbone summary"))
       gui.thread=7;
+    else
+      gui.thread=8;
     file=path+System.getProperty("file.separator")+name+" ("+month()+"-"+day()+"-"+year()+"_"+hour()+"-"+minute()+"-"+second()+(gui.thread==3?").wsn":").csv");
     if (mode)
       selectOutput("Save "+name+" to:", "graphFile", new File(file), this);
@@ -286,16 +240,89 @@ public class IO {
     box.pop("Backbone summary have been saved!", "Information", "Excellent");
   }
   void kCoverage(){
-     graph.initailizeBackbones();
-     if(graph.backbone.length==0)
-       error.logOut("Graph selection error - No backbone computed");
-     else{
-       while(coverageLabels.size()<graph.backbone.length)
-         coverageLabels.addLast("Backbone #"+(coverageLabels.size()+1));
-       while(coverageLabels.size()>graph.backbone.length)
-         coverageLabels.removeLast();
-       box.pop(coverageLabels, "Backbones", coverageAction, "Confirm", "Cancel");
-     }
+    graph.calculateBackbones();
+    StringBuffer text=new StringBuffer("Two-core"+System.getProperty("line.separator")+System.getProperty("line.separator"));
+    int[][] primary=new int[12][graph.backbone.length], relay=new int[12][graph.backbone.length], total=new int[12][graph.backbone.length];
+    for(int i=0;i<graph.backbone.length;i++){
+      Component backbone=graph.getBackbone(i);
+      for (Vertex node : graph.vertex)
+        node.k[0]=node.k[1]=0;
+      for (int j=1; j<backbone.degreeList.length; j++)
+        for (Vertex node=backbone.degreeList[j].next; node!=null; node=node.next)
+          cover(node,backbone);
+      updateCoverage(primary,relay,total,i);
+    }
+    recordCoverage(text,primary,relay,total);
+    calculateCoverage("Giant block", 0, text, primary, relay, total);
+    calculateCoverage("Giant component", 1, text, primary, relay, total);
+    output(text.toString());
+    box.pop("Backbone k-coverages have been saved!", "Information", "Cool");
+  }
+  void calculateCoverage(String core, int coreIndex, StringBuffer text,int[][] primary, int[][] relay, int[][] total){
+    text.append(core+System.getProperty("line.separator")+System.getProperty("line.separator"));
+    for(int i=0;i<12;i++)
+      for(int j=0;j<graph.backbone.length;j++){
+        primary[i][j]=0;
+        relay[i][j]=0;
+        total[i][j]=0;
+      }
+    for(int i=0;i<graph.backbone.length;i++){
+      Component backbone=graph.getBackbone(i);
+      for (Vertex node : graph.vertex)
+        node.k[0]=node.k[1]=0;
+      for (Vertex node:backbone.giant[coreIndex])
+        cover(node,backbone);
+      updateCoverage(primary,relay,total,i);
+    }
+    recordCoverage(text,primary,relay,total);
+  }
+  void cover(Vertex nodeA, Component backbone){
+    nodeA.k[0]=-1;
+    for(Vertex nodeB:nodeA.neighbors)
+      if(nodeB.k[0]>=0)
+        nodeB.k[nodeA.primeColor==backbone.primary?0:1]++;
+  }
+  void updateCoverage(int[][] primary,int[][] relay, int[][] total, int backbone){
+    for(Vertex node:graph.vertex)
+      if(node.k[0]>=0){
+        primary[11-node.k[0]][backbone]++;
+        relay[11-node.k[1]][backbone]++;
+        total[11-node.k[0]-node.k[1]][backbone]++;
+      }
+  }
+  void recordCoverage(StringBuffer text, int[][] primary,int[][] relay, int[][] total){
+    coverage[0]=coverage[1]=coverage[2]=-1;
+    for(int i=0;i<12;i++){
+      for(int j=0;j<graph.backbone.length;j++){
+        if(coverage[0]<0&&primary[i][j]!=0)
+          coverage[0]=i;
+        if(coverage[1]<0&&relay[i][j]!=0)
+          coverage[1]=i;
+        if(coverage[2]<0&&total[i][j]!=0)
+          coverage[2]=i;
+        if(coverage[0]>=0&&coverage[1]>=0&&coverage[2]>=0)
+          break;
+      }
+      if(coverage[0]>=0&&coverage[1]>=0&&coverage[2]>=0)
+        break;
+    }
+    recordPartCoverage(text,"Primary",0,primary);
+    recordPartCoverage(text,"Relay",1,relay);
+    recordPartCoverage(text,"Total",2,total);
+    text.append(System.getProperty("line.separator"));
+  }
+  void recordPartCoverage(StringBuffer text, String part, int partIndex, int[][] coverMatrix){
+    text.append(part);
+    for(int i=0;i<graph.backbone.length;i++)
+      text.append(","+(i+1));
+    text.append(System.getProperty("line.separator"));
+    for(int i=coverage[partIndex];i<12;i++){
+      text.append(11-i);
+      for(int j=0;j<graph.backbone.length;j++)
+        text.append(","+coverMatrix[i][j]);
+      text.append(System.getProperty("line.separator"));
+    }
+    text.append(System.getProperty("line.separator"));
   }
   void output(String text) {
     PrintWriter out=createWriter(file);

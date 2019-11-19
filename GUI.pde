@@ -22,8 +22,8 @@ class GUI {
   float logo() {
     pushStyle();
     imageMode(CENTER);
-    cover[gui.thread>0?1:0].display(GUI.HEIGHT, width/2, height/5, height/2.5);
-    fill(gui.thread>0?bodyColor[0].value:headColor[1].value);
+    cover[thread>0?1:0].display(GUI.HEIGHT, width/2, height/5, height/2.5);
+    fill(thread>0?bodyColor[0].value:headColor[1].value);
     text("DragonZ", width/2, height/2.5-unit(40));
     title.display(GUI.HEIGHT, width/2, height/2.5-unit(10), unit(40));
     popStyle();
