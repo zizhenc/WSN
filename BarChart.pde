@@ -59,6 +59,9 @@ class BarChart extends Chart {
       percent[i]=0;
   }
   void setInterval(float interval){
+    for(int i=0;i<percent.length;i++)
+      percent[i]=0;
+    this.interval=constrain(round(interval), 0, maxX-minX);
     this.interval=constrain(interval, 0, 1);
   }
   void showScaleX(float x, float y, int beginIndex, int endIndex) {

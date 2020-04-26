@@ -11,7 +11,7 @@ class Plot extends Chart {
           for (int i=0; i<plot.length; i++)
             if (active[i]){
               stroke(colour[i].value);
-              for (int j=0; j<=size[0][i]&&j<=maxX-minX; j++)
+              for (int j=0; j<=size[0][i]; j++)
                 point(xStart+j*intervalX, yStart-intervalY*points[i].get(j));
               if(play) {
                 size[0][i]+=interval;
@@ -28,7 +28,7 @@ class Plot extends Chart {
           if(active[index]) {
             pushStyle();
             stroke(colour[index].value);
-            for (int i=0; i<size[0][index]&&i<points[index].size(); i++)
+            for (int i=0; i<size[0][index]; i++)
                 point(xStart+(i+beginIndex-minX)*intervalX, yStart-intervalY*points[index].get(i));
             if(play) {
               size[0][index]+=interval;
@@ -45,7 +45,7 @@ class Plot extends Chart {
           for (int i=0; i<plot.length; i++)
             if (active[i]) {
               stroke(colour[i].value);
-              for (int j=0; j<size[1][i]&&j<maxX-minX; j++)
+              for (int j=0; j<size[1][i]; j++)
                 line(xStart+j*intervalX, yStart-intervalY*points[i].get(j), xStart+(j+1)*intervalX, yStart-intervalY*points[i].get(j+1));
               if(play) {
                 size[1][i]+=interval;
@@ -62,7 +62,7 @@ class Plot extends Chart {
           if(active[index]) {
             pushStyle();
             stroke(colour[index].value);
-            for (int i=0; i<size[1][index]&&i<points[index].size()-1; i++)
+            for (int i=0; i<size[1][index]; i++)
               line(xStart+(i+beginIndex-minX)*intervalX, yStart-intervalY*points[index].get(i), xStart+(i+beginIndex-minX+1)*intervalX, yStart-intervalY*points[index].get(i+1));
             if(play) {
               size[1][index]+=interval;
@@ -76,6 +76,10 @@ class Plot extends Chart {
     };
   }
   void setInterval(float interval) {
+    for(int i=0;i<size[0].length;i++)
+      size[0][i]=0;
+    for(int i=0;i<size[1].length;i++)
+      size[1][i]=0;
     this.interval=constrain(round(interval), 0, maxX-minX);
   }
   void reset(){
