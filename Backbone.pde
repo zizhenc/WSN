@@ -12,10 +12,10 @@ class Backbone extends Result implements Screen {
   BarChart barChart=new BarChart("Degree", "Vertex", plotColor, "Primary", "Relay", "Total");
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;
-  HashSet<Vertex> domain=new HashSet<Vertex>();
+  HashSet<Vertex> domain=new HashSet<Vertex>(), primaryDomain=new HashSet<Vertex>(), relayDomain=new HashSet<Vertex>();
   Analyze domination, network, coverage;
   Backbone () {
-    word=new String[14];
+    word=new String[13];
     parts.addLast(minorComponents);
     parts.addLast(tails);
     parts.addLast(minorBlocks);
@@ -31,9 +31,13 @@ class Backbone extends Result implements Screen {
     minorComponents.value=showRegion.value=false;
     domination=new Analyze() {
       void go(Vertex nodeA) {
+        HashSet<Vertex> subDomain=nodeA.primeColor==primary?primaryDomain:relayDomain;
         domain.add(nodeA);
-        for (Vertex nodeB : nodeA.neighbors)
+        subDomain.add(nodeA);
+        for (Vertex nodeB : nodeA.neighbors) {
           domain.add(nodeB);
+          subDomain.add(nodeB);
+        }
       }
     };
     coverage=new Analyze() {
@@ -97,6 +101,8 @@ class Backbone extends Result implements Screen {
   }
   void statistics() {
     domain.clear();
+    primaryDomain.clear();
+    relayDomain.clear();
     traverse(domination);
     switch(modes.value) {
     case 0:
@@ -251,28 +257,35 @@ class Backbone extends Result implements Screen {
     word[0]=String.format("Vertices: %d (%.2f %%)", _N, _N*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", _E, _E*100.0/graph._E);
     word[2]=String.format("Average degree: %.2f", showNode.value?_E*2.0/_N:0);
-    word[3]=String.format("Dominates: %d (%.2f%%)", domain.size(), domain.size()*100.0/graph.vertex.length);
-    word[4]="Components: "+components();
-    word[5]="Giant component blocks: "+component.blocks.size();
-    int len=8;
+    word[3]=String.format("Primary dominates: %d (%.2f%%)", primaryDomain.size(), primaryDomain.size()*100.0/graph.vertex.length);
+    word[4]=String.format("Relay dominates: %d (%.2f%%)", relayDomain.size(), relayDomain.size()*100.0/graph.vertex.length);
+    word[5]=String.format("Total dominates: %d (%.2f%%)", domain.size(), domain.size()*100.0/graph.vertex.length);
+    word[6]="Components: "+components();
+    word[7]="Giant component blocks: "+component.blocks.size();
+    int len=9;
     if (graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
       len+=2;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
       int faces=_E-_N+components()+graph.topology.characteristic()-1;
-      word[len-4]="Faces: "+faces;
-      word[len-3]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
+      word[len-3]="Faces: "+faces;
+      word[len-2]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
     }
-    word[len-2]="Primary partite #"+(primary.index+1)+" & relay partite #"+(relay.index+1);
     word[len-1]=String.format("3+-Coverage: %.2f%%",kCoverage*100);
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(16+i+1));
+    fill(primary.value);
+    text("Primary partite #"+(primary.index+1), gui.thisFont.stepX(3), gui.thisFont.stepY(17+len));
+    fill(gui.bodyColor[0].value);
+    text(" & ", gui.thisFont.stepX(3)+textWidth("Primary partite #"+(primary.index+1)), gui.thisFont.stepY(17+len));
+    fill(relay.value);
+    text("relay partite #"+(relay.index+1), gui.thisFont.stepX(3)+textWidth("Primary partite #"+(primary.index+1)+" & "), gui.thisFont.stepY(17+len));
     if (modes.value==1) {
-      barChart.showFrame(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
-      barChart.showLabels(gui.thisFont.stepX(2)+gui.margin()-textWidth("Degree"), gui.thisFont.stepY(18+len));
+      barChart.showFrame(gui.thisFont.stepX(3), gui.thisFont.stepY(17+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
+      barChart.showLabels(gui.thisFont.stepX(2)+gui.margin()-textWidth("Degree"), gui.thisFont.stepY(19+len));
       strokeWeight(7.5);
       barChart.drawPlot[0].display();
       barChart.showMeasurement();
     } else
-      table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(16+len)+gui.thisFont.gap());
+      table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(17+len)+gui.thisFont.gap());
   }
   void displayEdge(Vertex nodeA, Vertex nodeB) {
     if (nodeA.value<nodeB.value) {

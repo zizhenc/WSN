@@ -1,5 +1,5 @@
 public class IO {
-  String[] header={"Index", "Size", "Edges", "Average degree", "Maximum distance", "Minimum distance", "Average distance", "Faces", "Average face size", "3-cycle faces", "4-cycle faces", "Dominates"}, part={"Bipartite", "Giant component", "Two-core", "Giant block"}, factor={" size", " edge", " average degree", " faces", " average face size", " dominates"};
+  String[] header={"Index", "Size", "Edges", "Average degree", "Maximum distance", "Minimum distance", "Average distance", "Faces", "Average face size", "3-cycle faces", "4-cycle faces", "Dominates"}, part={"Bipartite", "Giant component", "Two-core", "Giant block"}, factor={" size", " edge", " average degree", " faces", " average face size", " primary dominates", " relay domminates", " dominates"};
   ArrayList<Graph> results=new ArrayList<Graph>();
   LinkedList<String> resultLabels=new LinkedList<String>();
   StringBuffer path=new StringBuffer("Results");
@@ -7,8 +7,9 @@ public class IO {
   String[] info;
   String nodes, file;
   Table tableI=new Table(), tableII=new Table();
-  int[] vertices=new int[part.length], degrees=new int[part.length], dominants=new int[part.length], coverage=new int[3];
-  HashSet<Vertex> domain=new HashSet<Vertex>();
+  int[] vertices=new int[part.length], degrees=new int[part.length], coverage=new int[3];
+  int[][] dominants={new int[part.length], new int[part.length], new int[part.length]};//dominaents[0]->total, dominants[1]->primary, dominants[2]->relay
+  HashSet<Vertex>[] domain=new HashSet[3];//domain[0]->total, domain[1]->primary, domain[2]->relay
   Action loadAction=new Action() {
     void go() {
       switch(box.option) {
@@ -40,6 +41,8 @@ public class IO {
     }
   };
   IO() {
+    for (int i=0; i<3; i++)
+      domain[i]=new HashSet<Vertex>();
     for (String p : part)
       for (String f : factor)
         tableII.addColumn(p+f);
@@ -141,42 +144,50 @@ public class IO {
     graph.calculateBackbones();
     for (Component component : graph.backbone) {
       TableRow row=tableII.addRow();
-      domain.clear();
+      for(int i=0;i<3;i++)
+        domain[i].clear();
       for (Vertex node : component.giant[0])
-        pushDominants(node);
-      dominants[3]=domain.size();
-      if (dominants[3]==graph.vertex.length)
-        dominants[0]=dominants[1]=dominants[2]=dominants[3];
+        pushDominants(node, component.primary);
+      for(int i=0;i<3;i++)
+        dominants[i][3]=domain[i].size();
+      if (dominants[2][3]==graph.vertex.length&&dominants[1][3]==graph.vertex.length)
+        for(int i=0;i<3;i++)
+          dominants[i][0]=dominants[i][1]=dominants[i][2]=dominants[i][3];
       else {
         for (LinkedList<Vertex> list : component.blocks)
           if (list!=component.giant[0]) {
             for (Vertex node : list)
               if (node.order[1]!=-1&&node.order[1]!=-3)
-                pushDominants(node);
-            if (domain.size()==graph.vertex.length)
+                pushDominants(node, component.primary);
+            if (domain[2].size()==graph.vertex.length&&domain[1].size()==graph.vertex.length)
               break;
           }
-        if (domain.size()<graph.vertex.length)
+        if (domain[2].size()<graph.vertex.length||domain[1].size()<graph.vertex.length)
           for (ListIterator<LinkedList<Vertex>> i=component.blocks.listIterator(component.blocks.size()-1); i.hasPrevious(); ) {
             Vertex node=i.previous().getLast();
             if (node.order[1]==-1)
-              pushDominants(node);
+              pushDominants(node, component.primary);
           }
-        dominants[2]=domain.size();
-        if (dominants[2]==graph.vertex.length)
-          dominants[0]=dominants[1]=dominants[2];
+        for(int i=0;i<3;i++)
+          dominants[i][2]=domain[i].size();
+        if (dominants[2][2]==graph.vertex.length&&dominants[1][2]==graph.vertex.length)
+          for(int i=0;i<3;i++)
+            dominants[i][0]=dominants[i][1]=dominants[i][2];
         else {
           for (Vertex node=component.degreeList[0].next; node!=null; node=node.next)
-            pushDominants(node);
-          dominants[1]=domain.size();
-          if (dominants[1]==graph.vertex.length)
-            dominants[0]=dominants[1];
+            pushDominants(node, component.primary);
+          for(int i=0;i<3;i++)
+            dominants[i][1]=domain[i].size();
+          if (dominants[2][1]==graph.vertex.length&&dominants[1][1]==graph.vertex.length)
+            for(int i=0;i<3;i++)
+              dominants[i][0]=dominants[i][1];
           else {
             for (LinkedList<Vertex> list : component.components)
               if (list!=component.giant[1])
                 for (Vertex node : list)
-                  pushDominants(node);
-            dominants[0]=domain.size();
+                  pushDominants(node, component.primary);
+            for(int i=0;i<3;i++)
+              dominants[i][0]=domain[i].size();
           }
         }
       }
@@ -219,7 +230,9 @@ public class IO {
       for (int i=0; i<part.length; i++) {
         row.setInt(i*factor.length+1, degrees[i]/2);
         row.setFloat(i*factor.length+2, degrees[i]*1.0/vertices[i]);
-        row.setString(i*factor.length+5, String.format("%d (%.2f%%)", dominants[i], dominants[i]*100.0/graph.vertex.length));
+        row.setString(i*factor.length+5, String.format("%d (%.2f%%)", dominants[1][i], dominants[1][i]*100.0/graph.vertex.length));
+        row.setString(i*factor.length+6, String.format("%d (%.2f%%)", dominants[2][i], dominants[2][i]*100.0/graph.vertex.length));
+        row.setString(i*factor.length+7, String.format("%d (%.2f%%)", dominants[0][i], dominants[0][i]*100.0/graph.vertex.length));
       }
       if (graph.topology.value<5) {
         int faces=degrees[0]/2-vertices[0]+component.components.size()-1+component.components.getFirst().size()+graph.topology.characteristic()-1;
@@ -363,7 +376,7 @@ public class IO {
     TableRow row=tableI.addRow();
     row.setInt("Index", colour.index);
     row.setInt("Size", colour.vertices.size());
-    colour.initialize(domain);
+    colour.initialize(domain[0]);
     while (colour.deploy==1)
       colour.deploying();
     int degree=0;
@@ -388,9 +401,17 @@ public class IO {
       row.setString("4-cycle faces", "N/A");
     }
   }
-  void pushDominants(Vertex nodeA) {
-    domain.add(nodeA);
-    for (Vertex nodeB : nodeA.neighbors)
-      domain.add(nodeB);
+  void pushDominants(Vertex nodeA, Color prime) {
+    HashSet<Vertex> subDomain=nodeA.primeColor==prime?domain[1]:domain[2];
+    if(domain[0].size()<graph.vertex.length) {
+      domain[0].add(nodeA);
+      for (Vertex nodeB : nodeA.neighbors)
+        domain[0].add(nodeB);
+    }
+    if(subDomain.size()<graph.vertex.length) {
+      subDomain.add(nodeA);
+      for (Vertex nodeB : nodeA.neighbors)
+        subDomain.add(nodeB);
+    }
   }
 }

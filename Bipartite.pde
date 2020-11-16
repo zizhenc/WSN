@@ -207,24 +207,29 @@ abstract class Bipartite extends Procedure implements Screen {
     word[4]="Components: "+components();
     if (!goOn)
       word[5]="Giant component blocks: "+component.blocks.size();
-    int len=goOn?6:7;
+    int len=goOn?5:6;
     if (graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
       len+=2;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
       int faces=_E-_N+components()+graph.topology.characteristic()-1;
-      word[len-3]="Faces: "+faces;
-      word[len-2]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
+      word[len-2]="Faces: "+faces;
+      word[len-1]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
     }
-    word[len-1]="Primary partite #"+(primary.index+1)+" & relay partite #"+(relay.index+1);
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+i+1));
+    fill(primary.value);
+    text("Primary partite #"+(primary.index+1), gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len+1));
+    fill(gui.bodyColor[0].value);
+    text(" & ", gui.thisFont.stepX(3)+textWidth("Primary partite #"+(primary.index+1)), gui.thisFont.stepY(startHeight+len+1));
+    fill(relay.value);
+    text("relay partite #"+(relay.index+1), gui.thisFont.stepX(3)+textWidth("Primary partite #"+(primary.index+1)+" & "), gui.thisFont.stepY(startHeight+len+1));
     if (modes.value==1) {
-      barChart.showFrame(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
-      barChart.showLabels(gui.thisFont.stepX(2)+gui.margin()-textWidth("Degree"), gui.thisFont.stepY(startHeight+len+2));
+      barChart.showFrame(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len+1)+gui.thisFont.gap(), gui.margin(), gui.margin());
+      barChart.showLabels(gui.thisFont.stepX(2)+gui.margin()-textWidth("Degree"), gui.thisFont.stepY(startHeight+len+3));
       strokeWeight(7.5);
       barChart.drawPlot[0].display();
       barChart.showMeasurement();
     } else
-      table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len)+gui.thisFont.gap());
+      table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len+1)+gui.thisFont.gap());
   }
   void displayEdge(Vertex nodeA, Vertex nodeB) {
     if (nodeA.value<nodeB.value) {
