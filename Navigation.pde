@@ -26,7 +26,7 @@ class Navigation {
     items[2].addFirst("Surplus [6]");//301
     items[2].addFirst("Results [R]");//300
     items[3].addFirst("Node distribution [1]");//410
-    items[3].addFirst("Graph generation [2]");//409
+    items[3].addFirst("Link generation [2]");//409
     items[3].addFirst("Smallest-last ordering [3]");//408
     items[3].addFirst("Smallest-last coloring [4]");//407
     items[3].addFirst("Partitioning [5]");//406

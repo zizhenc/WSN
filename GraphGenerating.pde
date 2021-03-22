@@ -1,10 +1,10 @@
-class GraphGenerating extends Procedure implements Screen {
+class LinkGenerating extends Procedure implements Screen {
   int _N;
   Radio methods=new Radio("Exhaustive method", "Sweep method", "Cell method"), coordinates=new Radio("Cartesian system", "Cylindrical system", "Spherical system");
   Slider edgeWeight=new Slider("Edge weight");
   Checker remainingVertices=new Checker("Remaining vertices"), generatedGraph=new Checker("Generated graph");
   Switcher showEdge=new Switcher("Edge", "Edge");
-  GraphGenerating() {
+  LinkGenerating() {
     word=new String[3];
     parts.addLast(remainingVertices);
     parts.addLast(generatedGraph);
@@ -97,7 +97,7 @@ class GraphGenerating extends Procedure implements Screen {
   }
   void data() {
     fill(gui.headColor[1].value);
-    text("Graph gernerating...", gui.thisFont.stepX(), gui.thisFont.stepY());
+    text("Link gernerating...", gui.thisFont.stepX(), gui.thisFont.stepY());
     fill(gui.headColor[2].value);
     text("Graph information:", gui.thisFont.stepX(2), gui.thisFont.stepY(2));
     text("Runtime data:", gui.thisFont.stepX(2), gui.thisFont.stepY(6));

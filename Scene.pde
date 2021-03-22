@@ -3,7 +3,7 @@ class Scene implements Screen {
   Image image=new Image("Scene.png");
   String[] title={
     "New Graph...", 
-    "Node Distributing...", "Graph Generating...", "Smallest-last Ordering...", "Smallest-last Coloring...", "Partitioning...", "Relay Coloring...", "Smallest-last Coloring Partites...", "Relay Coloring Partites...", "Smallest-last Coloring Bipartites...", "Relay Coloring Bipartites...", 
+    "Node Distributing...", "Link Generating...", "Smallest-last Ordering...", "Smallest-last Coloring...", "Partitioning...", "Relay Coloring...", "Smallest-last Coloring Partites...", "Relay Coloring Partites...", "Smallest-last Coloring Bipartites...", "Relay Coloring Bipartites...", 
     "Terminal Clique...", "Primary Independent Sets...", "Relay Independent Sets...", "Backbones...", "Surplus...", 
     "Degree Distribution Histogram...", 
     "Vertex Degree Plot...", "Color-size Plot...", 

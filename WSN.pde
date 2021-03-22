@@ -121,7 +121,7 @@ void daemon() {
     box=new DialogBox();
     screen=new Screen[]{
       new NewGraph(), 
-      new NodeDistributing(), new GraphGenerating(), new SmallestLastOrdering(), new SmallestLastColoring(), new Partitioning(), new RelayColoring(), new SLPartite(), new RLPartite(), new SLBipartite(), new RLBipartite(), 
+      new NodeDistributing(), new LinkGenerating(), new SmallestLastOrdering(), new SmallestLastColoring(), new Partitioning(), new RelayColoring(), new SLPartite(), new RLPartite(), new SLBipartite(), new RLBipartite(), 
       new Clique(), new PrimarySet(), new RelaySet(), new Backbone(), new Surplus(), 
       new DegreeDistribution(), new VertexDegreePlot(), new ColorSizePlot(), 
       new NewComputation(), new NewDemonstration(), 
