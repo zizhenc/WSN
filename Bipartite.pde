@@ -5,7 +5,7 @@ abstract class Bipartite extends Procedure implements Screen {
   SysColor[] plotColor=new SysColor[3];
   Radio modes=new Radio("Table", "Bar chart");
   Region region=new Region();
-  Slider edgeWeight=new Slider("Edge weight"), backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
+  Slider backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
   Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block");
   ExTable table;
   Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
@@ -33,7 +33,6 @@ abstract class Bipartite extends Procedure implements Screen {
   }
   void setting() {
     initialize();
-    edgeWeight.setPreference(gui.unit(0.001), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     setComponent(1);
     backbone.setPreference(1, getAmount());
   }
@@ -105,7 +104,6 @@ abstract class Bipartite extends Procedure implements Screen {
           if (minorBlocks.value||giantBlock.value&&nodeA.order[component.archive]==-3) {
             if (showEdge.value) {
               int count=0;
-              strokeWeight(edgeWeight.value);
               for (Vertex nodeB : nodeA.links) {
                 if (nodeB.order[component.archive]==-2&&!tails.value||nodeB.order[component.archive]>-2&&!minorBlocks.value||nodeB.order[component.archive]<-3&&!giantBlock.value||nodeB.order[component.archive]==-3&&!giantBlock.value&&!minorBlocks.value)
                   count++;
@@ -120,7 +118,7 @@ abstract class Bipartite extends Procedure implements Screen {
                     stroke(gui.partColor[0].value);
                   else
                     stroke(gui.mainColor.value);
-                  displayEdge(nodeA, nodeB);
+                  displayLink(nodeA, nodeB);
                 }
               }
               analyze(nodeA, nodeA.links.size()-count);
@@ -134,18 +132,17 @@ abstract class Bipartite extends Procedure implements Screen {
         if (showEdge.value) {
           int count=0;
           stroke(gui.partColor[1].value);
-          strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.links)
             if (goOn) {
               if (nodeB.order[component.archive]!=-2&&!giantComponent.value)
                 count++;
               else
-                displayEdge(nodeA, nodeB);
+                displayLink(nodeA, nodeB);
             } else {
               if (nodeB.order[component.archive]<-3&&!giantBlock.value||nodeB.order[component.archive]>-2&&!minorBlocks.value||nodeB.order[component.archive]==-3&&!giantBlock.value&&!minorBlocks.value)
                 count++;
               else
-                displayEdge(nodeA, nodeB);
+                displayLink(nodeA, nodeB);
             }
           analyze(nodeA, nodeA.links.size()-count);
         }
@@ -158,9 +155,8 @@ abstract class Bipartite extends Procedure implements Screen {
             if (showEdge.value) {
               analyze(nodeA, nodeA.links.size());
               stroke(gui.partColor[2].value);
-              strokeWeight(edgeWeight.value);
               for (Vertex nodeB : nodeA.links)
-                displayEdge(nodeA, nodeB);
+                displayLink(nodeA, nodeB);
             }
             showSensor(nodeA);
           }
@@ -168,13 +164,12 @@ abstract class Bipartite extends Procedure implements Screen {
   void showNetwork(Vertex nodeA, SysColor colour) {
     if (showEdge.value) {
       int count=0;
-      strokeWeight(edgeWeight.value);
       for (Vertex nodeB : nodeA.links)
         if (nodeB.order[component.archive]==-2&&!tails.value)
           count++;
         else {
           stroke(nodeB.order[component.archive]==-2?gui.partColor[1].value:colour.value);
-          displayEdge(nodeA, nodeB);
+          displayLink(nodeA, nodeB);
         }
       analyze(nodeA, nodeA.links.size()-count);
     }
@@ -231,10 +226,10 @@ abstract class Bipartite extends Procedure implements Screen {
     } else
       table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len+1)+gui.thisFont.gap());
   }
-  void displayEdge(Vertex nodeA, Vertex nodeB) {
+  void displayLink(Vertex nodeA, Vertex nodeB) {
     if (nodeA.value<nodeB.value) {
       ++_E;
-      line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+      displayEdge(nodeA, nodeB);
     }
   }
   void moreControls(float y) {

@@ -179,7 +179,7 @@ class Navigation {
       if (end>=0&&end<7)
         nextPage=1;
       break;
-    case 409://Graph Generating
+    case 409://Link Generating
       if (end>=1&&end<7)
         nextPage=2;
       break;

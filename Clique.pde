@@ -14,12 +14,11 @@ class Clique extends Result implements Screen {
         for (Vertex node : graph.clique)
           displayNode(node);
       if (showEdge.value) {
-        strokeWeight(edgeWeight.value);
         for (ListIterator<Vertex> i=graph.clique.listIterator(); i.hasNext(); ) {
           Vertex nodeA=i.next();
           for (ListIterator<Vertex> j=graph.clique.listIterator(i.previousIndex()+1); j.hasNext(); ) {
             Vertex nodeB=j.next();
-            line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+            displayEdge(nodeA, nodeB);
           }
         }
       }

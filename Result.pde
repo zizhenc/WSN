@@ -1,6 +1,7 @@
 abstract class Result {
   float centralX, centralY, centralZ, eyeX, eyeY, eyeZ, spinX, spinY, spinZ;
   String[] word;
+  Vertex nodeM=new Vertex();
   Slider nodeWeight=new Slider("Node weight"), edgeWeight=new Slider("Edge weight");
   Button[] button={new Button("Restore"), new Button("Screenshot")};
   Switcher spin=new Switcher("Spin", "Spin"), showNode=new Switcher("Node", "Node"), showEdge=new Switcher("Edge", "Edge"), projection=new Switcher("Orthographic", "Perspective");
@@ -77,6 +78,14 @@ abstract class Result {
     else
       strokeWeight(nodeWeight.value);
     point((float)node.x, (float)node.y, (float)node.z);
+  }
+  void displayEdge(Vertex nodeA, Vertex nodeB) {
+    nodeM.setCoordinates((nodeA.x+nodeB.x)/2, (nodeA.y+nodeB.y)/2, (nodeA.z+nodeB.z)/2);
+    if (projection.value)
+      strokeWeight(edgeWeight.value+(modelZ((float)nodeM.x, (float)nodeM.y, (float)nodeM.z)-modelZ(0, 0, 0))/height*edgeWeight.value);
+    else
+      strokeWeight(edgeWeight.value);
+    line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
   }
   void keyPress() {
     navigation.keyPress();

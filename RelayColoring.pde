@@ -1,7 +1,7 @@
 class RelayColoring extends Procedure implements Screen {
   int connection, _N, _E;
   boolean[] slot;
-  Slider connectivity=new Slider("Connectivity", 2, 1), edgeWeight=new Slider("Edge weight");
+  Slider connectivity=new Slider("Connectivity", 2, 1);
   Switcher showEdge=new Switcher("Edge", "Edge");
   Checker surplus=new Checker("Surplus"), coloredGraph=new Checker("Colored graph"), uncoloredGraph=new Checker("Uncolored graph"), primaryGraph=new Checker("Primary graph");
   RelayColoring() {
@@ -18,7 +18,6 @@ class RelayColoring extends Procedure implements Screen {
     initialize();
     surplus.value=primaryGraph.value=uncoloredGraph.value=showEdge.value=false;
     coloredGraph.value=true;
-    edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     if (navigation.end==5) {
       if (slot==null||slot.length<graph._PYColors.size())
         slot=new boolean[graph._PYColors.size()];
@@ -110,18 +109,17 @@ class RelayColoring extends Procedure implements Screen {
     }
   }
   void displayEdge(Vertex nodeA) {
-    strokeWeight(edgeWeight.value);
     for (Vertex nodeB : nodeA.neighbors)
       if (nodeA.value>nodeB.value)
         if (nodeB.primeColor.index<graph._PYColors.size()) {
           if (primaryGraph.value) {
             _E++;
-            line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+            displayEdge(nodeA, nodeB);
           }
         } else {
           if (coloredGraph.value&&nodeB.relayColor!=null||surplus.value&&nodeB.order[1]==-5||uncoloredGraph.value&&nodeB.order[1]==-6&&nodeB.relayColor==null) {
             _E++;
-            line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+            displayEdge(nodeA, nodeB);
           }
         }
   }

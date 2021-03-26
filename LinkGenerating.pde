@@ -1,7 +1,6 @@
 class LinkGenerating extends Procedure implements Screen {
   int _N;
   Radio methods=new Radio("Exhaustive method", "Sweep method", "Cell method"), coordinates=new Radio("Cartesian system", "Cylindrical system", "Spherical system");
-  Slider edgeWeight=new Slider("Edge weight");
   Checker remainingVertices=new Checker("Remaining vertices"), generatedGraph=new Checker("Generated graph");
   Switcher showEdge=new Switcher("Edge", "Edge");
   LinkGenerating() {
@@ -14,7 +13,6 @@ class LinkGenerating extends Procedure implements Screen {
   }
   void setting() {
     initialize();
-    edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     if (navigation.end==1) {
       navigation.end=-2;
       interval.setPreference(ceil(graph.vertex.length*7.0/3200), ceil(graph.vertex.length/3.0), ceil(graph.vertex.length*7.0/3200));
@@ -72,12 +70,10 @@ class LinkGenerating extends Procedure implements Screen {
         }
       } else if (generatedGraph.value) {
         stroke(gui.mainColor.value);
-        if (showEdge.value) {
-          strokeWeight(edgeWeight.value);
+        if (showEdge.value)
           for (Vertex nodeB : nodeA.neighbors)
             if (nodeA.value<nodeB.value)
-              line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
-        }
+              displayEdge(nodeA, nodeB);
         if (showNode.value) {
           displayNode(nodeA);
           _N++;

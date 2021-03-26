@@ -35,8 +35,11 @@ class Graph {
   void compute() {
     for (int i=0; i<vertex.length; i++)
       vertex[i]=topology.generateVertex(i);
+    int linkms=millis();
     initialize();
     while (method[methodIndex].connecting());
+    linkms=millis()-linkms;
+    int _SLColorms=millis();
     generateDegreeList();
     int[] degree={_E, 2*_E};
     Vertex[] list=new Vertex[2];
@@ -51,12 +54,19 @@ class Graph {
       colour(amount, slot);
       amount++;
     }
+    _SLColorms=millis()-_SLColorms;
+    int _RLColorms=millis();
     while (primaries<0)
       selectPrimarySet();
+    for (int i=_PYColors.size(); i<_SLColors.size(); i++)
+      for (Vertex nodeA : _SLColors.get(i).vertices)
+        for (Vertex nodeB : nodeA.neighbors)
+          nodeA.categorize(nodeB);
     generateRelayList(connectivity);
     for (amount=relayList.length; amount>=connectivity; amount=colour(slot, amount));
+    _RLColorms=millis()-_RLColorms;
     navigation.end=7;
-    box.pop("Graph "+index+" computation acomplished!", "Information", "Gotcha");
+    box.pop("Graph "+index+" computation acomplished!\nLink generation: "+linkms+" ms\nSmallest-last coloring: "+_SLColorms+" ms\nRelay coloring: "+_RLColorms+" ms\n", "Information", "Gotcha");
   }
   void initialize() {
     if (method[methodIndex]==null)
@@ -127,8 +137,6 @@ class Graph {
     vertex[index].primeColor=getColor(i);
     if (vertex[index].primeColor.vertices.isEmpty())
       _SLColors.add(vertex[index].primeColor);
-    for (Vertex node : vertex[index].neighbors)
-      node.categorize(vertex[index]);
     vertex[index].primeColor.vertices.addLast(vertex[index]);
   }
   void selectPrimarySet() {

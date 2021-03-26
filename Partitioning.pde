@@ -1,6 +1,6 @@
 class Partitioning extends Procedure implements Screen {
   int _E, frame, pivot;
-  Slider edgeWeight=new Slider("Edge weight"), breakpoint=new Slider("Selected percentile", 50, 1, 100, 1), selectColorSets=new Slider("Selected color sets", 1, 1);
+  Slider breakpoint=new Slider("Selected percentile", 50, 1, 100, 1), selectColorSets=new Slider("Selected color sets", 1, 1);
   Switcher showEdge=new Switcher("Edge", "Edge");
   Checker remainingGraph=new Checker("Remaining graph"), selectedGraph=new Checker("Selected graph");
   LinkedList<String> modalLabels=new LinkedList<String>();
@@ -15,7 +15,6 @@ class Partitioning extends Procedure implements Screen {
   }
   void setting() {
     initialize();
-    edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     if (navigation.end==4) {
       selectColorSets.setMax(graph._SLColors.size()-1);
       interval.setPreference(1, frameRate, 1);
@@ -64,14 +63,12 @@ class Partitioning extends Procedure implements Screen {
       stroke(gui.mainColor.value);
       for (int i=pivot; i<graph._SLColors.size(); i++ )
         for (Vertex nodeA : graph._SLColors.get(i).vertices) {
-          if (showEdge.value) {
-            strokeWeight(edgeWeight.value);
+          if (showEdge.value)
             for (Vertex nodeB : nodeA.neighbors)
               if (nodeA.value>nodeB.value&&nodeB.primeColor.index>=pivot||selectedGraph.value&&nodeB.primeColor.index<pivot) {
                 _E++;
-                line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+                displayEdge(nodeA, nodeB);
               }
-          }
           if (showNode.value)
             displayNode(nodeA);
         }
@@ -81,12 +78,11 @@ class Partitioning extends Procedure implements Screen {
         Color colour=graph._SLColors.get(i);
         for (Vertex nodeA : colour.vertices) {
           if (showEdge.value) {
-            strokeWeight(edgeWeight.value);
             stroke(gui.partColor[1].value);
             for (Vertex nodeB : nodeA.neighbors)
               if (nodeA.value>nodeB.value&&nodeB.primeColor.index<pivot) {
                 _E++;
-                line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+                displayEdge(nodeA, nodeB);
               }
           }
           if (showNode.value) {

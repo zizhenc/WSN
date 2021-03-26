@@ -1,9 +1,9 @@
 abstract class Partite extends Procedure implements Screen {
   int _E;
   Color colour;
-  Slider partiteIndex=new Slider("Partite #", 1, 1), regionAmount=new Slider("Region amount", 1, 1), edgeWeight=new Slider("Edge weight");
+  Slider partiteIndex=new Slider("Partite #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
   Region region=new Region();
-  Vertex nodeM=new Vertex();
+  Vertex middleNode=new Vertex();
   Checker partite=new Checker("Partite");
   Switcher showRegion=new Switcher("Region", "Region"), showEdge=new Switcher("Edge", "Edge"), showMeasurement=new Switcher("Measurement", "Measurement"), arrow=new Switcher("Arrow", "Arrow");
   HashSet<Vertex> domain=new HashSet<Vertex>();
@@ -20,7 +20,6 @@ abstract class Partite extends Procedure implements Screen {
   }
   void setting() {
     initialize();
-    edgeWeight.setPreference(gui.unit(0.001), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     setColorPool();
     partiteIndex.setPreference(1, colorPool.size());
     setPartite();
@@ -50,25 +49,23 @@ abstract class Partite extends Procedure implements Screen {
       Vertex nodeA=i.next();
       if (showEdge.value)
         if (showMeasurement.value) {
-          strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.arcs)
             if (nodeA.value<nodeB.value) {
               _E++;
-              nodeM.setCoordinates((nodeA.x+nodeB.x)/2, (nodeA.y+nodeB.y)/2, (nodeA.z+nodeB.z)/2);
+              middleNode.setCoordinates((nodeA.x+nodeB.x)/2, (nodeA.y+nodeB.y)/2, (nodeA.z+nodeB.z)/2);
               stroke(gui.partColor[nodeA.value<nodeB.value?1:2].value);
-              line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeM.x, (float)nodeM.y, (float)nodeM.z);
+              displayEdge(nodeA, middleNode);
               stroke(gui.partColor[nodeA.value<nodeB.value?2:1].value);
-              line((float)nodeM.x, (float)nodeM.y, (float)nodeM.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+              displayEdge(middleNode, nodeB);
               if (arrow.value)
                 arrow((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
             }
         } else if (partite.value) {
           stroke(colour.value);
-          strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.arcs)
             if (nodeA.value<nodeB.value) {
               _E++;
-              line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+              displayEdge(nodeA, nodeB);
             }
         }
       if (partite.value) {

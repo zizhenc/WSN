@@ -49,7 +49,8 @@ class GUI {
   void resetColor() {
     if (mode) {
       mainColor.setValue(84, 84, 159);
-      colour[0].setValue(255, 247, 217 );
+      colour[0].setValue(255, 255, 255);
+      //colour[0].setValue(255, 247, 217);
       colour[1].setValue(51, 35, 5);
       colour[2].setValue(199, 175, 189);
       colour[3].setValue(45, 196, 166);

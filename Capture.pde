@@ -22,7 +22,7 @@ class Capture {
       dottedLine(mouseX, 0, mouseX, height);
       if (captureWidth!=0&&captureHeight!=0) {
         fill(gui.bodyColor[2].value);
-        String prompt="Press "+(System.getProperty("os.name").contains("Windows")?"Enter":"Return")+" to crop.";
+        String prompt=captureWidth+" x "+captureHeight+" Press "+(System.getProperty("os.name").contains("Windows")?"Enter":"Return")+" to crop.";
         textAlign(RIGHT);
         text(prompt, x-gui.thisFont.stepX()+(captureWidth>0?captureWidth:0), y+gui.thisFont.stepY()+(captureHeight>0?captureHeight:0));
       } 

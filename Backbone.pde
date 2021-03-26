@@ -162,7 +162,6 @@ class Backbone extends Result implements Screen {
         Vertex nodeA=i.previous().getLast();
         if (minorBlocks.value||giantBlock.value&&nodeA.order[component.archive]==-3) {
           if (showEdge.value) {
-            strokeWeight(edgeWeight.value);
             for (Vertex nodeB : nodeA.links) {
               if (nodeB.order[component.archive]==-2&&tails.value||nodeB.order[component.archive]>-2&&minorBlocks.value||nodeB.order[component.archive]<-3&&giantBlock.value||nodeB.order[component.archive]==-3&&(giantBlock.value||minorBlocks.value)) {
                 if (nodeB.order[component.archive]==-2)
@@ -175,7 +174,7 @@ class Backbone extends Result implements Screen {
                   stroke(gui.partColor[0].value);
                 else
                   stroke(gui.mainColor.value);
-                displayEdge(nodeA, nodeB);
+                displayLink(nodeA, nodeB);
               }
             }
           }
@@ -186,10 +185,9 @@ class Backbone extends Result implements Screen {
       for (Vertex nodeA=component.degreeList[0].next; nodeA!=null; nodeA=nodeA.next) {
         if (showEdge.value) {
           stroke(gui.partColor[1].value);
-          strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.links)
             if (nodeB.order[component.archive]==-2||nodeB.order[component.archive]<-3&&giantBlock.value||nodeB.order[component.archive]>-2&&minorBlocks.value||nodeB.order[component.archive]==-3&&(giantBlock.value||minorBlocks.value))
-              displayEdge(nodeA, nodeB);
+              displayLink(nodeA, nodeB);
         }
         showSensor(nodeA);
       }
@@ -199,22 +197,19 @@ class Backbone extends Result implements Screen {
           for (Vertex nodeA : list) {
             if (showEdge.value) {
               stroke(gui.partColor[2].value);
-              strokeWeight(edgeWeight.value);
               for (Vertex nodeB : nodeA.links)
-                displayEdge(nodeA, nodeB);
+                displayLink(nodeA, nodeB);
             }
             showSensor(nodeA);
           }
   }
   void showNetwork(Vertex nodeA, SysColor colour) {
-    if (showEdge.value) {
-      strokeWeight(edgeWeight.value);
+    if (showEdge.value)
       for (Vertex nodeB : nodeA.links)
         if (nodeB.order[component.archive]!=-2||nodeB.order[component.archive]==-2&&tails.value) {
           stroke(nodeB.order[component.archive]==-2?gui.partColor[1].value:colour.value);
-          displayEdge(nodeA, nodeB);
+          displayLink(nodeA, nodeB);
         }
-    }
     showSensor(nodeA);
   }
   void showSensor(Vertex nodeA) {
@@ -287,10 +282,10 @@ class Backbone extends Result implements Screen {
     } else
       table.display(gui.thisFont.stepX(3), gui.thisFont.stepY(17+len)+gui.thisFont.gap());
   }
-  void displayEdge(Vertex nodeA, Vertex nodeB) {
+  void displayLink(Vertex nodeA, Vertex nodeB) {
     if (nodeA.value<nodeB.value) {
       ++_E;
-      line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+      displayEdge(nodeA, nodeB);
     }
   }
   void moreControls(float y) {

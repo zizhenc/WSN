@@ -3,8 +3,7 @@ class SmallestLastColoring extends Procedure implements Screen {
   boolean[] slot;
   Switcher showEdge=new Switcher("Edge", "Edge"), showMeasurement=new Switcher("Measurement", "Measurement");
   Checker uncoloredGraph=new Checker("Uncolored graph"), coloredGraph=new Checker("Colored graph");
-  Slider edgeWeight=new Slider("Edge weight");
-  Vertex nodeM=new Vertex();
+  Vertex middleNode=new Vertex();
   SmallestLastColoring() {
     word=new String[9];
     parts.addLast(uncoloredGraph);
@@ -16,7 +15,6 @@ class SmallestLastColoring extends Procedure implements Screen {
   }
   void setting() {
     initialize();
-    edgeWeight.setPreference(gui.unit(0.0002), gui.unit(0.000025), gui.unit(0.002), gui.unit(0.00025), gui.unit(1000));
     if (navigation.end==3) {
       navigation.end=-4;
       _N=0;
@@ -44,8 +42,11 @@ class SmallestLastColoring extends Procedure implements Screen {
         play.value=false;
       }
       if (play.value) {
-        if (graph.vertex[_N].primeColor==null)
+        if (graph.vertex[_N].primeColor==null) {
           graph.colour(_N, slot);
+          for (Vertex node : graph.vertex[_N].neighbors)
+            node.categorize(graph.vertex[_N]);
+        }
         _N++;
       }
     }
@@ -53,16 +54,15 @@ class SmallestLastColoring extends Procedure implements Screen {
   void show() {
     _E=0;
     if (showMeasurement.value&&showEdge.value) {
-      strokeWeight(edgeWeight.value);
       for (int i=0; i<_N; i++)
         for (Vertex nodeB : graph.vertex[i].neighbors)
           if (graph.vertex[i].value>nodeB.value&&nodeB.value<_N) {
             _E++;
-            nodeM.setCoordinates((graph.vertex[i].x+nodeB.x)/2, (graph.vertex[i].y+nodeB.y)/2, (graph.vertex[i].z+nodeB.z)/2);
+            middleNode.setCoordinates((graph.vertex[i].x+nodeB.x)/2, (graph.vertex[i].y+nodeB.y)/2, (graph.vertex[i].z+nodeB.z)/2);
             stroke(gui.partColor[graph.vertex[i].value<nodeB.value?1:2].value);
-            line((float)graph.vertex[i].x, (float)graph.vertex[i].y, (float)graph.vertex[i].z, (float)nodeM.x, (float)nodeM.y, (float)nodeM.z);
+            displayEdge(graph.vertex[i], middleNode);
             stroke(gui.partColor[graph.vertex[i].value<nodeB.value?2:1].value);
-            line((float)nodeM.x, (float)nodeM.y, (float)nodeM.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+            displayEdge(middleNode, nodeB);
           }
     }
     if (uncoloredGraph.value) {
@@ -70,11 +70,10 @@ class SmallestLastColoring extends Procedure implements Screen {
       for (int i=_N; i<graph.vertex.length; i++) {
         Vertex nodeA=graph.vertex[i];
         if (!showMeasurement.value&&showEdge.value) {
-          strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.neighbors)
             if (nodeB.value<_N&&coloredGraph.value||nodeA.value>nodeB.value&&nodeB.value>=_N) {
               _E++;
-              line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+              displayEdge(nodeA, nodeB);
             }
         }
         if (showNode.value)
@@ -86,11 +85,10 @@ class SmallestLastColoring extends Procedure implements Screen {
         Vertex nodeA=graph.vertex[i];
         if (!showMeasurement.value&&showEdge.value) {
           stroke(gui.mainColor.value);
-          strokeWeight(edgeWeight.value);
           for (Vertex nodeB : nodeA.neighbors)
             if (nodeA.value>nodeB.value&&nodeB.value<_N) {
               _E++;
-              line((float)nodeA.x, (float)nodeA.y, (float)nodeA.z, (float)nodeB.x, (float)nodeB.y, (float)nodeB.z);
+              displayEdge(nodeA, nodeB);
             }
         }
         if (showNode.value) {
