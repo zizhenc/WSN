@@ -7,7 +7,7 @@ abstract class NewDeployment extends New {
     inputLibrary.put("Select graph generating method (Exhaustive, Sweep or Cell): ", new Input("Select graph generating method (Exhaustive, Sweep or Cell): "));
     inputLibrary.put("Choose a coordinate system (Cartesian, Cylindrical or Spherical): ", new Input("Choose a coordinate system (Cartesian, Cylindrical or Spherical): "));
     inputLibrary.put("Choose a coordinate system (Cartesian or Cylindrical): ", new Input("Choose a coordinate system (Cartesian or Cylindrical): "));
-    inputLibrary.put("Select primary sets: ", new Input("Select primary sets: "));
+    inputLibrary.put("Select primary sets (quantity or percentage): ", new Input("Select primary sets (quantity or percentage): "));
     inputLibrary.put("Enter connectivity: ", new Input("Enter connectivity: "));
   }
   void enter() throws Exception {
@@ -32,7 +32,7 @@ abstract class NewDeployment extends New {
         coordinate=1;
       else
         throw new Exception('\"'+word+"\": No such coordinate system");
-      commit("Select primary sets: ");
+      commit("Select primary sets (quantity or percentage): ");
     } else if (prompt.equals("Choose a coordinate system (Cartesian, Cylindrical or Spherical): ")) {
       if (word.contains("cartesian"))
         coordinate=0;
@@ -42,8 +42,8 @@ abstract class NewDeployment extends New {
         coordinate=2;
       else
         throw new Exception('\"'+word+"\": No such coordinate system");
-      commit("Select primary sets: ");
-    } else if (prompt.equals("Select primary sets: ")) {
+      commit("Select primary sets (quantity or percentage): ");
+    } else if (prompt.equals("Select primary sets (quantity or percentage): ")) {
       if (word.contains("%")) {
         breakpoint=Float.parseFloat(word.substring(0, word.indexOf("%")));
         if (breakpoint<=0||breakpoint>100)
