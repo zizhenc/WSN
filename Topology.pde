@@ -6,7 +6,7 @@ abstract class Topology {
   abstract double getAvg(double r, int n);
   abstract Vertex generateVertex(int value);
   int connectivity() {
-    return value<6?5:7;
+    return value<6?5:8;
   }
   int characteristic() {
     return (value==5||value==6)?0:2;

@@ -22,12 +22,12 @@ class Backbone extends Result implements Screen {
     parts.addLast(giantBlock);
     switches.addLast(showRegion);
     tunes.addLast(backbone);
-    table=new ExTable(12, "Coverage", "Primary", "Relay", "Total");
+    table=new ExTable(13, "Coverage", "Primary", "Relay", "Total");
     plotColor[2]=gui.partColor[0];
-    barChart.setX(0, 11);
+    barChart.setX(0, 12);
     barChart.setPoints();
-    for (int i=0; i<12; i++)
-      table.setInt(11-i, 0, i);
+    for (int i=0; i<13; i++)
+      table.setInt(12-i, 0, i);
     minorComponents.value=showRegion.value=false;
     domination=new Analyze() {
       void go(Vertex nodeA) {
@@ -106,13 +106,13 @@ class Backbone extends Result implements Screen {
     traverse(domination);
     switch(modes.value) {
     case 0:
-      for (int i=0; i<12; i++)
+      for (int i=0; i<13; i++)
         for (int j=0; j<plot.length; j++)
           table.setInt(i, j+1, 0);
       break;
     case 1:
       for (ArrayList<Float> point : barChart.points)
-        for (int i=0; i<12; i++)
+        for (int i=0; i<13; i++)
           point.set(i, 0f);
     }
     for (Vertex node : graph.vertex)
@@ -126,9 +126,9 @@ class Backbone extends Result implements Screen {
       else {
         switch(modes.value) {
         case 0:
-          table.setInt(11-node.k[0], 1, table.getInt(11-node.k[0], 1)+1);
-          table.setInt(11-node.k[1], 2, table.getInt(11-node.k[1], 2)+1);
-          table.setInt(11-node.k[0]-node.k[1], 3, table.getInt(11-node.k[0]-node.k[1], 3)+1);
+          table.setInt(12-node.k[0], 1, table.getInt(12-node.k[0], 1)+1);
+          table.setInt(12-node.k[1], 2, table.getInt(12-node.k[1], 2)+1);
+          table.setInt(12-node.k[0]-node.k[1], 3, table.getInt(12-node.k[0]-node.k[1], 3)+1);
           break;
         case 1:
           barChart.points[0].set(node.k[0], barChart.points[0].get(node.k[0])+1);
@@ -138,9 +138,9 @@ class Backbone extends Result implements Screen {
       }
     nodes=graph.vertex.length-nodes;
     kCoverage=0;
-    for (int i=3; i<12; i++)
+    for (int i=3; i<13; i++)
       if(modes.value==0)
-        kCoverage+=table.getInt(11-i, 3);
+        kCoverage+=table.getInt(12-i, 3);
       else
         kCoverage+=barChart.points[2].get(i);
     kCoverage/=nodes;

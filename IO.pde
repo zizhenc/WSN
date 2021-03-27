@@ -255,7 +255,7 @@ public class IO {
   void kCoverage(){
     graph.calculateBackbones();
     StringBuffer text=new StringBuffer("Two-core"+System.getProperty("line.separator")+System.getProperty("line.separator"));
-    int[][] primary=new int[12][graph.backbone.length], relay=new int[12][graph.backbone.length], total=new int[12][graph.backbone.length];
+    int[][] primary=new int[13][graph.backbone.length], relay=new int[13][graph.backbone.length], total=new int[13][graph.backbone.length];
     for(int i=0;i<graph.backbone.length;i++){
       Component backbone=graph.getBackbone(i);
       for (Vertex node : graph.vertex)
@@ -273,7 +273,7 @@ public class IO {
   }
   void calculateCoverage(String core, int coreIndex, StringBuffer text,int[][] primary, int[][] relay, int[][] total){
     text.append(core+System.getProperty("line.separator")+System.getProperty("line.separator"));
-    for(int i=0;i<12;i++)
+    for(int i=0;i<total.length;i++)
       for(int j=0;j<graph.backbone.length;j++){
         primary[i][j]=0;
         relay[i][j]=0;
@@ -289,7 +289,7 @@ public class IO {
     }
     recordCoverage(text,primary,relay,total);
   }
-  void cover(Vertex nodeA, Component backbone){
+  void cover(Vertex nodeA, Component backbone) {
     nodeA.k[0]=-1;
     for(Vertex nodeB:nodeA.neighbors)
       if(nodeB.k[0]>=0)
@@ -298,20 +298,20 @@ public class IO {
   void updateCoverage(int[][] primary,int[][] relay, int[][] total, int backbone){
     for(Vertex node:graph.vertex)
       if(node.k[0]>=0){
-        primary[11-node.k[0]][backbone]++;
-        relay[11-node.k[1]][backbone]++;
-        total[11-node.k[0]-node.k[1]][backbone]++;
+        primary[node.k[0]][backbone]++;
+        relay[node.k[1]][backbone]++;
+        total[node.k[0]+node.k[1]][backbone]++;
       }
   }
   void recordCoverage(StringBuffer text, int[][] primary,int[][] relay, int[][] total){
     coverage[0]=coverage[1]=coverage[2]=-1;
-    for(int i=0;i<12;i++){
+    for(int i=total.length-1;i>=0;i--){
       for(int j=0;j<graph.backbone.length;j++){
-        if(coverage[0]<0&&primary[i][j]!=0)
+        if(coverage[0]<0&&primary[i][j]>0)
           coverage[0]=i;
-        if(coverage[1]<0&&relay[i][j]!=0)
+        if(coverage[1]<0&&relay[i][j]>0)
           coverage[1]=i;
-        if(coverage[2]<0&&total[i][j]!=0)
+        if(coverage[2]<0&&total[i][j]>0)
           coverage[2]=i;
         if(coverage[0]>=0&&coverage[1]>=0&&coverage[2]>=0)
           break;
@@ -329,8 +329,8 @@ public class IO {
     for(int i=0;i<graph.backbone.length;i++)
       text.append(","+(i+1));
     text.append(System.getProperty("line.separator"));
-    for(int i=coverage[partIndex];i<12;i++){
-      text.append(11-i);
+    for(int i=coverage[partIndex];i>=0;i--){
+      text.append(i);
       for(int j=0;j<graph.backbone.length;j++)
         text.append(","+coverMatrix[i][j]);
       text.append(System.getProperty("line.separator"));
