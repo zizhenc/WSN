@@ -55,9 +55,9 @@ class Graph {
       amount++;
     }
     _SLColorms=millis()-_SLColorms;
-    int _RLColorms=millis();
     while (primaries<0)
       selectPrimarySet();
+    int _RLColorms=millis();
     for (int i=_PYColors.size(); i<_SLColors.size(); i++)
       for (Vertex nodeA : _SLColors.get(i).vertices)
         for (Vertex nodeB : nodeA.neighbors)
