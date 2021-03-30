@@ -16,7 +16,7 @@ abstract class NewDeployment extends New {
     if (prompt.equals("Select graph generating method (Exhaustive, Sweep or Cell): ")) {
       if (word.contains("exhaustive")) {
         method=0;
-        commit("Select primary sets: ");
+        commit("Select primary sets (quantity or percentage): ");
       } else if (word.contains("sweep")) {
         method=1;
         commit("Choose a coordinate system (Cartesian, Cylindrical or Spherical): ");

@@ -1,6 +1,6 @@
 class LinkGenerating extends Procedure implements Screen {
   int _N;
-  Radio methods=new Radio("Exhaustive method", "Sweep method", "Cell method"), coordinates=new Radio("Cartesian system", "Cylindrical system", "Spherical system");
+  Radio methods=new Radio("Exhaustive method", "Sweep method", "Cell method"), coordinates=new Radio("Cartesian system");
   Checker remainingVertices=new Checker("Remaining vertices"), generatedGraph=new Checker("Generated graph");
   Switcher showEdge=new Switcher("Edge", "Edge");
   LinkGenerating() {
@@ -20,6 +20,7 @@ class LinkGenerating extends Procedure implements Screen {
         methods.value=graph.methodIndex;
         coordinates.value=graph.coordinateIndex;
       } else {
+        coordinates.value=0;
         graph.methodIndex=methods.value;
         graph.coordinateIndex=coordinates.value;
       }
@@ -40,11 +41,35 @@ class LinkGenerating extends Procedure implements Screen {
     graph._E=0;
   }
   void updateCoordinates() {//update coodinates when methods changed
-    if (methods.value==2&&graph.topology.value!=4) {
-      if (coordinates.labels.size()==3)
-        coordinates.labels.removeLast();
-    } else if (coordinates.labels.size()==2)
-      coordinates.labels.addLast("Spherical system");
+    switch(methods.value) {
+    case 1:
+      if (graph.topology.value<4) {
+        if (coordinates.labels.getLast()!="Polar system") {
+          while (coordinates.labels.size()>1)
+            coordinates.labels.removeLast();
+          coordinates.labels.addLast("Polar system");
+        }
+      } else if (coordinates.labels.size()<3) {
+        while (coordinates.labels.size()>1)
+          coordinates.labels.removeLast();
+        coordinates.labels.addLast("Cylindrical system");
+        coordinates.labels.addLast("Spherical system");
+      }
+      break;
+    case 2:
+      if (graph.topology.value==4) {
+        if (coordinates.labels.size()<3) {
+          while (coordinates.labels.size()>1)
+            coordinates.labels.removeLast();
+          coordinates.labels.addLast("Cylindrical system");
+          coordinates.labels.addLast("Spherical system");
+        }
+      } else if (coordinates.labels.getLast()!="Cylindrical system") {
+        while (coordinates.labels.size()>1)
+          coordinates.labels.removeLast();
+        coordinates.labels.addLast("Cylindrical system");
+      }
+    }
     graph.initialize();
   }
   void deploying() {
@@ -120,7 +145,10 @@ class LinkGenerating extends Procedure implements Screen {
     if (coordinates.active()) {
       coordinates.commit();
       reset();
-      graph.coordinateIndex=coordinates.value;
+      if (graph.topology.value<4&&methods.value==1&&coordinates.value==1)
+        graph.coordinateIndex=2;
+      else
+        graph.coordinateIndex=coordinates.value;
       graph.initialize();
     }
   }

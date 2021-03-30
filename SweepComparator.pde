@@ -5,7 +5,7 @@ class SweepComparator implements Comparator<Vertex> {
     case 0:
       return nodeA.x-nodeB.x;
     case 1:
-      return nodeA.pho-nodeB.pho;
+      return nodeA.z-nodeB.z;
     case 2:
       return nodeA.rho-nodeB.rho;
     default:
