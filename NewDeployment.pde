@@ -20,10 +20,7 @@ abstract class NewDeployment extends New {
         commit("Select primary sets (quantity or percentage): ");
       } else if (word.contains("sweep")) {
         method=1;
-        if (graph.topology.value<4)
-          commit("Choose a coordinate system (Cartesian or Polar): ");
-        else
-          commit("Choose a coordinate system (Cartesian, Cylindrical or Spherical): ");
+        commit(topology.value<4?"Choose a coordinate system (Cartesian or Polar): ":"Choose a coordinate system (Cartesian, Cylindrical or Spherical): ");
       } else if (word.contains("cell")) {
         method=2;
         commit(topology.value==4?"Choose a coordinate system (Cartesian, Cylindrical or Spherical): ":"Choose a coordinate system (Cartesian or Cylindrical): ");
