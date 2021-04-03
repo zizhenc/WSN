@@ -6,6 +6,7 @@ abstract class NewDeployment extends New {
   NewDeployment() {
     inputLibrary.put("Select graph generating method (Exhaustive, Sweep or Cell): ", new Input("Select graph generating method (Exhaustive, Sweep or Cell): "));
     inputLibrary.put("Choose a coordinate system (Cartesian, Cylindrical or Spherical): ", new Input("Choose a coordinate system (Cartesian, Cylindrical or Spherical): "));
+    inputLibrary.put("Choose a coordinate system (Cartesian or Polar): ", new Input("Choose a coordinate system (Cartesian or Polar): "));
     inputLibrary.put("Choose a coordinate system (Cartesian or Cylindrical): ", new Input("Choose a coordinate system (Cartesian or Cylindrical): "));
     inputLibrary.put("Select primary sets (quantity or percentage): ", new Input("Select primary sets (quantity or percentage): "));
     inputLibrary.put("Enter connectivity: ", new Input("Enter connectivity: "));
@@ -19,7 +20,10 @@ abstract class NewDeployment extends New {
         commit("Select primary sets (quantity or percentage): ");
       } else if (word.contains("sweep")) {
         method=1;
-        commit("Choose a coordinate system (Cartesian, Cylindrical or Spherical): ");
+        if (graph.topology.value<4)
+          commit("Choose a coordinate system (Cartesian or Polar): ");
+        else
+          commit("Choose a coordinate system (Cartesian, Cylindrical or Spherical): ");
       } else if (word.contains("cell")) {
         method=2;
         commit(topology.value==4?"Choose a coordinate system (Cartesian, Cylindrical or Spherical): ":"Choose a coordinate system (Cartesian or Cylindrical): ");
@@ -30,6 +34,14 @@ abstract class NewDeployment extends New {
         coordinate=0;
       else if (word.contains("cylindrical"))
         coordinate=1;
+      else
+        throw new Exception('\"'+word+"\": No such coordinate system");
+      commit("Select primary sets (quantity or percentage): ");
+    } else if (prompt.equals("Choose a coordinate system (Cartesian or Polar): ")) {
+      if (word.contains("cartesian"))
+        coordinate=0;
+      else if (word.contains("polar"))
+        coordinate=2;
       else
         throw new Exception('\"'+word+"\": No such coordinate system");
       commit("Select primary sets (quantity or percentage): ");
