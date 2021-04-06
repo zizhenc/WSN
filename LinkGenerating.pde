@@ -49,6 +49,12 @@ class LinkGenerating extends Procedure implements Screen {
             coordinates.labels.removeLast();
           coordinates.labels.addLast("Polar system");
         }
+      } else if (graph.topology.value==4) {
+        if (coordinates.labels.getLast()!="Cylindrical system") {
+          while (coordinates.labels.size()>1)
+            coordinates.labels.removeLast();
+          coordinates.labels.addLast("Cylindrical system");
+        }
       } else if (coordinates.labels.size()<3) {
         while (coordinates.labels.size()>1)
           coordinates.labels.removeLast();
