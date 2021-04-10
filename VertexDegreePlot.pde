@@ -5,7 +5,7 @@ class VertexDegreePlot extends Plots implements Screen {
     parts.addLast(averageOriginalDegree);
     parts.addLast(averageDegree);
     parts.addLast(degreeDeleted);
-    chart=new Plot("Node", "Degree", gui.partColor, "Original degree", "Average degree when deleted", "Average original degree", "Degree when deleted");
+    chart=new Plot("Node", "Degree", gui.partColor, "Original degree", "Average original degree", "Average degree when deleted", "Degree when deleted");
   }
   void moreSettings() {
     chart.setX(0, graph.vertex.length-1);
