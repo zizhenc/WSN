@@ -37,7 +37,7 @@ class Navigation {
     items[3].addFirst("Relay coloring bipartites [10]");//401
     items[3].addFirst("Procedures [P]");//400
     items[4].addFirst("Degree distribution histogram [1]");//503
-    items[4].addFirst("Vertex-degree plot [2]");//502
+    items[4].addFirst("Node-degree plot [2]");//502
     items[4].addFirst("Color-size plot [3]");//501
     items[4].addFirst("Charts [C]");//500
     items[5].addFirst("Font settings [1]");//603
@@ -219,7 +219,7 @@ class Navigation {
       if (end>=3)
         nextPage=16;
       break;
-    case 502://Vertex-degree plot
+    case 502://Node-degree plot
       if (end>=3)
         nextPage=17;
       break;

@@ -6,7 +6,7 @@ class DegreeDistribution extends Charts implements Screen {
     parts.addLast(inDegreeHistogram);
     parts.addLast(degreeHistogram);
     parts.addLast(outDegreeHistogram);
-    chart=new BarChart("Degree", "Vertex", gui.partColor, "Indegree", "Degree", "Outdegree");
+    chart=new BarChart("Degree", "Node", gui.partColor, "Indegree", "Degree", "Outdegree");
   }
   void setting() {
     chart.setX(0, graph.maxDegree);
