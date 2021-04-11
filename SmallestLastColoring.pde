@@ -122,7 +122,7 @@ class SmallestLastColoring extends Procedure implements Screen {
       if (uncoloredGraph.value)
         vertices+=graph.vertex.length-_N;
     }
-    word[0]=String.format("Vertices: %d (%.2f %%)", vertices, vertices*100.0/graph.vertex.length);
+    word[0]=String.format("Nodes: %d (%.2f %%)", vertices, vertices*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", _E, _E*100.0/graph._E);
     word[2]=String.format("Average degree: %.2f", _E*2.0/vertices);
     word[3]="Colors: "+graph._SLColors.size();

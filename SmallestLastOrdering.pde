@@ -138,7 +138,7 @@ class SmallestLastOrdering extends Procedure implements Screen {
         edges=degree[0];
       else if (deletedGraph.value)
         edges=_E;
-    word[0]=String.format("Vertices: %d (%.2f %%)", vertices, vertices*100.0/graph.vertex.length);
+    word[0]=String.format("Nodes: %d (%.2f %%)", vertices, vertices*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", edges, edges*100.0/graph._E);
     word[2]=String.format("Average degree: %.2f", edges*2.0/vertices);
     word[3]="Terminal clique size: "+graph.clique.size();

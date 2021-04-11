@@ -41,7 +41,7 @@ class Clique extends Result implements Screen {
     fill(gui.bodyColor[0].value);
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
-    word[0]="Vertices: "+(showClique.value&&showNode.value?graph.clique.size():0);
+    word[0]="Nodes: "+(showClique.value&&showNode.value?graph.clique.size():0);
     word[1]="Edges: "+(showClique.value&&showEdge.value?graph.clique.size()*(graph.clique.size()-1)/2:0);
     for (int i=0; i<2; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(12+i));

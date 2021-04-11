@@ -144,7 +144,7 @@ class RelayColoring extends Procedure implements Screen {
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
     int surplusOrder=graph.surplus();
-    word[0]=String.format("Vertices: %d (%.2f %%)", _N, _N*100.0/graph.vertex.length);
+    word[0]=String.format("Nodes: %d (%.2f %%)", _N, _N*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", _E, _E*100.0/graph._E);
     word[2]=String.format("Average degree: %.2f", _E*2.0/_N);
     word[3]=String.format("Relay colors: %d (%.2f%%)", graph._RLColors.size(), (graph.vertex.length-graph.primaries-surplusOrder)*100.0/graph.vertex.length);

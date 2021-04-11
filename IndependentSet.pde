@@ -174,7 +174,7 @@ abstract class IndependentSet extends Result implements Screen {
     fill(gui.headColor[2].value);
     text("Runtime data:", gui.thisFont.stepX(2), gui.thisFont.stepY(startHeight));
     fill(gui.bodyColor[0].value);
-    word[0]=String.format("Vertices: %d (%.2f %%)", (showNode.value&&partite.value)?colour.vertices.size():0, ((showNode.value&&partite.value)?colour.vertices.size():0)*100.0/graph.vertex.length);
+    word[0]=String.format("Nodes: %d (%.2f %%)", (showNode.value&&partite.value)?colour.vertices.size():0, ((showNode.value&&partite.value)?colour.vertices.size():0)*100.0/graph.vertex.length);
     word[1]=String.format("Edges: %d (%.2f %%)", _E, _E*100.0/graph._E);
     word[2]=String.format("Average degree: %.2f", (showNode.value&&partite.value)?_E*2.0/colour.vertices.size():0);
     int domination=partite.value&&showNode.value?colour.domination:0;
