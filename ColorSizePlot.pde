@@ -2,7 +2,7 @@ class ColorSizePlot extends Plots implements Screen {
   Checker _SLColors=new Checker("Smallest-last color sets"), primarySets=new Checker("Primary sets"), relayCandidates=new Checker("Relay candidates"), relaySets=new Checker("Relay sets");
   ExTable[] table={new ExTable(1, "Part", "Covered graph"), new ExTable(3, "Part", "Covered graph"), new ExTable(4, "Part", "Covered graph")};
   ColorSizePlot() {
-    chart=new Plot("Color", "Vertex", gui.partColor, "Smallest-last-colored sets", "Selected sets", "Relay candidates", "Relay-colored sets");
+    chart=new Plot("Color", "Node", gui.partColor, "Smallest-last-colored sets", "Selected sets", "Relay candidates", "Relay-colored sets");
     chart.setPlot(0, true);
     parts.addLast(_SLColors);
     table[0].setString(0, 0, "SL-colored");
