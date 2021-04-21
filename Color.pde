@@ -1,6 +1,6 @@
 class Color extends SysColor {//Color set has 3 status:0. no change, 1. reset, 2. restart
   int index, domination, deploy;//0: nochange, -1 algorithm stop ready to restart, 1 deploy
-  int[] cycles={-1, -1};//cycles[0]==-1 means calculating cycles, cycles[1]==-1 means reset status
+  int cycles=-2;//cycles<0 means calculating cycles, cycles==-2 means reset status (recalculating domain)
   double distance, maxDistance, minDistance;
   LinkedList<Vertex> vertices=new LinkedList<Vertex>();
   ListIterator<Vertex> nodeIterator;
@@ -13,7 +13,7 @@ class Color extends SysColor {//Color set has 3 status:0. no change, 1. reset, 2
     this.index=index;
   }
   boolean deployed() {
-    return cycles[1]>-1&&deploy==1&&nodeIterator.nextIndex()>0;
+    return cycles>-2&&deploy==1&&nodeIterator.nextIndex()>0;
   }
   void deploying() {
     if (deploy==1)
@@ -41,8 +41,8 @@ class Color extends SysColor {//Color set has 3 status:0. no change, 1. reset, 2
           }
         }
       } else {
-        if (cycles[0]==-1) {
-          cycles[0]=0;
+        if (cycles==-1) {
+          cycles=0;
           while (nodeIterator.hasPrevious()) {
             Vertex nodeA=nodeIterator.previous();
             for (ListIterator<Vertex> i=nodeA.arcs.listIterator(); i.hasNext(); ) {
@@ -52,20 +52,7 @@ class Color extends SysColor {//Color set has 3 status:0. no change, 1. reset, 2
                   Vertex nodeJ=j.next();
                   if (nodeJ.value>nodeA.value)
                     if (nodeI.arcs.contains(nodeJ))
-                      cycles[0]++;
-                    else {
-                      boolean getOut=false;
-                      for (Vertex nodeB : nodeI.arcs) {
-                        for (Vertex nodeC : nodeJ.arcs)
-                          if (nodeB!=nodeA&&nodeB==nodeC&&!nodeA.arcs.contains(nodeC)) {
-                            cycles[1]++;
-                            getOut=true;
-                            break;
-                          }
-                        if (getOut)
-                          break;
-                      }
-                    }
+                      cycles++;
                 }
             }
           }
@@ -84,8 +71,8 @@ class Color extends SysColor {//Color set has 3 status:0. no change, 1. reset, 2
     minDistance=Integer.MAX_VALUE;
   }
   void initialize(HashSet<Vertex> domain) {
-    if (cycles[1]==-1) {
-      cycles[1]=0;
+    if (cycles==-2) {
+      cycles=-1;
       nodeIterator=vertices.listIterator();
       domain.clear();
       for (Vertex nodeA : vertices) {
@@ -107,6 +94,6 @@ class Color extends SysColor {//Color set has 3 status:0. no change, 1. reset, 2
     for (Vertex node : vertices)
       node.clearColor(this);
     vertices.clear();
-    cycles[0]=cycles[1]=-1;
+    cycles=-1;
   }
 }

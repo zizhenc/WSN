@@ -183,13 +183,11 @@ abstract class IndependentSet extends Result implements Screen {
     word[5]=String.format("Minimum distance: %.3f", (_E==0)?0:colour.minDistance);
     word[6]=String.format("Average distance: %.3f", (_E==0)?0:colour.distance/_E);
     int len=7;
-    if (graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
-      len=11;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
+    if (graph.topology.value<7) {//For torus and Klein bottle, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
+      len=9;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
       int faces=showEdge.value?_E-colour.vertices.size()+graph.topology.characteristic():0;
       word[7]="Faces: "+faces;
-      word[8]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
-      word[9]=showEdge.value?String.format("3-cycle faces: %d (%.2f%%)", colour.cycles[0], colour.cycles[0]*100.0/faces):"3-cycle faces: 0 (0.00%)";
-      word[10]=showEdge.value?String.format("4-cycle faces: %d (%.2f%%)", colour.cycles[1], colour.cycles[1]*100.0/faces):"4-cycle faces: 0 (0.00%)";
+      word[8]=showEdge.value?String.format("Degree-3 faces: %d (%.2f%%)", colour.cycles, colour.cycles*100.0/faces):"Degree-3 faces: 0 (0.00%)";
     }
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+1+i));

@@ -8,7 +8,19 @@ abstract class Topology {
   int connectivity() {
     return value<6?5:8;
   }
-  int characteristic() {
-    return (value==5||value==6)?0:2;
+  int characteristic() {//with outer face correction
+    switch(value) {
+    case 1:
+    case 2:
+    case 3:
+      return 1;
+    case 4:
+      return 2;
+    case 5:
+    case 6:
+      return 0;
+    default:
+      return -1;
+    }
   }
 }

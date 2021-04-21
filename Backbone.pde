@@ -258,11 +258,10 @@ class Backbone extends Result implements Screen {
     word[6]="Components: "+components();
     word[7]="Giant component blocks: "+component.blocks.size();
     int len=9;
-    if (graph.topology.value<5) {//Only calculate faces for 2D and sphere topologies since begin from topoloty torus, if #of vertices is really small the cooresponding gabriel graph will change topology, then the face calculation would be wrong
-      len+=2;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
+    if (graph.topology.value<6) {
+      len++;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
       int faces=_E-_N+components()+graph.topology.characteristic()-1;
-      word[len-3]="Faces: "+faces;
-      word[len-2]=String.format("Average face size: %.2f", faces>0?_E*2.0/faces:0);
+      word[len-2]="Faces: "+faces;
     }
     word[len-1]=String.format("3+-Coverage: %.2f%%",kCoverage*100);
     for (int i=0; i<len; i++)

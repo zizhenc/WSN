@@ -82,7 +82,7 @@ class Vertex {
   void initialize(int value, int connectivity) {
     this.value=value;
     neighbors=new LinkedList<Vertex>();
-    colorList=new LinkedList[connectivity-1];//0 means 2 in connectivity 
+    colorList=new LinkedList[connectivity-1];//0 means 2 in connectivity
     for (int i=0; i<colorList.length; i++)
       colorList[i]=new LinkedList<Color>();
     coloredNeighbors=new HashMap<Color, LinkedList<Vertex>>();
