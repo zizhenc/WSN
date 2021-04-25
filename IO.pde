@@ -1,5 +1,5 @@
 public class IO {
-  String[] header={"Index", "Size", "Edges", "Average degree", "Maximum distance", "Minimum distance", "Average distance", "Faces", "Degree-3 faces", "Dominates"}, part={"Bipartite", "Giant component", "Two-core", "Giant block"}, factor={" size", " edge", " average degree", " faces", " primary dominates", " relay domminates", " dominates"};
+  String[] header={"Color#", "Order", "Size", "Average degree", "Maximum distance", "Minimum distance", "Average distance", "Faces", "Degree-3 faces", "Dominates"}, part={"Bipartite", "Giant component", "Two-core", "Giant block"}, factor={" order", " size", " average degree", " faces", " primary dominates", " relay domminates", " dominates"};
   ArrayList<Graph> results=new ArrayList<Graph>();
   LinkedList<String> resultLabels=new LinkedList<String>();
   StringBuffer path=new StringBuffer("Results");
@@ -43,6 +43,8 @@ public class IO {
   IO() {
     for (int i=0; i<3; i++)
       domain[i]=new HashSet<Vertex>();
+    tableII.addColumn("Primary color#");
+    tableII.addColumn("Relay color#");
     for (String p : part)
       for (String f : factor)
         tableII.addColumn(p+f);
@@ -102,7 +104,7 @@ public class IO {
     text+="Maximum degree,"+graph.maxDegree+separator;
     text+="Minimum degree,"+graph.minDegree+separator;
     text+="Maximum minimum-degree,"+graph.maxMinDegree+separator;
-    text+="Termial clique size,"+graph.clique.size()+separator;
+    text+="Termial clique order,"+graph.clique.size()+separator;
     text+="Colors,"+graph._SLColors.size()+separator;
     text+="Primary colors,"+graph._PYColors.size()+separator;
     text+="Relay colors,"+graph._RLColors.size()+separator;
@@ -144,6 +146,8 @@ public class IO {
     graph.calculateBackbones();
     for (Component component : graph.backbone) {
       TableRow row=tableII.addRow();
+      row.setInt("Primary color#",component.primary.index);
+      row.setInt("Relay color#",component.relay.index);
       for (int i=0; i<3; i++)
         domain[i].clear();
       for (Vertex node : component.giant[0])
@@ -196,7 +200,7 @@ public class IO {
       vertices[2]=vertices[1]-component.degreeList[0].value;
       vertices[3]=component.giant[0].size();
       for (int i=0; i<part.length; i++) {
-        row.setInt(i*factor.length, vertices[i]);
+        row.setInt(i*factor.length+2, vertices[i]);
         degrees[i]=0;
       }
       for (LinkedList<Vertex> list : component.components) {
@@ -228,22 +232,22 @@ public class IO {
         degrees[3]=degrees[2]-degrees[3]+component.tailsXGiant();
       }
       for (int i=0; i<part.length; i++) {
-        row.setInt(i*factor.length+1, degrees[i]/2);
-        row.setFloat(i*factor.length+2, degrees[i]*1.0/vertices[i]);
-        row.setString(i*factor.length+4, String.format("%d (%.2f%%)", dominants[1][i], dominants[1][i]*100.0/graph.vertex.length));
-        row.setString(i*factor.length+5, String.format("%d (%.2f%%)", dominants[2][i], dominants[2][i]*100.0/graph.vertex.length));
-        row.setString(i*factor.length+6, String.format("%d (%.2f%%)", dominants[0][i], dominants[0][i]*100.0/graph.vertex.length));
+        row.setInt(i*factor.length+1+2, degrees[i]/2);
+        row.setFloat(i*factor.length+2+2, degrees[i]*1.0/vertices[i]);
+        row.setString(i*factor.length+4+2, String.format("%d (%.2f%%)", dominants[1][i], dominants[1][i]*100.0/graph.vertex.length));
+        row.setString(i*factor.length+5+2, String.format("%d (%.2f%%)", dominants[2][i], dominants[2][i]*100.0/graph.vertex.length));
+        row.setString(i*factor.length+6+2, String.format("%d (%.2f%%)", dominants[0][i], dominants[0][i]*100.0/graph.vertex.length));
       }
       if (graph.topology.value<6) {
         int faces=degrees[0]/2-vertices[0]+component.components.size()-1+component.components.getFirst().size()+graph.topology.characteristic()-1;
         row.setInt("Bipartite faces", faces);
         for (int i=1; i<part.length; i++) {
           faces=degrees[i]/2-vertices[i]+graph.topology.characteristic();
-          row.setInt(i*factor.length+3, faces);
+          row.setInt(i*factor.length+3+2, faces);
         }
       } else
         for (int i=0; i<part.length; i++)
-          row.setString(i*factor.length+3, "N/A");
+          row.setString(i*factor.length+3+2, "N/A");
     }
     saveTable(tableII, file);
     box.pop("Backbone summary have been saved!", "Information", "Excellent");
@@ -252,22 +256,29 @@ public class IO {
     graph.calculateBackbones();
     StringBuffer text=new StringBuffer("Two-core"+System.getProperty("line.separator")+System.getProperty("line.separator"));
     int[][] primary=new int[13][graph.backbone.length], relay=new int[13][graph.backbone.length], total=new int[13][graph.backbone.length];
+    String[] primeColor=new String[graph.backbone.length], relayColor=new String[graph.backbone.length], totalColor=new String[graph.backbone.length];
     for (int i=0; i<graph.backbone.length; i++) {
       Component backbone=graph.getBackbone(i);
+      primeColor[i]=backbone.primary.index+"";
+      relayColor[i]=backbone.relay.index+"";
+      totalColor[i]=backbone.primary.index+"|"+backbone.relay.index;
       for (Vertex node : graph.vertex)
         node.k[0]=node.k[1]=0;
+      for (int j=1; j<backbone.degreeList.length; j++)
+        for (Vertex node=backbone.degreeList[j].next; node!=null; node=node.next)
+          node.k[0]=-1;
       for (int j=1; j<backbone.degreeList.length; j++)
         for (Vertex node=backbone.degreeList[j].next; node!=null; node=node.next)
           cover(node, backbone);
       updateCoverage(primary, relay, total, i);
     }
-    recordCoverage(text, primary, relay, total);
-    calculateCoverage("Giant block", 0, text, primary, relay, total);
-    calculateCoverage("Giant component", 1, text, primary, relay, total);
+    recordCoverage(text, primary, relay, total, primeColor, relayColor, totalColor);
+    calculateCoverage("Giant block", 0, text, primary, relay, total, primeColor, relayColor, totalColor);
+    calculateCoverage("Giant component", 1, text, primary, relay, total, primeColor, relayColor, totalColor);
     output(text.toString());
     box.pop("Backbone k-coverages have been saved!", "Information", "Cool");
   }
-  void calculateCoverage(String core, int coreIndex, StringBuffer text, int[][] primary, int[][] relay, int[][] total) {
+  void calculateCoverage(String core, int coreIndex, StringBuffer text, int[][] primary, int[][] relay, int[][] total, String[] primeColor, String[] relayColor, String[] totalColor) {
     text.append(core+System.getProperty("line.separator")+System.getProperty("line.separator"));
     for (int i=0; i<total.length; i++)
       for (int j=0; j<graph.backbone.length; j++) {
@@ -279,14 +290,15 @@ public class IO {
       Component backbone=graph.getBackbone(i);
       for (Vertex node : graph.vertex)
         node.k[0]=node.k[1]=0;
-      for (Vertex node : backbone.giant[coreIndex])
+      for (Vertex node : backbone.giant[coreIndex]){
+        node.k[0]=-1;
         cover(node, backbone);
+      }
       updateCoverage(primary, relay, total, i);
     }
-    recordCoverage(text, primary, relay, total);
+    recordCoverage(text, primary, relay, total, primeColor, relayColor, totalColor);
   }
   void cover(Vertex nodeA, Component backbone) {
-    nodeA.k[0]=-1;
     for (Vertex nodeB : nodeA.neighbors)
       if (nodeB.k[0]>=0)
         nodeB.k[nodeA.primeColor==backbone.primary?0:1]++;
@@ -299,7 +311,7 @@ public class IO {
         total[node.k[0]+node.k[1]][backbone]++;
       }
   }
-  void recordCoverage(StringBuffer text, int[][] primary, int[][] relay, int[][] total) {
+  void recordCoverage(StringBuffer text, int[][] primary, int[][] relay, int[][] total, String[] primeColor, String[] relayColor, String[] totalColor) {
     coverage[0]=coverage[1]=coverage[2]=-1;
     for (int i=total.length-1; i>=0; i--) {
       for (int j=0; j<graph.backbone.length; j++) {
@@ -315,15 +327,21 @@ public class IO {
       if (coverage[0]>=0&&coverage[1]>=0&&coverage[2]>=0)
         break;
     }
-    recordPartCoverage(text, "Primary", 0, primary);
-    recordPartCoverage(text, "Relay", 1, relay);
-    recordPartCoverage(text, "Total", 2, total);
+    text.append("Primary#");
+    for (int i=0; i<graph.backbone.length; i++)
+      text.append(","+primeColor[i]);
+    recordPartCoverage(text, 0, primary);
+    text.append("Relay#");
+    for (int i=0; i<graph.backbone.length; i++)
+      text.append(","+relayColor[i]);
+    recordPartCoverage(text, 1, relay);
+    text.append("Total#|#");
+    for (int i=0; i<graph.backbone.length; i++)
+      text.append(","+totalColor[i]);
+    recordPartCoverage(text, 2, total);
     text.append(System.getProperty("line.separator"));
   }
-  void recordPartCoverage(StringBuffer text, String part, int partIndex, int[][] coverMatrix) {
-    text.append(part);
-    for (int i=0; i<graph.backbone.length; i++)
-      text.append(","+(i+1));
+  void recordPartCoverage(StringBuffer text, int partIndex, int[][] coverMatrix) {
     text.append(System.getProperty("line.separator"));
     for (int i=coverage[partIndex]; i>=0; i--) {
       text.append(i);
@@ -370,15 +388,15 @@ public class IO {
   }
   void independentSet(Color colour) {
     TableRow row=tableI.addRow();
-    row.setInt("Index", colour.index);
-    row.setInt("Size", colour.vertices.size());
+    row.setInt("Color#", colour.index);
+    row.setInt("Order", colour.vertices.size());
     colour.initialize(domain[0]);
     while (colour.deploy==1)
       colour.deploying();
     int degree=0;
     for (Vertex node : colour.vertices)
       degree+=node.arcs.size();
-    row.setInt("Edges", degree/2);
+    row.setInt("Size", degree/2);
     row.setFloat("Average degree", degree*1.0/colour.vertices.size());
     row.setDouble("Maximum distance", colour.maxDistance);
     row.setDouble("Minimum distance", colour.minDistance);

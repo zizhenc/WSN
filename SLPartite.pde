@@ -17,7 +17,7 @@ class SLPartite extends Partite {
     word[4]="Deg(Max.): "+graph.maxDegree;
     word[5]="Deg(Min.): "+graph.minDegree;
     word[6]=String.format("Deg(Avg.): %.2f", graph._E*2.0/graph.vertex.length);
-    word[7]="Terminal clique size: "+graph.clique.size();
+    word[7]="Terminal clique order: "+graph.clique.size();
     word[8]="Maximum min-degree: "+graph.maxMinDegree;
     word[9]="Smallest-last coloring colors: "+graph._SLColors.size();
     fill(gui.bodyColor[0].value);

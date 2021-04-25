@@ -237,7 +237,7 @@ class Backbone extends Result implements Screen {
     word[4]="Deg(Max.): "+graph.maxDegree;
     word[5]="Deg(Min.): "+graph.minDegree;
     word[6]=String.format("Deg(Avg.): %.2f", graph._E*2.0/graph.vertex.length);
-    word[7]="Terminal clique size: "+graph.clique.size();
+    word[7]="Terminal clique order: "+graph.clique.size();
     word[8]="Maximum min-degree: "+graph.maxMinDegree;
     word[9]="Smallest-last coloring colors: "+graph._SLColors.size();
     word[10]=String.format("Primary colors: %d (%.2f %%)", graph._PYColors.size(), graph.primaries*100.0/graph.vertex.length);
@@ -267,11 +267,11 @@ class Backbone extends Result implements Screen {
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(16+i+1));
     fill(primary.value);
-    text("Primary partite #"+(primary.index+1), gui.thisFont.stepX(3), gui.thisFont.stepY(17+len));
+    text("Primary color #"+primary.index, gui.thisFont.stepX(3), gui.thisFont.stepY(17+len));
     fill(gui.bodyColor[0].value);
-    text(" & ", gui.thisFont.stepX(3)+textWidth("Primary partite #"+(primary.index+1)), gui.thisFont.stepY(17+len));
+    text(" & ", gui.thisFont.stepX(3)+textWidth("Primary color #"+primary.index), gui.thisFont.stepY(17+len));
     fill(relay.value);
-    text("relay partite #"+(relay.index+1), gui.thisFont.stepX(3)+textWidth("Primary partite #"+(primary.index+1)+" & "), gui.thisFont.stepY(17+len));
+    text("relay color #"+relay.index, gui.thisFont.stepX(3)+textWidth("Primary color #"+primary.index+" & "), gui.thisFont.stepY(17+len));
     if (modes.value==1) {
       barChart.showFrame(gui.thisFont.stepX(3), gui.thisFont.stepY(17+len)+gui.thisFont.gap(), gui.margin(), gui.margin());
       barChart.showLabels(gui.thisFont.stepX(2)+gui.margin()-textWidth("Degree"), gui.thisFont.stepY(19+len));

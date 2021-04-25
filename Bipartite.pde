@@ -211,11 +211,11 @@ abstract class Bipartite extends Procedure implements Screen {
     for (int i=0; i<len; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+i+1));
     fill(primary.value);
-    text("Primary partite #"+(primary.index+1), gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len+1));
+    text("Primary color #"+primary.index, gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len+1));
     fill(gui.bodyColor[0].value);
-    text(" & ", gui.thisFont.stepX(3)+textWidth("Primary partite #"+(primary.index+1)), gui.thisFont.stepY(startHeight+len+1));
+    text(" & ", gui.thisFont.stepX(3)+textWidth("Primary color #"+primary.index), gui.thisFont.stepY(startHeight+len+1));
     fill(relay.value);
-    text("relay partite #"+(relay.index+1), gui.thisFont.stepX(3)+textWidth("Primary partite #"+(primary.index+1)+" & "), gui.thisFont.stepY(startHeight+len+1));
+    text("relay color #"+relay.index, gui.thisFont.stepX(3)+textWidth("Primary color #"+primary.index+" & "), gui.thisFont.stepY(startHeight+len+1));
     if (modes.value==1) {
       barChart.showFrame(gui.thisFont.stepX(3), gui.thisFont.stepY(startHeight+len+1)+gui.thisFont.gap(), gui.margin(), gui.margin());
       barChart.showLabels(gui.thisFont.stepX(2)+gui.margin()-textWidth("Degree"), gui.thisFont.stepY(startHeight+len+3));

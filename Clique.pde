@@ -37,7 +37,7 @@ class Clique extends Result implements Screen {
     word[4]="Deg(Max.): "+graph.maxDegree;
     word[5]="Deg(Min.): "+graph.minDegree;
     word[6]=String.format("Deg(Avg.): %.2f", graph._E*2.0/graph.vertex.length);
-    word[7]="Terminal clique size: "+graph.clique.size();
+    word[7]="Terminal clique order: "+graph.clique.size();
     fill(gui.bodyColor[0].value);
     for (int i=0; i<word.length; i++)
       text(word[i], gui.thisFont.stepX(3), gui.thisFont.stepY(3+i));
