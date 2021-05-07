@@ -183,23 +183,18 @@ class Component {
           depthFirstSearch(nodeB, nodeA);
       }
       if (precessor!=null)
-        if (precessor.order[archive]==1)
-          seperate(nodeA, precessor); 
-        else if (nodeA.lowpoint<precessor.order[archive])
+        if (nodeA.lowpoint<precessor.order[archive])
           precessor.lowpoint=min(precessor.lowpoint, nodeA.lowpoint);
-        else
-          seperate(nodeA, precessor);
+      else {
+        blocks.addLast(new LinkedList<Vertex>());
+        Vertex s;
+        do {
+          s=stack.pop();
+          blocks.getLast().addLast(s);
+        } while (s!=nodeA);
+        blocks.getLast().addLast(precessor);
+      }
     } else
       precessor.lowpoint=min(precessor.lowpoint, nodeA.order[archive]);
-  }
-  void seperate(Vertex node, Vertex precessor) {
-    blocks.addLast(new LinkedList<Vertex>());
-    Vertex s=stack.pop();
-    while (s!=node) {
-      blocks.getLast().addLast(s);
-      s=stack.pop();
-    }
-    blocks.getLast().addLast(s);
-    blocks.getLast().addLast(precessor);
   }
 }
