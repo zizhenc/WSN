@@ -185,15 +185,15 @@ class Component {
       if (precessor!=null)
         if (nodeA.lowpoint<precessor.order[archive])
           precessor.lowpoint=min(precessor.lowpoint, nodeA.lowpoint);
-      else {
-        blocks.addLast(new LinkedList<Vertex>());
-        Vertex s;
-        do {
-          s=stack.pop();
-          blocks.getLast().addLast(s);
-        } while (s!=nodeA);
-        blocks.getLast().addLast(precessor);
-      }
+        else {
+          blocks.addLast(new LinkedList<Vertex>());
+          Vertex s;
+          do {
+            s=stack.pop();
+            blocks.getLast().addLast(s);
+          } while (s!=nodeA);
+          blocks.getLast().addLast(precessor);
+        }
     } else
       precessor.lowpoint=min(precessor.lowpoint, nodeA.order[archive]);
   }

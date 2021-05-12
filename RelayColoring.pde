@@ -32,7 +32,8 @@ class RelayColoring extends Procedure implements Screen {
   void restart() {
     if (graph.backbone!=null)
       for (Component component : graph.backbone)
-        component.archive=-1;
+        if (component!=null)
+          component.archive=-1;
     for (Color colour : graph._RLColors)
       colour.clean();
     graph._RLColors.clear();

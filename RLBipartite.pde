@@ -8,6 +8,7 @@ class RLBipartite extends Bipartite {
     primary=component.primary;
     relay=component.relay;
     reset();
+    component.restart();//in case some component has already been deployed
   }
   int getAmount() {
     return graph._RLColors.size();
