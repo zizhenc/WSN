@@ -206,6 +206,7 @@ abstract class Bipartite extends Procedure implements Screen {
     if (graph.topology.value<7) {
       len++;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
       int faces=_E-_N+components()+graph.topology.characteristic()-1;
+      faces=faces<0?0:faces;
       word[len-1]="Faces: "+faces;
     }
     for (int i=0; i<len; i++)

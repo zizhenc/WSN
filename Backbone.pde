@@ -261,6 +261,7 @@ class Backbone extends Result implements Screen {
     if (graph.topology.value<6) {
       len++;//another problem is to get rid of out face, which will influence cycle calculation if the # of vertices is small (Imagine if the out face has 3 or 4 boundaries, too).
       int faces=_E-_N+components()+graph.topology.characteristic()-1;
+      faces=faces<0?0:faces;
       word[len-2]="Faces: "+faces;
     }
     word[len-1]=String.format("3+-Coverage: %.2f%%",kCoverage*100);

@@ -8,7 +8,7 @@ public class IO {
   String nodes, file;
   Table tableI=new Table(), tableII=new Table();
   int[] vertices=new int[part.length], degrees=new int[part.length], coverage=new int[3];
-  int[][] dominants={new int[part.length], new int[part.length], new int[part.length]};//dominaents[0]->total, dominants[1]->primary, dominants[2]->relay
+  int[][] dominants={new int[part.length], new int[part.length], new int[part.length]};//dominants[0]->total, dominants[1]->primary, dominants[2]->relay
   HashSet<Vertex>[] domain=new HashSet[3];//domain[0]->total, domain[1]->primary, domain[2]->relay
   Action loadAction=new Action() {
     void go() {
@@ -146,8 +146,8 @@ public class IO {
     graph.calculateBackbones();
     for (Component component : graph.backbone) {
       TableRow row=tableII.addRow();
-      row.setInt("Primary color#",component.primary.index);
-      row.setInt("Relay color#",component.relay.index);
+      row.setInt("Primary color#", component.primary.index);
+      row.setInt("Relay color#", component.relay.index);
       for (int i=0; i<3; i++)
         domain[i].clear();
       for (Vertex node : component.giant[0])
@@ -158,20 +158,22 @@ public class IO {
         for (int i=0; i<3; i++)
           dominants[i][0]=dominants[i][1]=dominants[i][2]=dominants[i][3];
       else {
-        for (LinkedList<Vertex> list : component.blocks)
-          if (list!=component.giant[0]) {
-            for (Vertex node : list)
-              if (node.order[1]!=-1&&node.order[1]!=-3)
+        if (component.blocks.size()>1) {
+          for (LinkedList<Vertex> list : component.blocks)
+            if (list!=component.giant[0]) {
+              for (Vertex node : list)
+                if (node.order[1]!=-1&&node.order[1]!=-3)
+                  pushDominants(node, component.primary);
+              if (domain[2].size()==graph.vertex.length&&domain[1].size()==graph.vertex.length)
+                break;
+            }
+          if (domain[2].size()<graph.vertex.length||domain[1].size()<graph.vertex.length)
+            for (ListIterator<LinkedList<Vertex>> i=component.blocks.listIterator(component.blocks.size()-1); i.hasPrevious(); ) {
+              Vertex node=i.previous().getLast();
+              if (node.order[1]==-1)
                 pushDominants(node, component.primary);
-            if (domain[2].size()==graph.vertex.length&&domain[1].size()==graph.vertex.length)
-              break;
-          }
-        if (domain[2].size()<graph.vertex.length||domain[1].size()<graph.vertex.length)
-          for (ListIterator<LinkedList<Vertex>> i=component.blocks.listIterator(component.blocks.size()-1); i.hasPrevious(); ) {
-            Vertex node=i.previous().getLast();
-            if (node.order[1]==-1)
-              pushDominants(node, component.primary);
-          }
+            }
+        }
         for (int i=0; i<3; i++)
           dominants[i][2]=domain[i].size();
         if (dominants[2][2]==graph.vertex.length&&dominants[1][2]==graph.vertex.length)
@@ -214,7 +216,7 @@ public class IO {
       degrees[2]=degrees[1]-component.degreeList[0].value*2;
       if (component.blocks.size()==1)
         degrees[3]=degrees[2];
-      else {
+      else if (component.blocks.size()>1) {
         for (LinkedList<Vertex> list : component.blocks)
           if (component.giant[0]!=list)
             for (Vertex node : list)
@@ -233,16 +235,18 @@ public class IO {
       }
       for (int i=0; i<part.length; i++) {
         row.setInt(i*factor.length+1+2, degrees[i]/2);
-        row.setFloat(i*factor.length+2+2, degrees[i]*1.0/vertices[i]);
+        row.setFloat(i*factor.length+2+2, vertices[i]==0?0:degrees[i]*1.0/vertices[i]);
         row.setString(i*factor.length+4+2, String.format("%d (%.2f%%)", dominants[1][i], dominants[1][i]*100.0/graph.vertex.length));
         row.setString(i*factor.length+5+2, String.format("%d (%.2f%%)", dominants[2][i], dominants[2][i]*100.0/graph.vertex.length));
         row.setString(i*factor.length+6+2, String.format("%d (%.2f%%)", dominants[0][i], dominants[0][i]*100.0/graph.vertex.length));
       }
       if (graph.topology.value<6) {
         int faces=degrees[0]/2-vertices[0]+component.components.size()-1+component.components.getFirst().size()+graph.topology.characteristic()-1;
+        faces=faces<0?0:faces;
         row.setInt("Bipartite faces", faces);
         for (int i=1; i<part.length; i++) {
           faces=degrees[i]/2-vertices[i]+graph.topology.characteristic();
+          faces=faces<0?0:faces;
           row.setInt(i*factor.length+3+2, faces);
         }
       } else
@@ -290,7 +294,7 @@ public class IO {
       Component backbone=graph.getBackbone(i);
       for (Vertex node : graph.vertex)
         node.k[0]=node.k[1]=0;
-      for (Vertex node : backbone.giant[coreIndex]){
+      for (Vertex node : backbone.giant[coreIndex]) {
         node.k[0]=-1;
         cover(node, backbone);
       }
