@@ -1,7 +1,7 @@
 class SmallestLastColoring extends Procedure implements Screen {
   int _N, _E;
   boolean[] slot;
-  Switcher showEdge=new Switcher("Edge", "Edge"), showMeasurement=new Switcher("Measurement", "Measurement");
+  Switcher showEdge=new Switcher("Edge [e]", "Edge [e]"), showMeasurement=new Switcher("Measurement [m]", "Measurement [m]");
   Checker uncoloredGraph=new Checker("Uncolored graph"), coloredGraph=new Checker("Colored graph");
   Vertex middleNode=new Vertex();
   SmallestLastColoring() {

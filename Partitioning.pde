@@ -1,7 +1,7 @@
 class Partitioning extends Procedure implements Screen {
   int _E, frame, pivot;
   Slider breakpoint=new Slider("Selected percentile", 50, 1, 100, 1), selectColorSets=new Slider("Selected color sets", 1, 1);
-  Switcher showEdge=new Switcher("Edge", "Edge");
+  Switcher showEdge=new Switcher("Edge [e]", "Edge [e]");
   Checker remainingGraph=new Checker("Remaining graph"), selectedGraph=new Checker("Selected graph");
   LinkedList<String> modalLabels=new LinkedList<String>();
   Radio modes=new Radio(new String[]{"Auto select", "Manual select"});

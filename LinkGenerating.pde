@@ -2,7 +2,7 @@ class LinkGenerating extends Procedure implements Screen {
   int _N;
   Radio methods=new Radio("Exhaustive method", "Sweep method", "Cell method"), coordinates=new Radio("Cartesian system");
   Checker remainingVertices=new Checker("Remaining vertices"), generatedGraph=new Checker("Generated graph");
-  Switcher showEdge=new Switcher("Edge", "Edge");
+  Switcher showEdge=new Switcher("Edge [e]", "Edge [e]");
   LinkGenerating() {
     word=new String[3];
     parts.addLast(remainingVertices);

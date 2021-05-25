@@ -1,5 +1,5 @@
 abstract class Plots extends Charts {
-  Switcher showNode=new Switcher("Node", "Node"), showEdge=new Switcher("Edge", "Edge");
+  Switcher showNode=new Switcher("Node [n]", "Node [n]"), showEdge=new Switcher("Edge [e]", "Edge [e]");
   Slider nodeWeight=new Slider("Node weight");
   abstract void moreSettings();
   Plots() {

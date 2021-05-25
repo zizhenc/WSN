@@ -2,7 +2,7 @@ class RelayColoring extends Procedure implements Screen {
   int connection, _N, _E;
   boolean[] slot;
   Slider connectivity=new Slider("Connectivity", 2, 1);
-  Switcher showEdge=new Switcher("Edge", "Edge");
+  Switcher showEdge=new Switcher("Edge [e]", "Edge [e]");
   Checker surplus=new Checker("Surplus"), coloredGraph=new Checker("Colored graph"), uncoloredGraph=new Checker("Uncolored graph"), primaryGraph=new Checker("Primary graph");
   RelayColoring() {
     parts.addLast(coloredGraph);

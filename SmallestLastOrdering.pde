@@ -1,5 +1,5 @@
 class SmallestLastOrdering extends Procedure implements Screen {
-  Switcher showMeasurement=new Switcher("Measurement", "Measurement"), showEdge=new Switcher("Edge", "Edge");
+  Switcher showMeasurement=new Switcher("Measurement [m]", "Measurement [m]"), showEdge=new Switcher("Edge [e]", "Edge [e]");
   Checker deletedGraph=new Checker("Deleted graph"), remainingGraph=new Checker("Remaning graph");
   int[] degree=new int[2];//degree/2, degree;
   int _N, _E;

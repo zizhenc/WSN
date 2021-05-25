@@ -5,7 +5,7 @@ abstract class IndependentSet extends Result implements Screen {
   Region region=new Region();
   Vertex middleNode=new Vertex();
   Checker partite=new Checker("Partite");
-  Switcher showRegion=new Switcher("Region", "Region"), showMeasurement=new Switcher("Measurement", "Measurement"), arrow=new Switcher("Arrow", "Arrow");
+  Switcher showRegion=new Switcher("Region [t]", "Region [t]"), showMeasurement=new Switcher("Measurement [m]", "Measurement [m]"), arrow=new Switcher("Arrow [k]", "Arrow [k]");
   HashSet<Vertex> domain=new HashSet<Vertex>();
   ArrayList<Color> colorPool;
   abstract void setColorPool();
@@ -87,6 +87,9 @@ abstract class IndependentSet extends Result implements Screen {
         tunes.addLast(regionAmount);
       else
         tunes.removeLast();
+      break;
+    case 'k':
+      arrow.commit();
       break;
     case 'm':
       showMeasurement.commit();

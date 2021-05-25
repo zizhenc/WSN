@@ -1,6 +1,6 @@
 public class SystemSettings extends Setting implements Screen {
   int index;
-  Switcher saveMode=new Switcher("Auto", "Manual"), colorMode=new Switcher("Demo", "Paper"), captureMode=new Switcher("Fullscreen", "Partial screen");
+  Switcher saveMode=new Switcher("Auto [s]", "Manual [s]"), colorMode=new Switcher("Demo [c]", "Paper [c]"), captureMode=new Switcher("Fullscreen [x]", "Partial screen [x]");
   Slider fps=new Slider("FPS", 1, 144, 1);
   Animation sonic=new GIF("Sonic", 8);
   PathBar[] bar={new PathBar("Default save path", io.path), new PathBar("Screenshot path", capture.path), new PathBar("Error log path", error.path)};

@@ -8,7 +8,7 @@ abstract class Bipartite extends Procedure implements Screen {
   Slider backbone=new Slider("Backbone #", 1, 1), regionAmount=new Slider("Region amount", 1, 1);
   Checker minorComponents=new Checker("Minor components"), giantComponent=new Checker("Giant component"), tails=new Checker("Tails"), minorBlocks=new Checker("Minor blocks"), giantBlock=new Checker("Giant block");
   ExTable table;
-  Switcher showEdge=new Switcher("Edge", "Edge"), showRegion=new Switcher("Region", "Region");
+  Switcher showEdge=new Switcher("Edge [e]", "Edge [e]"), showRegion=new Switcher("Region [t]", "Region [t]");
   BarChart barChart=new BarChart("Degree", "Vertex", plotColor, "Primary", "Relay", "Total");
   Checker[] plot={new Checker("Primary"), new Checker("Relay"), new Checker("Total")};
   Component component;

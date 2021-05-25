@@ -1,7 +1,7 @@
 class ColorSettings extends Setting implements Screen {
   Slider r=new Slider("Red", 0, 255, 1), g=new Slider("Green", 0, 255, 1), b=new Slider("Blue", 0, 255, 1);
   Radio colors=new Radio("Main", "Background", "Frame", "Base", "Highlight", "Text header 0", "Text header 1", "Text header 2", "Text body 0", "Text body 1", "Text body 2", "Graph part 0", "Graph part 1", "Graph part 2", "Graph part 3");
-  Button reset=new Button("Reset");
+  Button reset=new Button("Reset [r]");
   ColorSettings(WSN wsn) {
     label="Colors";
     reset.alignment=CENTER;

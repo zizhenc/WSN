@@ -3,9 +3,9 @@ abstract class Charts {
   LinkedList<Slider> tunes=new LinkedList<Slider>();
   LinkedList<Switcher> switches=new LinkedList<Switcher>();
   LinkedList<Checker> parts=new LinkedList<Checker>();
-  Switcher play=new Switcher("Stop", "Play"), showMeasurement=new Switcher("Measurement", "Measurement");
+  Switcher play=new Switcher("Stop [p]", "Play [p]"), showMeasurement=new Switcher("Measurement [m]", "Measurement [m]");
   Slider edgeWeight=new Slider("Edge weight"), interval=new Slider("Display interval", 0);
-  Button[] button={new Button("Reset"), new Button("Restore"), new Button("Screenshot")};
+  Button[] button={new Button("Reset [r]"), new Button("Restore [g]"), new Button("Screenshot [x]")};
   Chart chart;
   Charts() {
     switches.addLast(play);

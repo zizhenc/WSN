@@ -1,5 +1,5 @@
 class DegreeDistribution extends Charts implements Screen {
-  Switcher showBar=new Switcher("Bar", "Bar");
+  Switcher showBar=new Switcher("Bar [b]", "Bar [b]");
   Checker degreeHistogram=new Checker("Degree histogram"), inDegreeHistogram=new Checker("Indegree histogram"), outDegreeHistogram=new Checker("Outdegree histogram");
   DegreeDistribution() {
     switches.addLast(showBar);

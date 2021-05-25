@@ -3,8 +3,8 @@ abstract class Procedure {
   String[] word;
   Vertex nodeM=new Vertex();
   Slider nodeWeight=new Slider("Node weight"), edgeWeight=new Slider("Edge weight"), interval=new Slider("Display interval", 1);
-  Button[] button={new Button("Reset"), new Button("Restore"), new Button("Screenshot")};
-  Switcher play=new Switcher("Stop", "Play"), spin=new Switcher("Spin", "Spin"), showNode=new Switcher("Node", "Node"), projection=new Switcher("Orthographic", "Perspective");
+  Button[] button={new Button("Reset [r]"), new Button("Restore [g]"), new Button("Screenshot [x]")};
+  Switcher play=new Switcher("Stop [p]", "Play [p]"), spin=new Switcher("Spin [q]", "Spin [q]"), showNode=new Switcher("Node [n]", "Node [n]"), projection=new Switcher("Orthographic [o]", "Perspective [o]");
   LinkedList<Slider> tunes=new LinkedList<Slider>();
   LinkedList<Checker> parts=new LinkedList<Checker>();
   LinkedList<Switcher> switches=new LinkedList<Switcher>();
@@ -152,6 +152,9 @@ abstract class Procedure {
         break;
       case 'q':
         spin.commit();
+        break;
+      case 'o':
+        projection.commit();
         break;
       case 'n':
         showNode.commit();
