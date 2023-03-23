@@ -25,8 +25,8 @@ class Region {
     }
   }
   void sphereTangency(Vertex vertex) {
-    stroke(gui.colour[2].value, 70);
-    fill(gui.colour[2].value, 70);
+    stroke(gui.colour[2].value, 90);
+    fill(gui.colour[2].value, 30);
     PVector node=new PVector((float)vertex.x, (float)vertex.y, (float)vertex.z);
     PVector axis=upVector.cross(node);
     pushMatrix();
@@ -40,8 +40,8 @@ class Region {
     popMatrix();
   }
   void torusTangency(Vertex vertex) {
-    stroke(gui.colour[2].value, 70);
-    fill(gui.colour[2].value, 70);
+    stroke(gui.colour[2].value, 90);
+    fill(gui.colour[2].value, 30);
     PVector origin=new PVector((float)vertex.x, (float)vertex.y, 0);
     origin.normalize();
     PVector node=new PVector((float)vertex.x, (float)vertex.y, (float)vertex.z);
@@ -58,12 +58,12 @@ class Region {
     popMatrix();
   }
   void parallel(Vertex vertex) {
-    stroke(gui.colour[2].value, 70);
-    fill(gui.colour[2].value, 70);
+    stroke(gui.colour[2].value, 90);
+    fill(gui.colour[2].value, 30);
     circle((float)vertex.x, (float)vertex.y, (float)graph.r*2);
   }
   void space(Vertex vertex) {
-    stroke(gui.colour[2].value, 70);
+    stroke(gui.colour[2].value);
     sphereDetail(12);
     noFill();
     pushMatrix();

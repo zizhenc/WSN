@@ -61,7 +61,7 @@ class Surplus extends Result implements Screen {
   void showNetwork(Vertex nodeA) {
     if (showEdge.value)
       for (Vertex nodeB : nodeA.neighbors)
-        if (nodeA.value<nodeB.value&&((nodeB.order[1]>0||nodeB.order[1]==-1)&&minorBlocks.value||nodeB.order[1]==0&&minorComponents.value||nodeB.order[1]==-2&&tails.value||nodeB.order[1]==-3&&(giantBlocks.value||minorBlocks.value)||nodeB.order[1]==-4&&giantBlocks.value)) {
+        if (nodeA.value<nodeB.value&&(surplus.value&&nodeB.order[1]==-5||(nodeB.order[1]>0||nodeB.order[1]==-1)&&minorBlocks.value||nodeB.order[1]==0&&minorComponents.value||nodeB.order[1]==-2&&tails.value||nodeB.order[1]==-3&&(giantBlocks.value||minorBlocks.value)||nodeB.order[1]==-4&&giantBlocks.value)) {
           _E++;
           displayEdge(nodeA, nodeB);
         }
