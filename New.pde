@@ -10,7 +10,7 @@ abstract class New implements Screen {
   abstract void enter()throws Exception;
   New() {
     inputLibrary.put("Press "+(System.getProperty("os.name").contains("Windows")?"Enter":"Return")+" to continue...", new Input("Press "+(System.getProperty("os.name").contains("Windows")?"Enter":"Return")+" to continue..."));
-    inputLibrary.put("Choose a topology (Square, Disk, Triangle, Sphere, Torus, Bottle, Cube, Ball): ", new Input("Choose a topology (Square, Disk, Triangle, Sphere, Torus, Bottle, Cube, Ball): "));
+    inputLibrary.put("Choose a topology (Line, Circle, Square, Disk, Triangle, Sphere, Torus, Bottle, Cube, Ball): ", new Input("Choose a topology (Line, Circle, Square, Disk, Triangle, Sphere, Torus, Bottle, Cube, Ball): "));
     inputLibrary.put("Enter vertex number: ", new Input("Enter vertex number: "));
     inputLibrary.put("Provide threshold (r or avg): ", new Input("Provide threshold (r or avg): "));
     inputLibrary.put("r=", new Input("r="));
@@ -63,9 +63,13 @@ abstract class New implements Screen {
   }
   void defaultEnter(String prompt, String word, String nextPrompt) throws Exception {
     if (prompt.equals("Press "+(System.getProperty("os.name").contains("Windows")?"Enter":"Return")+" to continue..."))
-      commit("Choose a topology (Square, Disk, Triangle, Sphere, Torus, Bottle, Cube, Ball): ");
-    else if (prompt.equals("Choose a topology (Square, Disk, Triangle, Sphere, Torus, Bottle, Cube, Ball): ")) {
-      if (word.contains("square"))
+      commit("Choose a topology (Line, Circle, Square, Disk, Triangle, Sphere, Torus, Bottle, Cube, Ball): ");
+    else if (prompt.equals("Choose a topology (Line, Circle, Square, Disk, Triangle, Sphere, Torus, Bottle, Cube, Ball): ")) {
+      if (word.contains("line"))
+        topology=new Line();
+      else if (word.contains("circle"))
+        topology=new Circle();
+      else if (word.contains("square"))
         topology=new Square();
       else if (word.contains("disk"))
         topology=new Disk();
@@ -87,7 +91,7 @@ abstract class New implements Screen {
     } else if (prompt.equals("Enter vertex number: ")) {
       _N=Integer.parseInt(word);
       if (_N<=0)
-        throw new NumberFormatException('\"'+word+"\": Invalid 'N' value"); 
+        throw new NumberFormatException('\"'+word+"\": Invalid 'N' value");
       commit("Provide threshold (r or avg): ");
     } else if (prompt.equals("Provide threshold (r or avg): "))
       if (word.contains("r"))
@@ -105,7 +109,7 @@ abstract class New implements Screen {
     } else if (prompt.equals("avg≈")) {
       double avgDegree=Double.parseDouble(word);
       if (avgDegree<0||avgDegree>_N-1)
-        throw new NumberFormatException('\"'+word+"\": Invalid average degree"); 
+        throw new NumberFormatException('\"'+word+"\": Invalid average degree");
       r=topology.getR(avgDegree, _N);
       inputs.get(index).word.append(String.format(" (r=%.2f)", r));
       commit(nextPrompt);

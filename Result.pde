@@ -29,7 +29,8 @@ abstract class Result {
     data();
     controls();
     pushMatrix();
-    camera(eyeX, eyeY, height*(float)graph.topology.yRange+eyeZ, centralX, centralY, centralZ, 0, 1, 0);
+    float heightRange=(float)(graph.topology.xRange>graph.topology.yRange?graph.topology.xRange:graph.topology.yRange);
+    camera(eyeX, eyeY, height*heightRange+eyeZ, centralX, centralY, centralZ, 0, 1, 0);
     scale(height);
     if (spin.value)
       spinY+=0.002;
