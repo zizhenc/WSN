@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.ListIterator;
-import java.awt.Desktop;
 GUI gui=new GUI();
 Graph graph;
 Screen[] screen;
@@ -93,7 +92,7 @@ void daemon() {
     switch(gui.thread) {
     case 2:
       graph.compute();
-      io.record();
+      io.recordFrame();
       break;
     case 3:
       io.graphInfo();

@@ -51,7 +51,7 @@ public class IO {
     for (String h : header)
       tableI.addColumn(h);
   }
-  void record() {
+  void recordFrame() {
     results.add(graph);
     resultLabels.addLast("Graph #"+graph.index+": "+graph.topology);
   }

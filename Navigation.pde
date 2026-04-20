@@ -240,16 +240,11 @@ class Navigation {
         nextPage=23    ;
       break;
     case 702://Documentation
-      if (Desktop.isDesktopSupported())
-      try {
-        Desktop.getDesktop().open(new File(dataPath("Documentation.pdf")));
-      }
-      catch (IOException e) {
-        error.logOut("File open error - "+e.getMessage());
-      }
+      launch(dataPath("Documentation.pdf"));
       break;
     case 701://About
       nextPage=24;
+      break;
     }
     if (page!=nextPage) {
       page=screen.length-1;
