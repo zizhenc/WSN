@@ -4,4 +4,4 @@ This is a visualized algorithm engineering work of backbone determination algori
 
 We model a wireless sensor network by constructing a random geometric graph, then partition the graph into a collection of disjoint bipartite subgraphs as backbones.
 
-The program manual is: https://github.com/zizhenc/WSNdoc/blob/main/Docmentation.pdf
+The program manual is: https://github.com/zizhenc/WSNdoc/blob/main/Documentation.pdf
